@@ -2,6 +2,14 @@ export const APP_NAME = 'Coldcard Hack Tracker';
 
 export const ORIGINAL_STOLEN_BTC = 1082.65;
 
+/** First public wave (Hamilton) before Galaxy’s fuller fingerprint set. */
+export const EARLY_WAVE = {
+  btc: 594.48,
+  addresses: 500,
+  sourceLabel: 'Rob Hamilton',
+  sourceUrl: 'https://x.com/Rob1Ham/status/2082896614218203616',
+} as const;
+
 export const INCIDENT = {
   dateLabel: 'July 30, 2026',
   windowUtc: '01:10:20 – 01:51:26 UTC',

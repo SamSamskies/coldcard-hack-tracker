@@ -151,6 +151,14 @@ button:focus-visible {
   font-size: 0.98rem;
 }
 
+.totals-note {
+  margin: 0.55rem 0 0;
+  max-width: 38rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
 .meta-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { APP_NAME, INCIDENT, ORIGINAL_STOLEN_BTC } from '../data/incident';
+import { APP_NAME, EARLY_WAVE, INCIDENT, ORIGINAL_STOLEN_BTC } from '../data/incident';
 import { formatBtc, formatRelativeTime } from '../lib/format';
 
 type Props = {
@@ -26,6 +26,15 @@ export function IncidentHeader({ lastUpdated, loading, onRefresh }: Props) {
           July 2026 seed-entropy sweep · {formatBtc(ORIGINAL_STOLEN_BTC)} BTC
           drained from {INCIDENT.victimAddresses.toLocaleString()} addresses in
           41 minutes
+        </p>
+        <p className="totals-note">
+          <a href={EARLY_WAVE.sourceUrl} target="_blank" rel="noreferrer">
+            Early reports
+          </a>{' '}
+          covered ~{formatBtc(EARLY_WAVE.btc)} BTC across
+          ~{EARLY_WAVE.addresses.toLocaleString()} wallets. Galaxy’s fuller
+          fingerprint set is the {formatBtc(ORIGINAL_STOLEN_BTC)} BTC /{' '}
+          {INCIDENT.victimAddresses.toLocaleString()} figure tracked here.
         </p>
       </div>
 
