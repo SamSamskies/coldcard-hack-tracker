@@ -6,11 +6,19 @@ export const INCIDENT = {
   dateLabel: 'July 30, 2026',
   windowUtc: '01:10:20 – 01:51:26 UTC',
   victimAddresses: 1196,
+  /** Native segwit / nested segwit / legacy — multi-path key scan signature. */
+  victimsByPath: {
+    bip84: 1183,
+    bip49: 7,
+    bip44: 6,
+  },
   blockStart: 960_183,
   blockEnd: 960_191,
   feeSatPerVb: 30,
+  /** Galaxy: 30–75× the ~0.4–1.0 sat/vB median that week. */
+  feeOverpayNote: '30–75× median that week',
   sourceLabel: 'Galaxy Research',
-  sourceUrl: 'https://x.com/glxyresearch',
+  sourceUrl: 'https://x.com/glxyresearch/status/2083181683067506899',
 } as const;
 
 export type HoldingAddress = {

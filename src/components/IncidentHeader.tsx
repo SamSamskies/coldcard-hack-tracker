@@ -47,7 +47,20 @@ export function IncidentHeader({ lastUpdated, loading, onRefresh }: Props) {
           </div>
           <div>
             <dt>Fee signature</dt>
-            <dd>{INCIDENT.feeSatPerVb.toFixed(1)} sat/vB · no change</dd>
+            <dd>
+              {INCIDENT.feeSatPerVb.toFixed(1)} sat/vB · no change
+              <span className="meta-sub">{INCIDENT.feeOverpayNote}</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Victim paths</dt>
+            <dd>
+              {INCIDENT.victimsByPath.bip84.toLocaleString()} BIP-84
+              <span className="meta-sub">
+                {INCIDENT.victimsByPath.bip49} BIP-49 ·{' '}
+                {INCIDENT.victimsByPath.bip44} BIP-44
+              </span>
+            </dd>
           </div>
           <div>
             <dt>Source</dt>
