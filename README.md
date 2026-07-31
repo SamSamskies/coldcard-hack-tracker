@@ -1,0 +1,54 @@
+# Coldcard Hack Tracker
+
+Live single-page dashboard for Bitcoin held after the July 2026 Coldcard seed-entropy sweep.
+
+Monitors the four Galaxy Research “current location” addresses via the public [mempool.space](https://mempool.space) API (no API key). Shows still-held %, BTC/USD value, per-address status, and outbound spends when funds move.
+
+## Develop
+
+```bash
+npm install
+npm run dev
+```
+
+Open the URL Vite prints (usually `http://localhost:5173`).
+
+## Build / deploy
+
+```bash
+npm run build
+npm run preview
+```
+
+`dist/` is a static site — deploy to Vercel, Netlify, Cloudflare Pages, or any static host.
+
+## Data sources
+
+| Data | Source |
+|------|--------|
+| Address balances & txs | `/api/address/{addr}` |
+| BTC/USD | `/api/v1/prices` |
+| Incident facts | Galaxy Research (static) |
+
+No API key is needed. The UI refreshes about every 60 seconds.
+
+### Explorer mirrors
+
+Some networks, VPNs, and DNS filters block `mempool.space`, which makes every
+request fail in the browser. The app probes hosts in order and reuses the first
+one that answers:
+
+1. `mempool.space`
+2. `mempool.emzy.de`
+3. `mempool.bitaroo.net`
+
+The footer shows which host served the current data. Edit `MEMPOOL_HOSTS` in
+[src/data/incident.ts](src/data/incident.ts) to add your own instance.
+
+### Limitation
+
+If funds hop to new addresses, v1 only shows the four known holders emptying — it does not auto-follow hops.
+
+## Disclaimer
+
+Not affiliated with Coinkite or Coldcard. For public blockchain monitoring only.
