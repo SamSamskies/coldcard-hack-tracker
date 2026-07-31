@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { APP_NAME, INCIDENT, ORIGINAL_STOLEN_BTC } from '../data/incident';
 import { formatBtc, formatRelativeTime } from '../lib/format';
 
@@ -8,6 +9,14 @@ type Props = {
 };
 
 export function IncidentHeader({ lastUpdated, loading, onRefresh }: Props) {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    if (!lastUpdated) return;
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, [lastUpdated]);
+
   return (
     <header className="incident-header">
       <div className="brand-block">
@@ -61,7 +70,7 @@ export function IncidentHeader({ lastUpdated, loading, onRefresh }: Props) {
           </button>
           <span className="updated" aria-live="polite">
             {lastUpdated
-              ? `Updated ${formatRelativeTime(lastUpdated)}`
+              ? `Updated ${formatRelativeTime(lastUpdated, now)}`
               : loading
                 ? 'Loading…'
                 : 'Not yet updated'}
