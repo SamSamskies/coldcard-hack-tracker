@@ -52,3 +52,7 @@ If funds hop to new addresses, v1 only shows the four known holders emptying —
 ## Disclaimer
 
 Not affiliated with Coinkite or Coldcard. For public blockchain monitoring only.
+
+## License
+
+[MIT](LICENSE)
