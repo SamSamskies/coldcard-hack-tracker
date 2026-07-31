@@ -17,9 +17,26 @@ export const INCIDENT = {
   feeSatPerVb: 30,
   /** Galaxy: 30–75× the ~0.4–1.0 sat/vB median that week. */
   feeOverpayNote: '30–75× median that week',
-  sourceLabel: 'Galaxy Research',
-  sourceUrl: 'https://x.com/glxyresearch/status/2083181683067506899',
 } as const;
+
+/** Primary public writeups for the sweep and the firmware issue. */
+export const SOURCES = [
+  {
+    label: 'Galaxy Research',
+    role: 'On-chain sweep',
+    url: 'https://x.com/glxyresearch/status/2083181683067506899',
+  },
+  {
+    label: 'Coinkite advisory',
+    role: 'Official guidance',
+    url: 'https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/',
+  },
+  {
+    label: 'Block Engineering',
+    role: 'Root-cause analysis',
+    url: 'https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware',
+  },
+] as const;
 
 export type HoldingAddress = {
   address: string;

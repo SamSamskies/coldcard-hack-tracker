@@ -62,14 +62,6 @@ export function IncidentHeader({ lastUpdated, loading, onRefresh }: Props) {
               </span>
             </dd>
           </div>
-          <div>
-            <dt>Source</dt>
-            <dd>
-              <a href={INCIDENT.sourceUrl} target="_blank" rel="noreferrer">
-                {INCIDENT.sourceLabel}
-              </a>
-            </dd>
-          </div>
         </dl>
 
         <div className="refresh-row">
