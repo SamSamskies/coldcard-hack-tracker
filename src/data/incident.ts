@@ -102,3 +102,12 @@ export const REFRESH_INTERVAL_MS = 60_000;
 export const SATS_PER_BTC = 100_000_000;
 /** Galaxy reported funds unspent at this block; later spends count as movement. */
 export const WATCH_AFTER_BLOCK = 960_400;
+
+/** Hop 0 = the four Galaxy holdings; hop 1+ = destinations of those spends. */
+export const MAX_HOP_DEPTH = 2;
+/** Cap fan-out per spend so public mempool polling stays cheap. */
+export const MAX_DESTINATIONS_PER_SPEND = 3;
+/** Ignore dust-sized hop destinations. */
+export const MIN_HOP_FOLLOW_SATS = 1_000_000; // 0.01 BTC
+/** Hard cap on extra addresses watched beyond the four holdings. */
+export const MAX_HOP_WATCH_ADDRESSES = 16;

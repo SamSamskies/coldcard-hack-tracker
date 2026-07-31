@@ -507,6 +507,24 @@ button:focus-visible {
   align-items: baseline;
 }
 
+.movement-txid-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.hop-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 0.12rem 0.35rem;
+}
+
 .movement-amt {
   color: var(--alert);
   font-weight: 600;

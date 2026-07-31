@@ -45,9 +45,12 @@ one that answers:
 The footer shows which host served the current data. Edit `MEMPOOL_HOSTS` in
 [src/data/incident.ts](src/data/incident.ts) to add your own instance.
 
-### Limitation
+### Hop following
 
-If funds hop to new addresses, v1 only shows the four known holders emptying — it does not auto-follow hops.
+When a holding address spends, the tracker follows the largest destinations
+(up to hop 2, ignoring dust under 0.01 BTC) and lists those outbound spends in
+the movement feed. Still-held % stays based on the original four Galaxy
+addresses only.
 
 ## Disclaimer
 

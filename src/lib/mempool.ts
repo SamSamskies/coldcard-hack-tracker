@@ -154,28 +154,40 @@ export function explorerTxUrl(txid: string): string {
 }
 
 /** Outbound spend from a watched address: value leaving that address. */
-export function outboundFromAddress(tx: Tx, address: string): {
+export function outboundFromAddress(
+  tx: Tx,
+  address: string,
+): {
   amountSats: number;
   destinations: string[];
+  recipients: { address: string; valueSats: number }[];
 } {
   const spent = tx.vin
     .filter((v) => v.prevout?.scriptpubkey_address === address)
     .reduce((sum, v) => sum + (v.prevout?.value ?? 0), 0);
 
   if (spent === 0) {
-    return { amountSats: 0, destinations: [] };
+    return { amountSats: 0, destinations: [], recipients: [] };
   }
 
   const changeBack = tx.vout
     .filter((o) => o.scriptpubkey_address === address)
     .reduce((sum, o) => sum + o.value, 0);
 
-  const destinations = tx.vout
-    .map((o) => o.scriptpubkey_address)
-    .filter((a): a is string => Boolean(a) && a !== address);
+  const byAddr = new Map<string, number>();
+  for (const o of tx.vout) {
+    const dest = o.scriptpubkey_address;
+    if (!dest || dest === address) continue;
+    byAddr.set(dest, (byAddr.get(dest) ?? 0) + o.value);
+  }
+
+  const recipients = [...byAddr.entries()]
+    .map(([addr, valueSats]) => ({ address: addr, valueSats }))
+    .sort((a, b) => b.valueSats - a.valueSats);
 
   return {
     amountSats: Math.max(0, spent - changeBack),
-    destinations: [...new Set(destinations)],
+    destinations: recipients.map((r) => r.address),
+    recipients,
   };
 }

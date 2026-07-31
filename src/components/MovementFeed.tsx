@@ -5,6 +5,7 @@ import {
   truncateTxid,
 } from '../lib/format';
 import { explorerAddressUrl, explorerTxUrl } from '../lib/mempool';
+import { MAX_HOP_DEPTH } from '../data/incident';
 import type { Movement } from '../hooks/useTrackerData';
 
 type Props = {
@@ -18,8 +19,8 @@ export function MovementFeed({ movements, loading }: Props) {
       <div className="panel-head">
         <h2 id="movement-heading">Movement feed</h2>
         <p>
-          Outbound spends from watched holding addresses. Empty means funds have
-          not moved since consolidation.
+          Outbound spends from the four holdings, then followed destinations (up
+          to hop {MAX_HOP_DEPTH}). Empty means funds have not left consolidation.
         </p>
       </div>
 
@@ -37,14 +38,19 @@ export function MovementFeed({ movements, loading }: Props) {
           {movements.slice(0, 40).map((m) => (
             <li key={`${m.txid}-${m.fromAddress}`} className="movement-item">
               <div className="movement-main">
-                <a
-                  className="mono"
-                  href={explorerTxUrl(m.txid)}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {truncateTxid(m.txid)}
-                </a>
+                <span className="movement-txid-row">
+                  {m.hop > 0 ? (
+                    <span className="hop-badge">Hop {m.hop}</span>
+                  ) : null}
+                  <a
+                    className="mono"
+                    href={explorerTxUrl(m.txid)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {truncateTxid(m.txid)}
+                  </a>
+                </span>
                 <span className="movement-amt mono">
                   −{formatBtc(m.amountBtc)} BTC
                 </span>
