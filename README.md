@@ -32,6 +32,12 @@ npm run preview
 
 No API key is needed. The UI refreshes about every 60 seconds.
 
+### Movement alerts
+
+Use the **Alerts** toggle in the header for browser notifications when a new
+outbound spend appears (holdings or followed hops). Preference is stored in
+`localStorage`; the tab must stay open for polling to continue.
+
 ### Explorer mirrors
 
 Some networks, VPNs, and DNS filters block `mempool.space`, which makes every

@@ -4,10 +4,12 @@ import { KpiRow } from './components/KpiRow';
 import { MovementFeed } from './components/MovementFeed';
 import { RiskChecklist } from './components/RiskChecklist';
 import { SourcesStrip } from './components/SourcesStrip';
+import { useMovementAlerts } from './hooks/useMovementAlerts';
 import { useTrackerData } from './hooks/useTrackerData';
 
 export default function App() {
   const data = useTrackerData();
+  const alerts = useMovementAlerts(data.movements);
   const hasData = data.addresses.length > 0;
 
   return (
@@ -18,6 +20,12 @@ export default function App() {
           lastUpdated={data.lastUpdated}
           loading={data.loading}
           onRefresh={data.refresh}
+          alertsEnabled={alerts.enabled}
+          alertsSupported={alerts.supported}
+          alertsPermission={alerts.permission}
+          onToggleAlerts={() => {
+            void alerts.toggle();
+          }}
         />
 
         {data.error ? (
