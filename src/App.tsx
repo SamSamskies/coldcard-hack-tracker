@@ -2,6 +2,7 @@ import { AddressList } from './components/AddressList';
 import { IncidentHeader } from './components/IncidentHeader';
 import { KpiRow } from './components/KpiRow';
 import { MovementFeed } from './components/MovementFeed';
+import { RiskChecklist } from './components/RiskChecklist';
 import { SourcesStrip } from './components/SourcesStrip';
 import { useTrackerData } from './hooks/useTrackerData';
 
@@ -52,6 +53,8 @@ export default function App() {
         />
 
         <MovementFeed movements={data.movements} loading={data.loading} />
+
+        <RiskChecklist />
 
         <SourcesStrip />
 

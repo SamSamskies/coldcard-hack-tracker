@@ -520,6 +520,67 @@ button:focus-visible {
   font-size: 0.82rem;
 }
 
+.risk-checklist {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem 0 0.25rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.risk-intro {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 42rem;
+}
+
+.risk-heading {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.risk-lede {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.risk-points {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+  align-items: start;
+}
+
+@media (min-width: 720px) {
+  .risk-points {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.risk-points li {
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
+}
+
+.risk-point-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.risk-point-text {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
 .sources-strip {
   display: flex;
   flex-wrap: wrap;
