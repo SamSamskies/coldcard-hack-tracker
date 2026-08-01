@@ -63,8 +63,13 @@ export const CLUSTERS: readonly Cluster[] = [
   {
     id: 'evening-july31',
     label: 'Evening wave · July 31',
-    stolenBtc: 0.50986038,
-    note: 'Block 960457. Low-fee (~2 sat/vB) sweeps into a short-lived collector, then one vault. Distinct from the Kelbie vault.',
+    /**
+     * Traced across the whole cluster, not just the original vault: 42 external
+     * sweeps landed 1.0088 BTC in cluster addresses (blocks 960425–960571) and
+     * every intermediate is now drained, leaving 1.00962114 BTC on two addresses.
+     */
+    stolenBtc: 1.00962114,
+    note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31: short-lived collector → 0.51 BTC vault (still held). A parallel set of sweeps consolidated separately, then on Aug 1 pushed 0.41 BTC through the same vault in ~18 min and out to a new address. Distinct from the Kelbie vault.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -100,7 +105,7 @@ export const SOURCES = [
   },
   {
     label: 'Evan Schoenberg',
-    note: 'Evening July 31 low-fee (~2 sat/vB) sweeps consolidated into a separate ~0.51 BTC vault.',
+    note: 'Evening July 31 low-fee (~2 sat/vB) sweeps into a separate vault; tracing the Aug 1 pass-through raised the cluster to ~1.01 BTC across two live addresses.',
     url: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -176,7 +181,14 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
-    note: '0.50980268 BTC consolidated from victim sweeps',
+    note: 'Jul 31 consolidation, still unspent. Aug 1 pass-through tracked separately below',
+  },
+  {
+    address: 'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s',
+    label: 'Aug 1 hop vault',
+    reportBtc: 0.49981846,
+    clusterId: 'evening-july31',
+    note: 'Aug 1 pass-through (0.41 BTC via the evening vault plus 0.09 BTC joined en route); separate coins from the Jul 31 vault balance',
   },
   {
     address: 'bc1qzm5pauxyv7t7vqstzpumqcn066wfjsmev34mf3',
