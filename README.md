@@ -13,6 +13,12 @@ npm run dev
 
 Open the URL Vite prints (usually `http://localhost:5173`).
 
+```bash
+npm test
+```
+
+Runs the Vitest unit suite (formatters, outbound/hop logic, incident data invariants).
+
 ## Build / deploy
 
 ```bash
