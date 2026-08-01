@@ -364,6 +364,11 @@ button:focus-visible {
 
 .kpi-value.mono {
   font-family: var(--font-mono);
+  /* Full sat strings are long; keep amount + unit on one line. */
+  font-size: clamp(1.05rem, 2.1vw, 1.45rem);
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .kpi-value.text {
@@ -373,9 +378,10 @@ button:focus-visible {
 }
 
 .kpi-value .unit {
-  font-size: 0.55em;
+  font-size: 0.7em;
   font-weight: 500;
   color: var(--text-muted);
+  margin-left: 0.2em;
 }
 
 .kpi-detail {

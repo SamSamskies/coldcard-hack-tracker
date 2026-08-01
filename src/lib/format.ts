@@ -1,7 +1,17 @@
-export function formatBtc(btc: number, digits = 2): string {
-  return btc.toLocaleString('en-US', {
-    minimumFractionDigits: digits,
-    maximumFractionDigits: digits,
+/** Full satoshi precision (up to 8 dp); keeps at least 2 dp for round totals. */
+export function formatBtc(btc: number, digits?: number): string {
+  if (!Number.isFinite(btc)) return '—';
+  if (digits != null) {
+    return btc.toLocaleString('en-US', {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    });
+  }
+  // Round to nearest sat first so float dust does not print as junk digits.
+  const rounded = Math.round(btc * 1e8) / 1e8;
+  return rounded.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 8,
   });
 }
 

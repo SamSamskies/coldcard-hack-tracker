@@ -26,7 +26,7 @@ export const INCIDENT = {
   feeOverpayNote: '30–75× median that week',
 } as const;
 
-export type ClusterId = 'galaxy-july30' | 'kelbie-july31';
+export type ClusterId = 'galaxy-july30' | 'kelbie-july31' | 'evening-july31';
 
 export type Cluster = {
   id: ClusterId;
@@ -56,6 +56,13 @@ export const CLUSTERS: readonly Cluster[] = [
     note: 'Past Block scan end (block 960230). Seven of eight markers; RBF differs.',
     sourceUrl: 'https://x.com/KevinKelbie/status/2083368025864990857',
   },
+  {
+    id: 'evening-july31',
+    label: 'Evening wave · July 31',
+    stolenBtc: 0.50986038,
+    note: 'Low-fee (~2 sat/vB) sweeps into a short-lived collector, then one vault. Distinct from the Kelbie vault.',
+    sourceUrl: 'https://x.com/evands/status/2083505832587587945',
+  },
 ] as const;
 
 export const CLUSTER_BY_ID: Record<ClusterId, Cluster> = Object.fromEntries(
@@ -81,6 +88,11 @@ export const SOURCES = [
     url: 'https://x.com/KevinKelbie/status/2083368025864990857',
   },
   {
+    label: 'Evan Schoenberg',
+    role: 'Evening wave',
+    url: 'https://x.com/evands/status/2083505832587587945',
+  },
+  {
     label: 'Coinkite advisory',
     role: 'Official guidance',
     url: 'https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/',
@@ -104,34 +116,41 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
   {
     address: 'bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r',
     label: 'Holding 1',
-    reportBtc: 562.02,
+    reportBtc: 562.02020083,
     clusterId: 'galaxy-july30',
   },
   {
     address: 'bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3',
     label: 'Holding 2',
-    reportBtc: 398.48,
+    reportBtc: 398.47573857,
     clusterId: 'galaxy-july30',
   },
   {
     address: 'bc1q8jy96fe5lf8vfugydnte3cguk92gpev7kwtp3q',
     label: 'Holding 3',
-    reportBtc: 89.62,
+    reportBtc: 89.6232789,
     clusterId: 'galaxy-july30',
   },
   {
     address: 'bc1qnk4zh9qcnap2mycp56qjrgza3cc8ylrh8fecp0',
     label: 'Holding 4',
-    reportBtc: 32.45,
+    reportBtc: 32.4505632,
     clusterId: 'galaxy-july30',
     note: 'Unmoved collector remainder',
   },
   {
     address: 'bc1qtfrwa4j6rmj9rsgspv6a0yjumkg39js2numu75',
     label: 'July 31 vault',
-    reportBtc: 45.9,
+    reportBtc: 45.90251994,
     clusterId: 'kelbie-july31',
     note: 'Consolidated from 1,216 sweeps; still unspent',
+  },
+  {
+    address: 'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
+    label: 'Evening vault',
+    reportBtc: 0.50980268,
+    clusterId: 'evening-july31',
+    note: 'Block 960457–960458; 0.50980268 BTC consolidated from victim sweeps',
   },
 ] as const;
 

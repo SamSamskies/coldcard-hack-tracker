@@ -29,7 +29,7 @@ export function IncidentHeader({
 }: Props) {
   const [now, setNow] = useState(() => new Date());
   const galaxy = CLUSTERS.find((c) => c.id === 'galaxy-july30')!;
-  const laterWave = CLUSTERS.find((c) => c.id === 'kelbie-july31')!;
+  const laterWaves = CLUSTERS.filter((c) => c.id !== 'galaxy-july30');
 
   useEffect(() => {
     if (!lastUpdated) return;
@@ -72,11 +72,21 @@ export function IncidentHeader({
           different operators.
         </p>
         <p className="totals-note">
-          Later wave:{' '}
-          <a href={laterWave.sourceUrl} target="_blank" rel="noreferrer">
-            {formatBtc(laterWave.stolenBtc)} BTC
-          </a>{' '}
-          past Block’s scan end (block 960230) — {laterWave.note}
+          Later waves:{' '}
+          {laterWaves.map((wave, i) => (
+            <span key={wave.id}>
+              {i > 0 ? ' · ' : null}
+              {wave.sourceUrl ? (
+                <a href={wave.sourceUrl} target="_blank" rel="noreferrer">
+                  {formatBtc(wave.stolenBtc)} BTC
+                </a>
+              ) : (
+                formatBtc(wave.stolenBtc) + ' BTC'
+              )}{' '}
+              ({wave.label})
+            </span>
+          ))}
+          .
         </p>
       </div>
 
