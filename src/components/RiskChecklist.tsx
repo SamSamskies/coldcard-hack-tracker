@@ -28,6 +28,10 @@ const FIRMWARE_ROWS = [
 
 const POINTS = [
   {
+    label: 'Mk4 is in scope now',
+    text: 'Early drains fit Mk3’s ~40-bit search space. Community reports now include Mk4 RNG seeds being swept — device model is not visible on-chain, so treat vulnerable Mk4 / Mk5 / Q seeds with the same urgency.',
+  },
+  {
     label: 'Firmware update is not enough',
     text: 'Patching does not repair an existing seed. Generate a new seed on fixed firmware and migrate funds carefully.',
   },
