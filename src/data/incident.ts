@@ -71,8 +71,8 @@ export const CLUSTERS: readonly Cluster[] = [
     id: 'morning-aug1',
     label: 'Morning wave · Aug 1',
     stolenBtc: 0.33295323,
-    note: 'Blocks 960518–960523. Direct victim sweeps (~15–50 sat/vB) into one vault. Includes a reported Mk4 RNG / duress-wallet honey pot (device model not visible on-chain).',
-    sourceUrl: 'https://x.com/TomerStrolight/status/2083525927309320202',
+    note: 'Blocks 960518–960523. Direct victim sweeps (~15–50 sat/vB) into one vault; honey-pot / duress-wallet report (Mk4 claim later withdrawn — seed was Mk3-origin).',
+    sourceUrl: 'https://x.com/TomerStrolight/status/2083578868191957292',
   },
 ] as const;
 
@@ -105,8 +105,8 @@ export const SOURCES = [
   },
   {
     label: 'Tomer Strolight',
-    note: 'Aug 1 morning wave: reported Mk4 RNG / duress-wallet honey pot swept into a ~0.33 BTC vault (blocks 960518–960523).',
-    url: 'https://x.com/TomerStrolight/status/2083525927309320202',
+    note: 'Aug 1 morning wave: duress-wallet honey pot swept into a ~0.33 BTC vault; Mk4 attribution later corrected to Mk3-origin seed.',
+    url: 'https://x.com/TomerStrolight/status/2083578868191957292',
   },
   {
     label: 'Coinkite advisory',
