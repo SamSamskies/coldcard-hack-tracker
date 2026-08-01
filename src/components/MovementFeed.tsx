@@ -19,8 +19,10 @@ export function MovementFeed({ movements, loading }: Props) {
       <div className="panel-head">
         <h2 id="movement-heading">Movement feed</h2>
         <p>
-          Outbound spends from watched holdings, then followed destinations (up
-          to hop {MAX_HOP_DEPTH}). Empty means funds have not left consolidation.
+          Outbound spends of the reported consolidation from watched holdings,
+          then followed destinations (up to hop {MAX_HOP_DEPTH}). Later surplus
+          that passes through a vault while its reported balance remains is
+          ignored.
         </p>
       </div>
 
@@ -30,7 +32,7 @@ export function MovementFeed({ movements, loading }: Props) {
         <div className="empty-state">
           <p className="empty-title">No outbound spends</p>
           <p className="muted">
-            All watched balances still match the post-sweep holding set.
+            Reported consolidation balances have not left the holding addresses.
           </p>
         </div>
       ) : (

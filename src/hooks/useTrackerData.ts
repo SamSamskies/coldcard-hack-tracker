@@ -206,26 +206,37 @@ export function useTrackerData(): TrackerData {
         ),
       ]);
 
-      const known = new Set(seedWatches.map((w) => w.address));
-      const allMovements = movementsFromWatch(
-        seedWatches,
-        seedTxLists as Tx[][],
+      // Ignore outbounds from vaults that still hold their reportBtc. Those are
+      // later surplus / unrelated churn, not the reported stolen stack moving.
+      const reportTouched = new Set(
+        HOLDING_ADDRESSES.filter((h, i) => {
+          const balanceBtc = satsToBtc(addressBalanceSats(summaries[i]));
+          return statusFor(balanceBtc, h.reportBtc) !== 'held';
+        }).map((h) => h.address),
       );
 
-      // Merge freshly discovered hops with any remembered from earlier polls.
+      const activeSeeds: WatchTarget[] = [];
+      const activeSeedTxLists: Tx[][] = [];
+      seedWatches.forEach((w, i) => {
+        if (!reportTouched.has(w.address)) return;
+        activeSeeds.push(w);
+        activeSeedTxLists.push((seedTxLists as Tx[][])[i] ?? []);
+      });
+
+      const known = new Set(seedWatches.map((w) => w.address));
+      const allMovements = movementsFromWatch(activeSeeds, activeSeedTxLists);
+
+      // Only follow hops from report-impacting spends (rebuild each poll).
+      hopWatchRef.current.clear();
       const freshHops = discoverNextHops(
-        seedWatches,
-        seedTxLists as Tx[][],
+        activeSeeds,
+        activeSeedTxLists,
         known,
         MAX_HOP_WATCH_ADDRESSES,
       );
       for (const hop of freshHops) {
         hopWatchRef.current.set(hop.address, hop);
         known.add(hop.address);
-      }
-      // Drop remembered hops that somehow match a holding (shouldn't happen).
-      for (const addr of HOLDING_ADDRESSES.map((h) => h.address)) {
-        hopWatchRef.current.delete(addr);
       }
 
       let hopWatches = [...hopWatchRef.current.values()]
@@ -323,7 +334,8 @@ export function useTrackerData(): TrackerData {
 
   const heldBtc = addresses.reduce((s, a) => s + a.balanceBtc, 0);
   // Measured against what reached the holding addresses, so sweep fees
-  // are not reported as movement.
+  // are not reported as movement. Surplus that arrives and leaves while the
+  // report balance remains is ignored in the movement feed as well.
   const movedBtc = Math.max(0, CONSOLIDATED_BTC - heldBtc);
   const heldPct =
     CONSOLIDATED_BTC > 0

@@ -53,10 +53,14 @@ The footer shows which host served the current data. Edit `MEMPOOL_HOSTS` in
 
 ### Hop following
 
-When a holding address spends, the tracker follows the largest destinations
-(up to hop 2, ignoring dust under 0.01 BTC) and lists those outbound spends in
-the movement feed. Still-held % stays based on the watched holding addresses
-only.
+When a holding address spends reported consolidation, the tracker follows the
+largest destinations (up to hop 2, ignoring dust under 0.01 BTC) and lists those
+outbound spends in the movement feed. Still-held % stays based on the watched
+holding addresses only.
+
+If a vault later receives extra coins and forwards them while still holding its
+reported balance, that pass-through is ignored — it is not treated as the
+stolen stack moving.
 
 ## Disclaimer
 

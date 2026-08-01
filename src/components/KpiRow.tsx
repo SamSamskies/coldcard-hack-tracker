@@ -81,8 +81,8 @@ export function KpiRow({
           {!hasData
             ? 'Waiting for chain data'
             : alert
-              ? 'Funds have left the holding addresses'
-              : 'Nothing has left the holding addresses'}
+              ? 'Reported consolidation has left the holding addresses'
+              : 'Reported consolidation still on the holding addresses'}
         </p>
       </article>
 
@@ -102,7 +102,7 @@ export function KpiRow({
             ? 'Waiting for chain data'
             : lastMovement
               ? `${formatBtc(lastMovement.amountBtc)} BTC from ${lastMovement.fromLabel}`
-              : 'All watched holdings still holding'}
+              : 'No spends of the reported consolidation'}
         </p>
       </article>
     </section>
