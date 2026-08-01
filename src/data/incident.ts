@@ -60,7 +60,7 @@ export const CLUSTERS: readonly Cluster[] = [
     id: 'evening-july31',
     label: 'Evening wave · July 31',
     stolenBtc: 0.50986038,
-    note: 'Low-fee (~2 sat/vB) sweeps into a short-lived collector, then one vault. Distinct from the Kelbie vault.',
+    note: 'Block 960457. Low-fee (~2 sat/vB) sweeps into a short-lived collector, then one vault. Distinct from the Kelbie vault.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
 ] as const;
@@ -160,7 +160,7 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
-    note: 'Block 960457–960458; 0.50980268 BTC consolidated from victim sweeps',
+    note: '0.50980268 BTC consolidated from victim sweeps',
   },
 ] as const;
 
