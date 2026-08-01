@@ -26,7 +26,11 @@ export const INCIDENT = {
   feeOverpayNote: '30–75× median that week',
 } as const;
 
-export type ClusterId = 'galaxy-july30' | 'kelbie-july31' | 'evening-july31';
+export type ClusterId =
+  | 'galaxy-july30'
+  | 'kelbie-july31'
+  | 'evening-july31'
+  | 'morning-aug1';
 
 export type Cluster = {
   id: ClusterId;
@@ -63,6 +67,13 @@ export const CLUSTERS: readonly Cluster[] = [
     note: 'Block 960457. Low-fee (~2 sat/vB) sweeps into a short-lived collector, then one vault. Distinct from the Kelbie vault.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
+  {
+    id: 'morning-aug1',
+    label: 'Morning wave · Aug 1',
+    stolenBtc: 0.33295323,
+    note: 'Blocks 960518–960523. Direct victim sweeps (~15–50 sat/vB) into one vault; honey-pot / duress-wallet report.',
+    sourceUrl: 'https://x.com/TomerStrolight/status/2083525927309320202',
+  },
 ] as const;
 
 export const CLUSTER_BY_ID: Record<ClusterId, Cluster> = Object.fromEntries(
@@ -91,6 +102,11 @@ export const SOURCES = [
     label: 'Evan Schoenberg',
     note: 'Evening July 31 low-fee (~2 sat/vB) sweeps consolidated into a separate ~0.51 BTC vault.',
     url: 'https://x.com/evands/status/2083505832587587945',
+  },
+  {
+    label: 'Tomer Strolight',
+    note: 'Aug 1 morning wave: RNG / duress-wallet honey pot swept into a ~0.33 BTC vault (blocks 960518–960523).',
+    url: 'https://x.com/TomerStrolight/status/2083525927309320202',
   },
   {
     label: 'Coinkite advisory',
@@ -161,6 +177,13 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
     note: '0.50980268 BTC consolidated from victim sweeps',
+  },
+  {
+    address: 'bc1qzm5pauxyv7t7vqstzpumqcn066wfjsmev34mf3',
+    label: 'Aug 1 vault',
+    reportBtc: 0.33203236,
+    clusterId: 'morning-aug1',
+    note: '0.33203236 BTC from 16 victim sweeps; still unspent',
   },
 ] as const;
 
