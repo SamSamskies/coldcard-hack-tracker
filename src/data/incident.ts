@@ -78,7 +78,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 1.20115791,
     date: '2026-07-31',
-    note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31 vault (~0.51 BTC) still held. Aug 1: ~0.41 BTC passed through that vault to a hop address, then a delayed ~0.19 BTC victim consolidation joined the hop (now ~0.69 BTC). A separate Ocean (OCEAN.XYZ) miner-payout UTXO also touched the hop and was peeled off — possible same-operator lead, not counted as stolen. Distinct from the Kelbie vault.',
+    note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31 vault (~0.51 BTC) still held. Aug 1: ~0.41 BTC passed through that vault to a hop address, then a delayed ~0.19 BTC victim consolidation joined the hop (now ~0.69 BTC). A separate Ocean (OCEAN.XYZ) miner-payout UTXO also touched the hop and was peeled off — possible same-operator lead, not counted as stolen. Distinct from the Kelbie vault, which also happened on July 31.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
