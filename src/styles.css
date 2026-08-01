@@ -521,10 +521,16 @@ button:focus-visible {
 }
 
 .cluster-meta {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-  gap: 0.6rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem 1.5rem;
   margin: 0.75rem 0 0;
+}
+
+/* Size each stat to its own content so a long value wraps the row
+   instead of wrapping mid-phrase inside a fixed column. */
+.cluster-meta > div {
+  flex: 0 0 auto;
 }
 
 .cluster-meta dt {
@@ -539,6 +545,27 @@ button:focus-visible {
   margin: 0.15rem 0 0;
   font-family: var(--font-mono);
   font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.cluster-meta .meta-primary {
+  display: block;
+  white-space: nowrap;
+}
+
+.cluster-meta .meta-sub {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .cluster-meta > div {
+    flex: 1 1 100%;
+  }
+
+  .cluster-meta .meta-primary,
+  .cluster-meta .meta-sub {
+    white-space: normal;
+  }
 }
 
 .cluster-label {

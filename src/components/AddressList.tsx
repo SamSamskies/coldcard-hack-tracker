@@ -2,7 +2,6 @@ import {
   CLUSTER_BY_ID,
   CLUSTERS,
   CONSOLIDATED_BTC,
-  EARLY_WAVE,
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
@@ -40,39 +39,43 @@ function GalaxyClusterMeta() {
       <div>
         <dt>Scope</dt>
         <dd>
-          {formatBtc(CLUSTER_BY_ID['galaxy-july30'].stolenBtc)} BTC /{' '}
-          {INCIDENT.victimAddresses.toLocaleString()} addresses
-          <span className="meta-sub">
-            Early reports ~{formatBtc(EARLY_WAVE.btc)} BTC / ~
-            {EARLY_WAVE.addresses.toLocaleString()} wallets
+          <span className="meta-primary">
+            {formatBtc(CLUSTER_BY_ID['galaxy-july30'].stolenBtc)} BTC ·{' '}
+            {INCIDENT.victimAddresses.toLocaleString()} addresses
           </span>
         </dd>
       </div>
       <div>
         <dt>Window</dt>
         <dd>
-          {INCIDENT.dateLabel}
+          <span className="meta-primary">{INCIDENT.dateLabel}</span>
           <span className="meta-sub">{INCIDENT.windowUtc}</span>
         </dd>
       </div>
       <div>
         <dt>Blocks</dt>
         <dd>
-          {INCIDENT.blockStart.toLocaleString()}–
-          {INCIDENT.blockEnd.toLocaleString()}
+          <span className="meta-primary">
+            {INCIDENT.blockStart.toLocaleString()}–
+            {INCIDENT.blockEnd.toLocaleString()}
+          </span>
         </dd>
       </div>
       <div>
         <dt>Fee signature</dt>
         <dd>
-          {INCIDENT.feeSatPerVb.toFixed(1)} sat/vB · no change
+          <span className="meta-primary">
+            {INCIDENT.feeSatPerVb.toFixed(1)} sat/vB · no change
+          </span>
           <span className="meta-sub">{INCIDENT.feeOverpayNote}</span>
         </dd>
       </div>
       <div>
         <dt>Victim paths</dt>
         <dd>
-          {INCIDENT.victimsByPath.bip84.toLocaleString()} BIP-84
+          <span className="meta-primary">
+            {INCIDENT.victimsByPath.bip84.toLocaleString()} BIP-84
+          </span>
           <span className="meta-sub">
             {INCIDENT.victimsByPath.bip49} BIP-49 ·{' '}
             {INCIDENT.victimsByPath.bip44} BIP-44
