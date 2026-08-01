@@ -22,12 +22,12 @@ const PENDING = '—';
 function lastMovementDetail(m: Movement): string {
   const base = `${formatBtc(m.amountBtc)} BTC from ${m.fromLabel}`;
   if (m.impact === 'extra') {
-    return `${base} · later deposits (report still held)`;
+    return `${base} · more coins in, then out (report still held)`;
   }
   if (m.impact === 'hop') {
     return `${base} · followed hop`;
   }
-  return `${base} · of reported stack`;
+  return `${base} · reported stack`;
 }
 
 export function KpiRow({

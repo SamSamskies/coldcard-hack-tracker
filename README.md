@@ -60,11 +60,13 @@ only.
 
 ### Report shortfall vs movement feed
 
-**Report shortfall** is how much the current holding balances sit below the
-frozen `reportBtc` snapshot (the consolidated stolen stack). **Movement feed**
-lists every post-watch outbound spend. If a vault receives later deposits and
-then spends them while still holding its reported balance, the feed shows that
-spend (tagged **Extra**) but report shortfall stays 0.
+**Report shortfall** is how much current holding balances sit below the frozen
+`reportBtc` snapshot. **Movement feed** lists post-watch outbound spends.
+
+If a vault later receives more coins and forwards them while still holding its
+reported balance (as with the Evening vault’s ~0.41 BTC pass-through), the
+dashboard shows a plain-language “What happened” note, tags the spend
+**Extra**, and keeps report shortfall at 0.
 
 ## Disclaimer
 

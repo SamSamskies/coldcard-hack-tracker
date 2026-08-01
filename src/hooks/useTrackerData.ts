@@ -27,6 +27,8 @@ export type AddressStatus = 'held' | 'partial' | 'emptied';
 export type LiveAddress = HoldingAddress & {
   balanceBtc: number;
   balanceSats: number;
+  /** Lifetime sats received (chain + mempool). */
+  fundedBtc: number;
   utxoCount: number;
   status: AddressStatus;
   flash?: boolean;
@@ -54,6 +56,17 @@ export type Movement = {
   blockTime?: number;
 };
 
+/** Later deposits that arrived at a report vault, then left again. */
+export type LaterFlow = {
+  address: string;
+  label: string;
+  reportBtc: number;
+  laterInBtc: number;
+  laterOutBtc: number;
+  destinations: string[];
+  txid: string;
+};
+
 export type TrackerData = {
   addresses: LiveAddress[];
   heldBtc: number;
@@ -61,6 +74,7 @@ export type TrackerData = {
   heldPct: number;
   usdPrice: number | null;
   movements: Movement[];
+  laterFlows: LaterFlow[];
   lastMovement: Movement | null;
   lastUpdated: Date | null;
   source: string | null;
@@ -145,6 +159,53 @@ function withMovementImpact(
     }
     return { ...m, impact: 'report' as const };
   });
+}
+
+/**
+ * Holdings that received more than their report snapshot, then spent the
+ * surplus while the reported stack remained. Explains "0 shortfall + outbound".
+ */
+function buildLaterFlows(
+  holdings: LiveAddress[],
+  movements: Movement[],
+): LaterFlow[] {
+  const extras = movements.filter((m) => m.impact === 'extra');
+  if (extras.length === 0) return [];
+
+  const byAddress = new Map<string, Movement[]>();
+  for (const m of extras) {
+    const list = byAddress.get(m.fromAddress) ?? [];
+    list.push(m);
+    byAddress.set(m.fromAddress, list);
+  }
+
+  const flows: LaterFlow[] = [];
+  for (const h of holdings) {
+    const outs = byAddress.get(h.address);
+    if (!outs?.length) continue;
+
+    const laterInBtc = Math.max(0, h.fundedBtc - h.reportBtc);
+    const laterOutBtc = outs.reduce((s, m) => s + m.amountBtc, 0);
+    if (laterInBtc < 0.001 && laterOutBtc < 0.001) continue;
+
+    const destinations = [
+      ...new Set(outs.flatMap((m) => m.destinations)),
+    ];
+    // Prefer the largest outbound as the primary example tx.
+    const primary = [...outs].sort((a, b) => b.amountBtc - a.amountBtc)[0];
+
+    flows.push({
+      address: h.address,
+      label: h.label,
+      reportBtc: h.reportBtc,
+      laterInBtc,
+      laterOutBtc,
+      destinations,
+      txid: primary.txid,
+    });
+  }
+
+  return flows.sort((a, b) => b.laterOutBtc - a.laterOutBtc);
 }
 
 function hopLabel(address: string, hop: number): string {
@@ -301,6 +362,9 @@ export function useTrackerData(): TrackerData {
         const summary = summaries[i];
         const balanceSats = addressBalanceSats(summary);
         const balanceBtc = satsToBtc(balanceSats);
+        const fundedSats =
+          summary.chain_stats.funded_txo_sum +
+          summary.mempool_stats.funded_txo_sum;
         const prev = prevBalances.current.get(h.address);
         const changed = prev !== undefined && prev !== balanceSats;
         prevBalances.current.set(h.address, balanceSats);
@@ -323,6 +387,7 @@ export function useTrackerData(): TrackerData {
           ...h,
           balanceBtc,
           balanceSats,
+          fundedBtc: satsToBtc(fundedSats),
           utxoCount: Math.max(0, utxoEstimate(summary)),
           status: statusFor(balanceBtc, h.reportBtc),
           flash: changed,
@@ -361,6 +426,7 @@ export function useTrackerData(): TrackerData {
       : 0;
 
   const movements = withMovementImpact(rawMovements, addresses);
+  const laterFlows = buildLaterFlows(addresses, movements);
   const lastMovement =
     movements.find((m) => m.confirmed) ?? movements[0] ?? null;
 
@@ -371,6 +437,7 @@ export function useTrackerData(): TrackerData {
     heldPct,
     usdPrice,
     movements,
+    laterFlows,
     lastMovement,
     lastUpdated,
     source,

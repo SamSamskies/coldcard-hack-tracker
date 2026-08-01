@@ -5,7 +5,6 @@ import {
   truncateTxid,
 } from '../lib/format';
 import { explorerAddressUrl, explorerTxUrl } from '../lib/mempool';
-import { MAX_HOP_DEPTH } from '../data/incident';
 import type { Movement } from '../hooks/useTrackerData';
 
 type Props = {
@@ -16,7 +15,7 @@ type Props = {
 const IMPACT_EXTRA = {
   label: 'Extra',
   title:
-    'Later deposits left this address; the reported consolidation balance is still present',
+    'More coins arrived after the report, then left; the reported balance is still present',
 } as const;
 
 export function MovementFeed({ movements, loading }: Props) {
@@ -25,10 +24,11 @@ export function MovementFeed({ movements, loading }: Props) {
       <div className="panel-head">
         <h2 id="movement-heading">Movement feed</h2>
         <p>
-          Outbound spends after the watch cutoff from holdings and followed
-          destinations (up to hop {MAX_HOP_DEPTH}). Tagged{' '}
-          <span className="impact-inline">Extra</span> when a vault still holds
-          its reported stack — that spend does not raise report shortfall.
+          Outbound spends after the watch cutoff. If more coins arrived at a
+          vault after the report and then left while the reported balance stayed
+          put, those spends are tagged{' '}
+          <span className="impact-inline">Extra</span> and explained above —
+          they are not the original reported stack moving.
         </p>
       </div>
 
@@ -99,8 +99,8 @@ export function MovementFeed({ movements, loading }: Props) {
                 </div>
                 {m.impact === 'extra' ? (
                   <p className="movement-note muted">
-                    Does not reduce report shortfall — vault still holds its
-                    reported balance.
+                    More coins arrived after the report, then left — not the
+                    original reported balance.
                   </p>
                 ) : null}
                 {m.destinations.length > 0 ? (

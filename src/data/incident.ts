@@ -176,7 +176,7 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
-    note: '0.50980268 BTC consolidated from victim sweeps',
+    note: '0.50980268 BTC consolidated from victim sweeps. Later ~0.41 BTC also arrived here, then left to a new address; reported balance remains.',
   },
   {
     address: 'bc1qzm5pauxyv7t7vqstzpumqcn066wfjsmev34mf3',
