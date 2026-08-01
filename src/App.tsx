@@ -26,6 +26,7 @@ export default function App() {
           onToggleAlerts={() => {
             void alerts.toggle();
           }}
+          usdPrice={data.usdPrice}
         />
 
         {data.error ? (

@@ -37,6 +37,12 @@ export type Cluster = {
   label: string;
   /** Estimated BTC drained from victims in this cluster. */
   stolenBtc: number;
+  /**
+   * UTC day the wave landed, to day granularity only. Intraday timing is not
+   * established for every cluster, so the timeline plots by date rather than
+   * implying block-level precision the reports do not support.
+   */
+  date: string;
   note: string;
   sourceUrl?: string;
 };
@@ -50,6 +56,7 @@ export const CLUSTERS: readonly Cluster[] = [
     id: 'galaxy-july30',
     label: 'Galaxy fingerprint · July 30',
     stolenBtc: 1082.65,
+    date: '2026-07-30',
     note: 'Block/Galaxy on-chain fingerprint; four consolidation holdings.',
     sourceUrl: 'https://x.com/glxyresearch/status/2083181683067506899',
   },
@@ -57,6 +64,7 @@ export const CLUSTERS: readonly Cluster[] = [
     id: 'kelbie-july31',
     label: 'Post-scan wave · July 31',
     stolenBtc: 45.91,
+    date: '2026-07-31',
     note: 'Past Block scan end (block 960230). Seven of eight markers; RBF differs.',
     sourceUrl: 'https://x.com/KevinKelbie/status/2083368025864990857',
   },
@@ -69,6 +77,7 @@ export const CLUSTERS: readonly Cluster[] = [
      * every intermediate is now drained, leaving 1.00962114 BTC on two addresses.
      */
     stolenBtc: 1.00962114,
+    date: '2026-07-31',
     note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31: short-lived collector → 0.51 BTC vault (still held). A parallel set of sweeps consolidated separately, then on Aug 1 pushed 0.41 BTC through the same vault in ~18 min and out to a new address. Distinct from the Kelbie vault.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
@@ -76,6 +85,7 @@ export const CLUSTERS: readonly Cluster[] = [
     id: 'morning-aug1',
     label: 'Morning wave · Aug 1',
     stolenBtc: 0.33295323,
+    date: '2026-08-01',
     note: 'Blocks 960518–960523. Direct victim sweeps (~15–50 sat/vB) into one vault; honey-pot / duress-wallet report (Mk4 claim later withdrawn — seed was Mk3-origin).',
     sourceUrl: 'https://x.com/TomerStrolight/status/2083578868191957292',
   },

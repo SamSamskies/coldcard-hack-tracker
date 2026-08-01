@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { APP_NAME } from '../data/incident';
 import { formatRelativeTime } from '../lib/format';
+import { StolenTimeline } from './StolenTimeline';
 
 type Props = {
   lastUpdated: Date | null;
@@ -10,6 +11,7 @@ type Props = {
   alertsSupported: boolean;
   alertsPermission: string;
   onToggleAlerts: () => void;
+  usdPrice: number | null;
 };
 
 export function IncidentHeader({
@@ -20,6 +22,7 @@ export function IncidentHeader({
   alertsSupported,
   alertsPermission,
   onToggleAlerts,
+  usdPrice,
 }: Props) {
   const [now, setNow] = useState(() => new Date());
 
@@ -51,6 +54,8 @@ export function IncidentHeader({
         <h1 className="brand">{APP_NAME}</h1>
         <p className="subtitle">Seed-entropy sweeps since July 2026</p>
       </div>
+
+      <StolenTimeline usdPrice={usdPrice} />
 
       <div className="header-controls">
         <label
