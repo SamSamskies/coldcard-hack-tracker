@@ -73,8 +73,8 @@ export default function App() {
             {data.source && data.source !== 'mempool.space'
               ? ' (fallback mirror)'
               : ''}
-            . Incident facts from Galaxy Research. Not affiliated with Coinkite
-            or Coldcard.
+            . Incident facts from Galaxy Research and community cluster reports.
+            Not affiliated with Coinkite or Coldcard.
           </p>
         </footer>
       </main>

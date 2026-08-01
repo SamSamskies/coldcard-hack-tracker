@@ -1,8 +1,8 @@
 # Coldcard Hack Tracker
 
-Live single-page dashboard for Bitcoin held after the July 2026 Coldcard seed-entropy sweep.
+Live single-page dashboard for Bitcoin held after the July 2026 Coldcard seed-entropy sweeps.
 
-Monitors the four Galaxy Research “current location” addresses via the public [mempool.space](https://mempool.space) API (no API key). Shows still-held %, BTC/USD value, per-address status, and outbound spends when funds move.
+Monitors consolidation vaults across named clusters (Galaxy’s July 30 fingerprint set plus later reported waves) via the public [mempool.space](https://mempool.space) API (no API key). Shows still-held %, BTC/USD value, per-address status, and outbound spends when funds move. Clusters may be different operators.
 
 ## Develop
 
@@ -28,7 +28,7 @@ npm run preview
 |------|--------|
 | Address balances & txs | `/api/address/{addr}` |
 | BTC/USD | `/api/v1/prices` |
-| Incident facts | Galaxy Research (static) |
+| Incident facts | Galaxy Research + community cluster reports (static) |
 
 No API key is needed. The UI refreshes about every 60 seconds.
 
@@ -55,8 +55,8 @@ The footer shows which host served the current data. Edit `MEMPOOL_HOSTS` in
 
 When a holding address spends, the tracker follows the largest destinations
 (up to hop 2, ignoring dust under 0.01 BTC) and lists those outbound spends in
-the movement feed. Still-held % stays based on the original four Galaxy
-addresses only.
+the movement feed. Still-held % stays based on the watched holding addresses
+only.
 
 ## Disclaimer
 

@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { APP_NAME, EARLY_WAVE, INCIDENT, ORIGINAL_STOLEN_BTC } from '../data/incident';
+import {
+  APP_NAME,
+  CLUSTERS,
+  EARLY_WAVE,
+  INCIDENT,
+  ORIGINAL_STOLEN_BTC,
+} from '../data/incident';
 import { formatBtc, formatRelativeTime } from '../lib/format';
 
 type Props = {
@@ -22,6 +28,8 @@ export function IncidentHeader({
   onToggleAlerts,
 }: Props) {
   const [now, setNow] = useState(() => new Date());
+  const galaxy = CLUSTERS.find((c) => c.id === 'galaxy-july30')!;
+  const laterWave = CLUSTERS.find((c) => c.id === 'kelbie-july31')!;
 
   useEffect(() => {
     if (!lastUpdated) return;
@@ -50,55 +58,26 @@ export function IncidentHeader({
         <p className="eyebrow">Live chain monitor</p>
         <h1 className="brand">{APP_NAME}</h1>
         <p className="subtitle">
-          July 2026 seed-entropy sweep · {formatBtc(ORIGINAL_STOLEN_BTC)} BTC
-          drained from {INCIDENT.victimAddresses.toLocaleString()} addresses in
-          41 minutes
+          July 2026 seed-entropy sweeps · {formatBtc(ORIGINAL_STOLEN_BTC)} BTC
+          tracked across {CLUSTERS.length} clusters
         </p>
         <p className="totals-note">
           <a href={EARLY_WAVE.sourceUrl} target="_blank" rel="noreferrer">
             Early reports
           </a>{' '}
           covered ~{formatBtc(EARLY_WAVE.btc)} BTC across
-          ~{EARLY_WAVE.addresses.toLocaleString()} wallets. Galaxy’s fuller
-          fingerprint set is the {formatBtc(ORIGINAL_STOLEN_BTC)} BTC /{' '}
-          {INCIDENT.victimAddresses.toLocaleString()} figure tracked here.
+          ~{EARLY_WAVE.addresses.toLocaleString()} wallets. Galaxy’s fingerprint
+          set is {formatBtc(galaxy.stolenBtc)} BTC /{' '}
+          {INCIDENT.victimAddresses.toLocaleString()} addresses. Clusters may be
+          different operators.
         </p>
-      </div>
-
-      <div className="meta-block">
-        <dl className="meta-grid">
-          <div>
-            <dt>Window</dt>
-            <dd>
-              {INCIDENT.dateLabel}
-              <span className="meta-sub">{INCIDENT.windowUtc}</span>
-            </dd>
-          </div>
-          <div>
-            <dt>Blocks</dt>
-            <dd>
-              {INCIDENT.blockStart.toLocaleString()}–
-              {INCIDENT.blockEnd.toLocaleString()}
-            </dd>
-          </div>
-          <div>
-            <dt>Fee signature</dt>
-            <dd>
-              {INCIDENT.feeSatPerVb.toFixed(1)} sat/vB · no change
-              <span className="meta-sub">{INCIDENT.feeOverpayNote}</span>
-            </dd>
-          </div>
-          <div>
-            <dt>Victim paths</dt>
-            <dd>
-              {INCIDENT.victimsByPath.bip84.toLocaleString()} BIP-84
-              <span className="meta-sub">
-                {INCIDENT.victimsByPath.bip49} BIP-49 ·{' '}
-                {INCIDENT.victimsByPath.bip44} BIP-44
-              </span>
-            </dd>
-          </div>
-        </dl>
+        <p className="totals-note">
+          Later wave:{' '}
+          <a href={laterWave.sourceUrl} target="_blank" rel="noreferrer">
+            {formatBtc(laterWave.stolenBtc)} BTC
+          </a>{' '}
+          past Block’s scan end (block 960230) — {laterWave.note}
+        </p>
       </div>
 
       <div className="header-controls">

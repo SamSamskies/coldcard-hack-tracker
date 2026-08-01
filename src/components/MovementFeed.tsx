@@ -19,7 +19,7 @@ export function MovementFeed({ movements, loading }: Props) {
       <div className="panel-head">
         <h2 id="movement-heading">Movement feed</h2>
         <p>
-          Outbound spends from the four holdings, then followed destinations (up
+          Outbound spends from watched holdings, then followed destinations (up
           to hop {MAX_HOP_DEPTH}). Empty means funds have not left consolidation.
         </p>
       </div>

@@ -322,8 +322,8 @@ export function useTrackerData(): TrackerData {
   }, [refresh]);
 
   const heldBtc = addresses.reduce((s, a) => s + a.balanceBtc, 0);
-  // Measured against what reached the holding addresses, so the attacker's
-  // sweep fees are not reported as movement.
+  // Measured against what reached the holding addresses, so sweep fees
+  // are not reported as movement.
   const movedBtc = Math.max(0, CONSOLIDATED_BTC - heldBtc);
   const heldPct =
     CONSOLIDATED_BTC > 0

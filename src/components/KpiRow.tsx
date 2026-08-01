@@ -102,7 +102,7 @@ export function KpiRow({
             ? 'Waiting for chain data'
             : lastMovement
               ? `${formatBtc(lastMovement.amountBtc)} BTC from ${lastMovement.fromLabel}`
-              : 'All four destinations still holding'}
+              : 'All watched holdings still holding'}
         </p>
       </article>
     </section>

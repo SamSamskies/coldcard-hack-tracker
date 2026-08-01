@@ -1,7 +1,5 @@
 export const APP_NAME = 'Coldcard Hack Tracker';
 
-export const ORIGINAL_STOLEN_BTC = 1082.65;
-
 /** First public wave (Hamilton) before Galaxy’s fuller fingerprint set. */
 export const EARLY_WAVE = {
   btc: 594.48,
@@ -10,6 +8,7 @@ export const EARLY_WAVE = {
   sourceUrl: 'https://x.com/Rob1Ham/status/2082896614218203616',
 } as const;
 
+/** Primary July 30 window mapped by Galaxy from Block’s fingerprint. */
 export const INCIDENT = {
   dateLabel: 'July 30, 2026',
   windowUtc: '01:10:20 – 01:51:26 UTC',
@@ -27,12 +26,59 @@ export const INCIDENT = {
   feeOverpayNote: '30–75× median that week',
 } as const;
 
+export type ClusterId = 'galaxy-july30' | 'kelbie-july31';
+
+export type Cluster = {
+  id: ClusterId;
+  label: string;
+  /** Estimated BTC drained from victims in this cluster. */
+  stolenBtc: number;
+  note: string;
+  sourceUrl?: string;
+};
+
+/**
+ * Named consolidation clusters. Operators may differ; attribution is
+ * fingerprint / community report, not proven same attacker.
+ */
+export const CLUSTERS: readonly Cluster[] = [
+  {
+    id: 'galaxy-july30',
+    label: 'Galaxy fingerprint · July 30',
+    stolenBtc: 1082.65,
+    note: 'Block/Galaxy on-chain fingerprint; four consolidation holdings.',
+    sourceUrl: 'https://x.com/glxyresearch/status/2083181683067506899',
+  },
+  {
+    id: 'kelbie-july31',
+    label: 'Post-scan wave · July 31',
+    stolenBtc: 45.91,
+    note: 'Past Block scan end (block 960230). Seven of eight markers; RBF differs.',
+    sourceUrl: 'https://x.com/KevinKelbie/status/2083368025864990857',
+  },
+] as const;
+
+export const CLUSTER_BY_ID: Record<ClusterId, Cluster> = Object.fromEntries(
+  CLUSTERS.map((c) => [c.id, c]),
+) as Record<ClusterId, Cluster>;
+
+/** Sum of cluster drain estimates across all watched waves. */
+export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
+  (sum, c) => sum + c.stolenBtc,
+  0,
+);
+
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
     label: 'Galaxy Research',
     role: 'On-chain sweep',
     url: 'https://x.com/glxyresearch/status/2083181683067506899',
+  },
+  {
+    label: 'Kevin Kelbie',
+    role: 'July 31 wave',
+    url: 'https://x.com/KevinKelbie/status/2083368025864990857',
   },
   {
     label: 'Coinkite advisory',
@@ -50,6 +96,7 @@ export type HoldingAddress = {
   address: string;
   label: string;
   reportBtc: number;
+  clusterId: ClusterId;
   note?: string;
 };
 
@@ -58,39 +105,50 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     address: 'bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r',
     label: 'Holding 1',
     reportBtc: 562.02,
+    clusterId: 'galaxy-july30',
   },
   {
     address: 'bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3',
     label: 'Holding 2',
     reportBtc: 398.48,
+    clusterId: 'galaxy-july30',
   },
   {
     address: 'bc1q8jy96fe5lf8vfugydnte3cguk92gpev7kwtp3q',
     label: 'Holding 3',
     reportBtc: 89.62,
+    clusterId: 'galaxy-july30',
   },
   {
     address: 'bc1qnk4zh9qcnap2mycp56qjrgza3cc8ylrh8fecp0',
     label: 'Holding 4',
     reportBtc: 32.45,
+    clusterId: 'galaxy-july30',
     note: 'Unmoved collector remainder',
+  },
+  {
+    address: 'bc1qtfrwa4j6rmj9rsgspv6a0yjumkg39js2numu75',
+    label: 'July 31 vault',
+    reportBtc: 45.9,
+    clusterId: 'kelbie-july31',
+    note: 'Consolidated from 1,216 sweeps; still unspent',
   },
 ] as const;
 
 /**
- * Some networks and DNS resolvers block mempool.space, so fall through to
- * community instances that serve the same API.
- */
-/**
- * What actually landed in the four holding addresses. Lower than
- * ORIGINAL_STOLEN_BTC because the attacker burned miner fees sweeping and
- * consolidating, so this is the baseline for "is it still there".
+ * What actually landed in watched holding addresses. Lower than
+ * ORIGINAL_STOLEN_BTC because sweep and consolidation fees burned sats,
+ * so this is the baseline for "is it still there".
  */
 export const CONSOLIDATED_BTC = HOLDING_ADDRESSES.reduce(
   (sum, h) => sum + h.reportBtc,
   0,
 );
 
+/**
+ * Some networks and DNS resolvers block mempool.space, so fall through to
+ * community instances that serve the same API.
+ */
 export const MEMPOOL_HOSTS = [
   'https://mempool.space',
   'https://mempool.emzy.de',
@@ -100,14 +158,14 @@ export const MEMPOOL_HOSTS = [
 export const REQUEST_TIMEOUT_MS = 8_000;
 export const REFRESH_INTERVAL_MS = 60_000;
 export const SATS_PER_BTC = 100_000_000;
-/** Galaxy reported funds unspent at this block; later spends count as movement. */
+/** Primary wave funds reported unspent at this block; later spends count as movement. */
 export const WATCH_AFTER_BLOCK = 960_400;
 
-/** Hop 0 = the four Galaxy holdings; hop 1+ = destinations of those spends. */
+/** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
 export const MAX_HOP_DEPTH = 2;
 /** Cap fan-out per spend so public mempool polling stays cheap. */
 export const MAX_DESTINATIONS_PER_SPEND = 3;
 /** Ignore dust-sized hop destinations. */
 export const MIN_HOP_FOLLOW_SATS = 1_000_000; // 0.01 BTC
-/** Hard cap on extra addresses watched beyond the four holdings. */
+/** Hard cap on extra addresses watched beyond the seed holdings. */
 export const MAX_HOP_WATCH_ADDRESSES = 16;
