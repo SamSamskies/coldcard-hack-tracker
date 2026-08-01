@@ -32,6 +32,14 @@ export type LiveAddress = HoldingAddress & {
   flash?: boolean;
 };
 
+/**
+ * How an outbound spend relates to the frozen report snapshot.
+ * - report: dents (or emptied) a watched holding vs its reportBtc
+ * - extra: holding still matches report; spend was later deposits / churn
+ * - hop: spend from a followed destination, not a report holding
+ */
+export type MovementImpact = 'report' | 'extra' | 'hop';
+
 export type Movement = {
   txid: string;
   fromAddress: string;
@@ -40,6 +48,7 @@ export type Movement = {
   destinations: string[];
   /** 0 = original holding address; 1+ = followed hop. */
   hop: number;
+  impact: MovementImpact;
   confirmed: boolean;
   blockHeight?: number;
   blockTime?: number;
@@ -88,11 +97,13 @@ function isPostWatch(tx: Tx): boolean {
   );
 }
 
+type RawMovement = Omit<Movement, 'impact'>;
+
 function movementsFromWatch(
   watches: readonly WatchTarget[],
   txLists: Tx[][],
-): Movement[] {
-  const items: Movement[] = [];
+): RawMovement[] {
+  const items: RawMovement[] = [];
 
   watches.forEach((w, i) => {
     for (const tx of txLists[i] ?? []) {
@@ -115,6 +126,25 @@ function movementsFromWatch(
   });
 
   return items;
+}
+
+/** Tag spends so the UI can separate report shortfall from later churn. */
+function withMovementImpact(
+  items: RawMovement[],
+  holdings: LiveAddress[],
+): Movement[] {
+  const byAddress = new Map(holdings.map((a) => [a.address, a]));
+
+  return items.map((m) => {
+    if (m.hop > 0) return { ...m, impact: 'hop' as const };
+
+    const live = byAddress.get(m.fromAddress);
+    // Still fully held vs report → this outbound did not create shortfall.
+    if (live && live.status === 'held') {
+      return { ...m, impact: 'extra' as const };
+    }
+    return { ...m, impact: 'report' as const };
+  });
 }
 
 function hopLabel(address: string, hop: number): string {
@@ -165,7 +195,7 @@ function discoverNextHops(
     }));
 }
 
-function sortMovements(items: Movement[]): Movement[] {
+function sortMovements(items: RawMovement[]): RawMovement[] {
   return [...items].sort((a, b) => {
     const ta = a.blockTime ?? (a.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
     const tb = b.blockTime ?? (b.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
@@ -178,7 +208,7 @@ function sortMovements(items: Movement[]): Movement[] {
 export function useTrackerData(): TrackerData {
   const [addresses, setAddresses] = useState<LiveAddress[]>([]);
   const [usdPrice, setUsdPrice] = useState<number | null>(null);
-  const [movements, setMovements] = useState<Movement[]>([]);
+  const [rawMovements, setRawMovements] = useState<RawMovement[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [source, setSource] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -301,7 +331,7 @@ export function useTrackerData(): TrackerData {
 
       setAddresses(live);
       if (price != null) setUsdPrice(price);
-      setMovements(sortMovements(allMovements));
+      setRawMovements(sortMovements(allMovements));
       setLastUpdated(new Date());
       setSource(activeHostName());
       setLoading(false);
@@ -322,14 +352,15 @@ export function useTrackerData(): TrackerData {
   }, [refresh]);
 
   const heldBtc = addresses.reduce((s, a) => s + a.balanceBtc, 0);
-  // Measured against what reached the holding addresses, so sweep fees
-  // are not reported as movement.
+  // Shortfall vs the frozen report snapshot — not a sum of outbound txs.
+  // Later deposits that leave again do not count here while reportBtc remains.
   const movedBtc = Math.max(0, CONSOLIDATED_BTC - heldBtc);
   const heldPct =
     CONSOLIDATED_BTC > 0
       ? Math.min(100, (heldBtc / CONSOLIDATED_BTC) * 100)
       : 0;
 
+  const movements = withMovementImpact(rawMovements, addresses);
   const lastMovement =
     movements.find((m) => m.confirmed) ?? movements[0] ?? null;
 

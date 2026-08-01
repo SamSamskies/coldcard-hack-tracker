@@ -19,6 +19,17 @@ type Props = {
 
 const PENDING = '—';
 
+function lastMovementDetail(m: Movement): string {
+  const base = `${formatBtc(m.amountBtc)} BTC from ${m.fromLabel}`;
+  if (m.impact === 'extra') {
+    return `${base} · later deposits (report still held)`;
+  }
+  if (m.impact === 'hop') {
+    return `${base} · followed hop`;
+  }
+  return `${base} · of reported stack`;
+}
+
 export function KpiRow({
   heldBtc,
   movedBtc,
@@ -67,7 +78,7 @@ export function KpiRow({
       </article>
 
       <article className={`kpi ${alert ? 'kpi-alert' : ''}`}>
-        <p className="kpi-label">Moved</p>
+        <p className="kpi-label">Report shortfall</p>
         <p className={`kpi-value mono ${loading ? 'is-loading' : 'settle'}`}>
           {hasData ? (
             <>
@@ -81,13 +92,13 @@ export function KpiRow({
           {!hasData
             ? 'Waiting for chain data'
             : alert
-              ? 'Funds have left the holding addresses'
-              : 'Nothing has left the holding addresses'}
+              ? 'Reported consolidation missing from holdings'
+              : 'Reported consolidation still on holdings'}
         </p>
       </article>
 
       <article className="kpi">
-        <p className="kpi-label">Last movement</p>
+        <p className="kpi-label">Last outbound</p>
         <p className={`kpi-value text ${loading ? 'is-loading' : 'settle'}`}>
           {!hasData
             ? PENDING
@@ -95,14 +106,14 @@ export function KpiRow({
               ? lastMovement.blockTime
                 ? formatBlockTime(lastMovement.blockTime)
                 : 'Unconfirmed'
-              : 'Unmoved'}
+              : 'None'}
         </p>
         <p className="kpi-detail">
           {!hasData
             ? 'Waiting for chain data'
             : lastMovement
-              ? `${formatBtc(lastMovement.amountBtc)} BTC from ${lastMovement.fromLabel}`
-              : 'All watched holdings still holding'}
+              ? lastMovementDetail(lastMovement)
+              : 'No post-watch spends from watched addresses'}
         </p>
       </article>
     </section>

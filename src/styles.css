@@ -687,10 +687,26 @@ button:focus-visible {
   padding: 0.12rem 0.35rem;
 }
 
+.impact-inline {
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .movement-amt {
   color: var(--alert);
   font-weight: 600;
   white-space: nowrap;
+}
+
+.movement-amt-extra {
+  color: var(--text-muted);
+}
+
+.movement-extra {
+  border-style: dashed;
 }
 
 .movement-meta {
@@ -701,6 +717,11 @@ button:focus-visible {
   margin-top: 0.45rem;
   font-size: 0.82rem;
   color: var(--text-muted);
+}
+
+.movement-note {
+  margin: 0.4rem 0 0;
+  font-size: 0.78rem;
 }
 
 .movement-dest {

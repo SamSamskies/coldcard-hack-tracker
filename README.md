@@ -58,6 +58,14 @@ When a holding address spends, the tracker follows the largest destinations
 the movement feed. Still-held % stays based on the watched holding addresses
 only.
 
+### Report shortfall vs movement feed
+
+**Report shortfall** is how much the current holding balances sit below the
+frozen `reportBtc` snapshot (the consolidated stolen stack). **Movement feed**
+lists every post-watch outbound spend. If a vault receives later deposits and
+then spends them while still holding its reported balance, the feed shows that
+spend (tagged **Extra**) but report shortfall stays 0.
+
 ## Disclaimer
 
 Not affiliated with Coinkite or Coldcard. For public blockchain monitoring only.
