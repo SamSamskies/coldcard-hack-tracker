@@ -707,6 +707,63 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+.risk-firmware {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 42rem;
+}
+
+.risk-firmware-wrap {
+  overflow-x: auto;
+  margin-top: 0.35rem;
+}
+
+.risk-firmware-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+.risk-firmware-table th {
+  text-align: left;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 0.4rem 0.55rem 0.4rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.risk-firmware-table td {
+  padding: 0.5rem 0.55rem 0.5rem 0;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+  color: var(--text-muted);
+}
+
+.risk-firmware-table tr:last-child td {
+  border-bottom: none;
+}
+
+.risk-firmware-table td:first-child {
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.risk-firmware-table .mono {
+  font-size: 0.8rem;
+}
+
+.risk-firmware-table .risk-vuln {
+  color: var(--alert);
+}
+
+.risk-firmware-table .risk-fixed {
+  color: var(--held);
+}
+
 .risk-points {
   margin: 0;
   padding: 0;
@@ -737,6 +794,7 @@ button:focus-visible {
 }
 
 .risk-point-text {
+  margin: 0;
   font-size: 0.88rem;
   color: var(--text-muted);
   line-height: 1.4;

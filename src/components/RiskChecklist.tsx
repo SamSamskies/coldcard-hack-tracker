@@ -1,8 +1,32 @@
-const POINTS = [
+const FIRMWARE_ROWS = [
   {
-    label: 'Likely exposed',
-    text: 'Seed generated on Mk3 4.0.1–4.1.9 (~40-bit), or on Mk4 / Mk5 / Q before the Aug 1 fixed releases (~72-bit). Fixed: Mk3 ≥4.2.0, Mk4/Mk5 ≥5.6.0 (Edge ≥6.6.0X), Q ≥1.5.0Q (Edge ≥6.6.0QX).',
+    device: 'Mk3',
+    vulnerable: '4.0.1–4.1.9 (~40-bit)',
+    fixed: '4.2.0+',
   },
+  {
+    device: 'Mk4 / Mk5',
+    vulnerable: 'Before Aug 1 patch (~72-bit)',
+    fixed: '5.6.0+',
+  },
+  {
+    device: 'Q',
+    vulnerable: 'Before Aug 1 patch (~72-bit)',
+    fixed: '1.5.0Q+',
+  },
+  {
+    device: 'Edge (Mk4 / Mk5)',
+    vulnerable: 'Before Aug 1 patch',
+    fixed: '6.6.0X+',
+  },
+  {
+    device: 'Edge (Q)',
+    vulnerable: 'Before Aug 1 patch',
+    fixed: '6.6.0QX+',
+  },
+] as const;
+
+const POINTS = [
   {
     label: 'Firmware update is not enough',
     text: 'Patching does not repair an existing seed. Generate a new seed on fixed firmware and migrate funds carefully.',
@@ -33,6 +57,34 @@ export function RiskChecklist() {
           writeup. This tracker does not check your wallet — follow the official
           steps before moving funds.
         </p>
+      </div>
+
+      <div className="risk-firmware">
+        <span className="risk-point-label">Likely exposed</span>
+        <p className="risk-point-text">
+          Your seed is likely exposed if it was generated on vulnerable firmware.
+          Fixed releases and later are safe for new seeds.
+        </p>
+        <div className="risk-firmware-wrap">
+          <table className="risk-firmware-table">
+            <thead>
+              <tr>
+                <th scope="col">Device</th>
+                <th scope="col">Vulnerable</th>
+                <th scope="col">Fixed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {FIRMWARE_ROWS.map((row) => (
+                <tr key={row.device}>
+                  <td>{row.device}</td>
+                  <td className="mono risk-vuln">{row.vulnerable}</td>
+                  <td className="mono risk-fixed">{row.fixed}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <ul className="risk-points">
