@@ -35,13 +35,8 @@ function movementKey(m: Movement): string {
 }
 
 function notifyMovement(m: Movement) {
-  const tag =
-    m.impact === 'extra'
-      ? ' (extra deposits)'
-      : m.hop > 0
-        ? ` (hop ${m.hop})`
-        : '';
-  const body = `${formatBtc(m.amountBtc)} BTC left ${m.fromLabel}${tag}`;
+  const hop = m.hop > 0 ? ` (hop ${m.hop})` : '';
+  const body = `${formatBtc(m.amountBtc)} BTC left ${m.fromLabel}${hop}`;
   try {
     const n = new Notification(APP_NAME, {
       body,

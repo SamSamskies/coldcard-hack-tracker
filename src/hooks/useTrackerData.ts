@@ -27,20 +27,10 @@ export type AddressStatus = 'held' | 'partial' | 'emptied';
 export type LiveAddress = HoldingAddress & {
   balanceBtc: number;
   balanceSats: number;
-  /** Lifetime sats received (chain + mempool). */
-  fundedBtc: number;
   utxoCount: number;
   status: AddressStatus;
   flash?: boolean;
 };
-
-/**
- * How an outbound spend relates to the frozen report snapshot.
- * - report: dents (or emptied) a watched holding vs its reportBtc
- * - extra: holding still matches report; spend was later deposits / churn
- * - hop: spend from a followed destination, not a report holding
- */
-export type MovementImpact = 'report' | 'extra' | 'hop';
 
 export type Movement = {
   txid: string;
@@ -50,21 +40,9 @@ export type Movement = {
   destinations: string[];
   /** 0 = original holding address; 1+ = followed hop. */
   hop: number;
-  impact: MovementImpact;
   confirmed: boolean;
   blockHeight?: number;
   blockTime?: number;
-};
-
-/** Later deposits that arrived at a report vault, then left again. */
-export type LaterFlow = {
-  address: string;
-  label: string;
-  reportBtc: number;
-  laterInBtc: number;
-  laterOutBtc: number;
-  destinations: string[];
-  txid: string;
 };
 
 export type TrackerData = {
@@ -74,7 +52,6 @@ export type TrackerData = {
   heldPct: number;
   usdPrice: number | null;
   movements: Movement[];
-  laterFlows: LaterFlow[];
   lastMovement: Movement | null;
   lastUpdated: Date | null;
   source: string | null;
@@ -111,13 +88,11 @@ function isPostWatch(tx: Tx): boolean {
   );
 }
 
-type RawMovement = Omit<Movement, 'impact'>;
-
 function movementsFromWatch(
   watches: readonly WatchTarget[],
   txLists: Tx[][],
-): RawMovement[] {
-  const items: RawMovement[] = [];
+): Movement[] {
+  const items: Movement[] = [];
 
   watches.forEach((w, i) => {
     for (const tx of txLists[i] ?? []) {
@@ -140,72 +115,6 @@ function movementsFromWatch(
   });
 
   return items;
-}
-
-/** Tag spends so the UI can separate report shortfall from later churn. */
-function withMovementImpact(
-  items: RawMovement[],
-  holdings: LiveAddress[],
-): Movement[] {
-  const byAddress = new Map(holdings.map((a) => [a.address, a]));
-
-  return items.map((m) => {
-    if (m.hop > 0) return { ...m, impact: 'hop' as const };
-
-    const live = byAddress.get(m.fromAddress);
-    // Still fully held vs report → this outbound did not create shortfall.
-    if (live && live.status === 'held') {
-      return { ...m, impact: 'extra' as const };
-    }
-    return { ...m, impact: 'report' as const };
-  });
-}
-
-/**
- * Holdings that received more than their report snapshot, then spent the
- * surplus while the reported stack remained. Explains "0 shortfall + outbound".
- */
-function buildLaterFlows(
-  holdings: LiveAddress[],
-  movements: Movement[],
-): LaterFlow[] {
-  const extras = movements.filter((m) => m.impact === 'extra');
-  if (extras.length === 0) return [];
-
-  const byAddress = new Map<string, Movement[]>();
-  for (const m of extras) {
-    const list = byAddress.get(m.fromAddress) ?? [];
-    list.push(m);
-    byAddress.set(m.fromAddress, list);
-  }
-
-  const flows: LaterFlow[] = [];
-  for (const h of holdings) {
-    const outs = byAddress.get(h.address);
-    if (!outs?.length) continue;
-
-    const laterInBtc = Math.max(0, h.fundedBtc - h.reportBtc);
-    const laterOutBtc = outs.reduce((s, m) => s + m.amountBtc, 0);
-    if (laterInBtc < 0.001 && laterOutBtc < 0.001) continue;
-
-    const destinations = [
-      ...new Set(outs.flatMap((m) => m.destinations)),
-    ];
-    // Prefer the largest outbound as the primary example tx.
-    const primary = [...outs].sort((a, b) => b.amountBtc - a.amountBtc)[0];
-
-    flows.push({
-      address: h.address,
-      label: h.label,
-      reportBtc: h.reportBtc,
-      laterInBtc,
-      laterOutBtc,
-      destinations,
-      txid: primary.txid,
-    });
-  }
-
-  return flows.sort((a, b) => b.laterOutBtc - a.laterOutBtc);
 }
 
 function hopLabel(address: string, hop: number): string {
@@ -256,7 +165,7 @@ function discoverNextHops(
     }));
 }
 
-function sortMovements(items: RawMovement[]): RawMovement[] {
+function sortMovements(items: Movement[]): Movement[] {
   return [...items].sort((a, b) => {
     const ta = a.blockTime ?? (a.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
     const tb = b.blockTime ?? (b.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
@@ -269,7 +178,7 @@ function sortMovements(items: RawMovement[]): RawMovement[] {
 export function useTrackerData(): TrackerData {
   const [addresses, setAddresses] = useState<LiveAddress[]>([]);
   const [usdPrice, setUsdPrice] = useState<number | null>(null);
-  const [rawMovements, setRawMovements] = useState<RawMovement[]>([]);
+  const [movements, setMovements] = useState<Movement[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [source, setSource] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -297,26 +206,37 @@ export function useTrackerData(): TrackerData {
         ),
       ]);
 
-      const known = new Set(seedWatches.map((w) => w.address));
-      const allMovements = movementsFromWatch(
-        seedWatches,
-        seedTxLists as Tx[][],
+      // Ignore outbounds from vaults that still hold their reportBtc. Those are
+      // later surplus / unrelated churn, not the reported stolen stack moving.
+      const reportTouched = new Set(
+        HOLDING_ADDRESSES.filter((h, i) => {
+          const balanceBtc = satsToBtc(addressBalanceSats(summaries[i]));
+          return statusFor(balanceBtc, h.reportBtc) !== 'held';
+        }).map((h) => h.address),
       );
 
-      // Merge freshly discovered hops with any remembered from earlier polls.
+      const activeSeeds: WatchTarget[] = [];
+      const activeSeedTxLists: Tx[][] = [];
+      seedWatches.forEach((w, i) => {
+        if (!reportTouched.has(w.address)) return;
+        activeSeeds.push(w);
+        activeSeedTxLists.push((seedTxLists as Tx[][])[i] ?? []);
+      });
+
+      const known = new Set(seedWatches.map((w) => w.address));
+      const allMovements = movementsFromWatch(activeSeeds, activeSeedTxLists);
+
+      // Only follow hops from report-impacting spends (rebuild each poll).
+      hopWatchRef.current.clear();
       const freshHops = discoverNextHops(
-        seedWatches,
-        seedTxLists as Tx[][],
+        activeSeeds,
+        activeSeedTxLists,
         known,
         MAX_HOP_WATCH_ADDRESSES,
       );
       for (const hop of freshHops) {
         hopWatchRef.current.set(hop.address, hop);
         known.add(hop.address);
-      }
-      // Drop remembered hops that somehow match a holding (shouldn't happen).
-      for (const addr of HOLDING_ADDRESSES.map((h) => h.address)) {
-        hopWatchRef.current.delete(addr);
       }
 
       let hopWatches = [...hopWatchRef.current.values()]
@@ -362,9 +282,6 @@ export function useTrackerData(): TrackerData {
         const summary = summaries[i];
         const balanceSats = addressBalanceSats(summary);
         const balanceBtc = satsToBtc(balanceSats);
-        const fundedSats =
-          summary.chain_stats.funded_txo_sum +
-          summary.mempool_stats.funded_txo_sum;
         const prev = prevBalances.current.get(h.address);
         const changed = prev !== undefined && prev !== balanceSats;
         prevBalances.current.set(h.address, balanceSats);
@@ -387,7 +304,6 @@ export function useTrackerData(): TrackerData {
           ...h,
           balanceBtc,
           balanceSats,
-          fundedBtc: satsToBtc(fundedSats),
           utxoCount: Math.max(0, utxoEstimate(summary)),
           status: statusFor(balanceBtc, h.reportBtc),
           flash: changed,
@@ -396,7 +312,7 @@ export function useTrackerData(): TrackerData {
 
       setAddresses(live);
       if (price != null) setUsdPrice(price);
-      setRawMovements(sortMovements(allMovements));
+      setMovements(sortMovements(allMovements));
       setLastUpdated(new Date());
       setSource(activeHostName());
       setLoading(false);
@@ -417,16 +333,15 @@ export function useTrackerData(): TrackerData {
   }, [refresh]);
 
   const heldBtc = addresses.reduce((s, a) => s + a.balanceBtc, 0);
-  // Shortfall vs the frozen report snapshot — not a sum of outbound txs.
-  // Later deposits that leave again do not count here while reportBtc remains.
+  // Measured against what reached the holding addresses, so sweep fees
+  // are not reported as movement. Surplus that arrives and leaves while the
+  // report balance remains is ignored in the movement feed as well.
   const movedBtc = Math.max(0, CONSOLIDATED_BTC - heldBtc);
   const heldPct =
     CONSOLIDATED_BTC > 0
       ? Math.min(100, (heldBtc / CONSOLIDATED_BTC) * 100)
       : 0;
 
-  const movements = withMovementImpact(rawMovements, addresses);
-  const laterFlows = buildLaterFlows(addresses, movements);
   const lastMovement =
     movements.find((m) => m.confirmed) ?? movements[0] ?? null;
 
@@ -437,7 +352,6 @@ export function useTrackerData(): TrackerData {
     heldPct,
     usdPrice,
     movements,
-    laterFlows,
     lastMovement,
     lastUpdated,
     source,

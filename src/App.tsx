@@ -1,7 +1,6 @@
 import { AddressList } from './components/AddressList';
 import { IncidentHeader } from './components/IncidentHeader';
 import { KpiRow } from './components/KpiRow';
-import { LaterFlowNotice } from './components/LaterFlowNotice';
 import { MovementFeed } from './components/MovementFeed';
 import { RiskChecklist } from './components/RiskChecklist';
 import { SourcesStrip } from './components/SourcesStrip';
@@ -54,8 +53,6 @@ export default function App() {
           loading={data.loading && !hasData}
           hasData={hasData}
         />
-
-        <LaterFlowNotice flows={data.laterFlows} />
 
         <AddressList
           addresses={data.addresses}

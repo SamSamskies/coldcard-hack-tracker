@@ -19,17 +19,6 @@ type Props = {
 
 const PENDING = '—';
 
-function lastMovementDetail(m: Movement): string {
-  const base = `${formatBtc(m.amountBtc)} BTC from ${m.fromLabel}`;
-  if (m.impact === 'extra') {
-    return `${base} · more coins in, then out (report still held)`;
-  }
-  if (m.impact === 'hop') {
-    return `${base} · followed hop`;
-  }
-  return `${base} · reported stack`;
-}
-
 export function KpiRow({
   heldBtc,
   movedBtc,
@@ -78,7 +67,7 @@ export function KpiRow({
       </article>
 
       <article className={`kpi ${alert ? 'kpi-alert' : ''}`}>
-        <p className="kpi-label">Report shortfall</p>
+        <p className="kpi-label">Moved</p>
         <p className={`kpi-value mono ${loading ? 'is-loading' : 'settle'}`}>
           {hasData ? (
             <>
@@ -92,13 +81,13 @@ export function KpiRow({
           {!hasData
             ? 'Waiting for chain data'
             : alert
-              ? 'Reported consolidation missing from holdings'
-              : 'Reported consolidation still on holdings'}
+              ? 'Reported consolidation has left the holding addresses'
+              : 'Reported consolidation still on the holding addresses'}
         </p>
       </article>
 
       <article className="kpi">
-        <p className="kpi-label">Last outbound</p>
+        <p className="kpi-label">Last movement</p>
         <p className={`kpi-value text ${loading ? 'is-loading' : 'settle'}`}>
           {!hasData
             ? PENDING
@@ -106,14 +95,14 @@ export function KpiRow({
               ? lastMovement.blockTime
                 ? formatBlockTime(lastMovement.blockTime)
                 : 'Unconfirmed'
-              : 'None'}
+              : 'Unmoved'}
         </p>
         <p className="kpi-detail">
           {!hasData
             ? 'Waiting for chain data'
             : lastMovement
-              ? lastMovementDetail(lastMovement)
-              : 'No post-watch spends from watched addresses'}
+              ? `${formatBtc(lastMovement.amountBtc)} BTC from ${lastMovement.fromLabel}`
+              : 'No spends of the reported consolidation'}
         </p>
       </article>
     </section>

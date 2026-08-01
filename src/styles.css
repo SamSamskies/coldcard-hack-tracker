@@ -294,43 +294,6 @@ button:focus-visible {
   word-break: break-word;
 }
 
-.later-flow {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.later-flow-card {
-  padding: 1rem 1.1rem 1.05rem;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-  background: var(--bg-elevated);
-}
-
-.later-flow-kicker {
-  margin: 0;
-  font-size: 0.78rem;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
-.later-flow-body {
-  margin: 0.45rem 0 0;
-  font-size: 0.98rem;
-  line-height: 1.45;
-  max-width: 62ch;
-}
-
-.later-flow-meta {
-  margin: 0.55rem 0 0;
-  font-size: 0.82rem;
-}
-
-.later-flow-meta a {
-  color: inherit;
-}
-
 .kpi-row {
   display: grid;
   gap: 0.75rem;
@@ -724,26 +687,10 @@ button:focus-visible {
   padding: 0.12rem 0.35rem;
 }
 
-.impact-inline {
-  font-size: 0.78em;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
 .movement-amt {
   color: var(--alert);
   font-weight: 600;
   white-space: nowrap;
-}
-
-.movement-amt-extra {
-  color: var(--text-muted);
-}
-
-.movement-extra {
-  border-style: dashed;
 }
 
 .movement-meta {
@@ -754,11 +701,6 @@ button:focus-visible {
   margin-top: 0.45rem;
   font-size: 0.82rem;
   color: var(--text-muted);
-}
-
-.movement-note {
-  margin: 0.4rem 0 0;
-  font-size: 0.78rem;
 }
 
 .movement-dest {
