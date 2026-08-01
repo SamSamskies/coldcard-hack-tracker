@@ -2,6 +2,7 @@ import {
   CLUSTER_BY_ID,
   CLUSTERS,
   CONSOLIDATED_BTC,
+  GALAXY,
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
@@ -30,10 +31,10 @@ function groupByCluster(addresses: LiveAddress[]): {
   return CLUSTERS.map((cluster) => ({
     clusterId: cluster.id,
     rows: addresses.filter((a) => a.clusterId === cluster.id),
-  })).filter((g) => g.rows.length > 0);
+  }));
 }
 
-function GalaxyClusterMeta() {
+function GalaxyWave1Meta() {
   return (
     <dl className="cluster-meta">
       <div>
@@ -143,6 +144,7 @@ function TableHead() {
 
 export function AddressList({ addresses, usdPrice, loading }: Props) {
   const groups = groupByCluster(addresses);
+  const unwatchedBtc = ORIGINAL_STOLEN_BTC - CONSOLIDATED_BTC;
 
   return (
     <section className="panel" aria-labelledby="addresses-heading">
@@ -150,9 +152,13 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
         <h2 id="addresses-heading">Watched holdings</h2>
         <p>
           About {formatBtc(ORIGINAL_STOLEN_BTC)} BTC drained across tracked
-          clusters, of which {formatBtc(CONSOLIDATED_BTC)} BTC reached these
-          vaults (gap is mostly fees). Clusters may be different operators —
-          attribution is fingerprint / community report.
+          clusters. Galaxy’s same-operator total is{' '}
+          {formatBtc(GALAXY.totalStolenBtc)} BTC across{' '}
+          {GALAXY.victimAddresses.toLocaleString()} addresses.{' '}
+          {formatBtc(CONSOLIDATED_BTC)} BTC sits in addresses we poll live; the
+          remaining ~{formatBtc(unwatchedBtc)} BTC is mostly Galaxy Wave 3’s
+          293 P2WSH vaults plus fees. Evening/morning waves may be different
+          operators.
         </p>
       </div>
 
@@ -197,23 +203,30 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                   ) : null}
                 </div>
                 <p className="cluster-note">{cluster.note}</p>
-                {clusterId === 'galaxy-july30' ? <GalaxyClusterMeta /> : null}
+                {clusterId === 'galaxy-july30' ? <GalaxyWave1Meta /> : null}
               </header>
 
-              <div className="address-table-wrap">
-                <table className="address-table">
-                  <TableHead />
-                  <tbody>
-                    {rows.map((a) => (
-                      <AddressRow
-                        key={a.address}
-                        address={a}
-                        usdPrice={usdPrice}
-                      />
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              {rows.length === 0 ? (
+                <p className="cluster-unwatched">
+                  No individual addresses watched for this wave (
+                  {formatBtc(cluster.stolenBtc)} BTC in Galaxy’s total).
+                </p>
+              ) : (
+                <div className="address-table-wrap">
+                  <table className="address-table">
+                    <TableHead />
+                    <tbody>
+                      {rows.map((a) => (
+                        <AddressRow
+                          key={a.address}
+                          address={a}
+                          usdPrice={usdPrice}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </article>
           );
         })

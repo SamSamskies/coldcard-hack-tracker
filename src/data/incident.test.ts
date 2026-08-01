@@ -3,6 +3,7 @@ import {
   CLUSTERS,
   CLUSTER_BY_ID,
   CONSOLIDATED_BTC,
+  GALAXY,
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
@@ -20,8 +21,18 @@ describe('incident data invariants', () => {
     expect(CONSOLIDATED_BTC).toBe(sum);
   });
 
-  it('keeps consolidated below original stolen (fees burned)', () => {
+  it('keeps consolidated below original stolen (fees + unwatched waves)', () => {
     expect(CONSOLIDATED_BTC).toBeLessThan(ORIGINAL_STOLEN_BTC);
+  });
+
+  it('matches Galaxy’s three-wave headline total for Waves 1–3', () => {
+    const galaxyIds: ClusterId[] = [
+      'galaxy-july30',
+      'galaxy-july31',
+      'galaxy-wave3',
+    ];
+    const sum = galaxyIds.reduce((s, id) => s + CLUSTER_BY_ID[id].stolenBtc, 0);
+    expect(sum).toBeCloseTo(GALAXY.totalStolenBtc, 2);
   });
 
   it('has unique holding addresses', () => {
@@ -54,6 +65,7 @@ describe('incident data invariants', () => {
         0,
       );
       // Holdings can be slightly under stolen (fees) but should not exceed it.
+      // Some clusters (e.g. Wave 3) have no watched holdings yet.
       expect(held).toBeLessThanOrEqual(cluster.stolenBtc + 1e-8);
     }
   });

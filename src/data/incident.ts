@@ -8,10 +8,22 @@ export const EARLY_WAVE = {
   sourceUrl: 'https://x.com/Rob1Ham/status/2082896614218203616',
 } as const;
 
-/** Primary July 30 window mapped by Galaxy from Block’s fingerprint. */
+/**
+ * Galaxy’s three-wave same-operator fingerprint (Aug 1 updates).
+ * Headline total 1,367.05 BTC across 4,585 victim addresses.
+ */
+export const GALAXY = {
+  totalStolenBtc: 1367.05,
+  victimAddresses: 4585,
+  holdingAddresses: 7 + 293, // 4 W1 finals + 2 W2 + 293 W3 P2WSH vaults
+  sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
+} as const;
+
+/** Primary July 30 window (Galaxy Wave 1) mapped from Block’s fingerprint. */
 export const INCIDENT = {
   dateLabel: 'July 30, 2026',
   windowUtc: '01:10:20 – 01:51:26 UTC',
+  /** Wave 1 victim count from Galaxy’s first map (path breakdown sums to this). */
   victimAddresses: 1196,
   /** Native segwit / nested segwit / legacy — multi-path key scan signature. */
   victimsByPath: {
@@ -28,7 +40,8 @@ export const INCIDENT = {
 
 export type ClusterId =
   | 'galaxy-july30'
-  | 'kelbie-july31'
+  | 'galaxy-july31'
+  | 'galaxy-wave3'
   | 'evening-july31'
   | 'morning-aug1';
 
@@ -48,25 +61,33 @@ export type Cluster = {
 };
 
 /**
- * Named consolidation clusters. Operators may differ; attribution is
- * fingerprint / community report, not proven same attacker.
+ * Named consolidation clusters. Galaxy Waves 1–3 are attributed to the same
+ * operator; evening/morning waves may differ (fingerprint / community report).
  */
 export const CLUSTERS: readonly Cluster[] = [
   {
     id: 'galaxy-july30',
-    label: 'Galaxy fingerprint · July 30',
+    label: 'Galaxy Wave 1 · July 30',
     stolenBtc: 1082.65,
     date: '2026-07-30',
-    note: 'Block/Galaxy on-chain fingerprint; four consolidation holdings.',
+    note: 'Blocks 960183–960191 · fixed 30 sat/vB · four consolidation holdings.',
     sourceUrl: 'https://x.com/glxyresearch/status/2083181683067506899',
   },
   {
-    id: 'kelbie-july31',
-    label: 'Post-scan wave · July 31',
-    stolenBtc: 45.91,
+    id: 'galaxy-july31',
+    label: 'Galaxy Wave 2 · July 31',
+    stolenBtc: 76.16,
     date: '2026-07-31',
-    note: 'Past Block scan end (block 960230). Seven of eight markers; RBF differs.',
-    sourceUrl: 'https://x.com/KevinKelbie/status/2083368025864990857',
+    note: 'Blocks 960345–960369 · 1,478 addresses · fees 50 and 10 sat/vB. ~45.90 BTC consolidated to the watched vault; ~30.18 BTC still at the unmoved collector.',
+    sourceUrl: 'https://x.com/glxyresearch/status/2083560940469981591',
+  },
+  {
+    id: 'galaxy-wave3',
+    label: 'Galaxy Wave 3 · Jul 31–Aug 1',
+    stolenBtc: 208.24,
+    date: '2026-07-31',
+    note: 'Blocks 960396–960471 · 1,912 addresses · ~10 sat/vB · 293 one-to-one parks into 293 P2WSH vaults (~207.73 BTC held). No shared collector — not individually watched here.',
+    sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
   },
   {
     id: 'evening-july31',
@@ -78,7 +99,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 1.20115791,
     date: '2026-07-31',
-    note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31 vault (~0.51 BTC) still held. Aug 1: ~0.41 BTC passed through that vault to a hop address, then a delayed ~0.19 BTC victim consolidation joined the hop (now ~0.69 BTC). A separate Ocean (OCEAN.XYZ) miner-payout UTXO also touched the hop and was peeled off — possible same-operator lead, not counted as stolen. Distinct from the Kelbie vault, which also happened on July 31.',
+    note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31 vault (~0.51 BTC) still held. Aug 1: ~0.41 BTC passed through that vault to a hop address, then a delayed ~0.19 BTC victim consolidation joined the hop (now ~0.69 BTC). A separate Ocean (OCEAN.XYZ) miner-payout UTXO also touched the hop and was peeled off — possible same-operator lead, not counted as stolen. Distinct from Galaxy Wave 2.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -95,7 +116,7 @@ export const CLUSTER_BY_ID: Record<ClusterId, Cluster> = Object.fromEntries(
   CLUSTERS.map((c) => [c.id, c]),
 ) as Record<ClusterId, Cluster>;
 
-/** Sum of cluster drain estimates across all watched waves. */
+/** Sum of cluster drain estimates across all tracked waves. */
 export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
   (sum, c) => sum + c.stolenBtc,
   0,
@@ -104,13 +125,23 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
-    label: 'Galaxy Research',
-    note: 'Mapped the July 30 fingerprint set: 1,082.65 BTC across 1,196 addresses into four holdings.',
+    label: 'Galaxy Research · Wave 3',
+    note: 'Aug 1: third wave (~207.73 BTC into 293 P2WSH vaults). Observed total 1,367.05 BTC across 4,585 addresses.',
+    url: 'https://x.com/glxyresearch/status/2083623500183421043',
+  },
+  {
+    label: 'Galaxy Research · Wave 2',
+    note: 'Aug 1: second wave attributed to the same operator — 1,158.81 BTC / 2,673 addresses across seven holdings.',
+    url: 'https://x.com/glxyresearch/status/2083560940469981591',
+  },
+  {
+    label: 'Galaxy Research · Wave 1',
+    note: 'Mapped the July 30 fingerprint set: 1,082.65 BTC across ~1,195 addresses into four holdings.',
     url: 'https://x.com/glxyresearch/status/2083181683067506899',
   },
   {
     label: 'Kevin Kelbie',
-    note: 'July 31 post-scan wave (~45.9 BTC) after Block’s scan window; similar markers, different RBF behavior.',
+    note: 'Independently flagged the ~45.9 BTC July 31 vault (now Galaxy Wave 2) after Block’s scan window; RBF differed from Wave 1.',
     url: 'https://x.com/KevinKelbie/status/2083368025864990857',
   },
   {
@@ -196,10 +227,17 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
   },
   {
     address: 'bc1qtfrwa4j6rmj9rsgspv6a0yjumkg39js2numu75',
-    label: 'July 31 vault',
+    label: 'Wave 2 vault',
     reportBtc: 45.90251994,
-    clusterId: 'kelbie-july31',
-    note: 'Consolidated from 1,216 sweeps; still unspent',
+    clusterId: 'galaxy-july31',
+    note: 'Consolidated from 1,216 sweeps (via bc1qsjrf5ze…); still unspent',
+  },
+  {
+    address: 'bc1qmd5m5ktv7m5ffujxv4248fxv36myvdx79n8jp6',
+    label: 'Wave 2 collector',
+    reportBtc: 30.18476329,
+    clusterId: 'galaxy-july31',
+    note: 'Unmoved collector from 93 sweeps at ~10 sat/vB; still unspent',
   },
   {
     address: 'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
@@ -226,8 +264,9 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
 
 /**
  * What actually landed in watched holding addresses. Lower than
- * ORIGINAL_STOLEN_BTC because sweep and consolidation fees burned sats,
- * so this is the baseline for "is it still there".
+ * ORIGINAL_STOLEN_BTC because sweep/consolidation fees burned sats and because
+ * Galaxy Wave 3 (293 P2WSH vaults) is not individually watched, so this is the
+ * baseline for "is the watched stack still there".
  */
 export const CONSOLIDATED_BTC = HOLDING_ADDRESSES.reduce(
   (sum, h) => sum + h.reportBtc,
