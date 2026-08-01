@@ -1,11 +1,15 @@
 const POINTS = [
   {
     label: 'Likely exposed',
-    text: 'Seed generated on Coldcard Mk3 firmware 4.0.1–4.1.9, or on Mk4 / Mk5 / Q before the July 2026 fixed releases.',
+    text: 'Seed generated on Mk3 4.0.1–4.1.9 (~40-bit), or on Mk4 / Mk5 / Q before the Aug 1 fixed releases (~72-bit). Fixed: Mk3 ≥4.2.0, Mk4/Mk5 ≥5.6.0 (Edge ≥6.6.0X), Q ≥1.5.0Q (Edge ≥6.6.0QX).',
   },
   {
     label: 'Firmware update is not enough',
     text: 'Patching does not repair an existing seed. Generate a new seed on fixed firmware and migrate funds carefully.',
+  },
+  {
+    label: 'Beyond the main seed',
+    text: 'The same weak RNG also covered paper-wallet keys, Seed XOR masks, and some Key Teleport / clone / Secure Notes material (Block).',
   },
   {
     label: 'Lower risk',
@@ -25,8 +29,9 @@ export function RiskChecklist() {
           Am I at risk?
         </h2>
         <p className="risk-lede">
-          Short checklist from Coinkite’s advisory. This tracker does not check
-          your wallet — follow the official steps before moving funds.
+          Short checklist from Coinkite’s Aug 1 advisory and Block’s root-cause
+          writeup. This tracker does not check your wallet — follow the official
+          steps before moving funds.
         </p>
       </div>
 

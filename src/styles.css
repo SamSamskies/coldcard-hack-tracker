@@ -144,14 +144,6 @@ button:focus-visible {
   font-size: 0.98rem;
 }
 
-.totals-note {
-  margin: 0.55rem 0 0;
-  max-width: 38rem;
-  color: var(--text-muted);
-  font-size: 0.82rem;
-  line-height: 1.45;
-}
-
 .header-controls {
   display: flex;
   flex-wrap: wrap;
@@ -751,10 +743,8 @@ button:focus-visible {
 }
 
 .sources-strip {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.75rem 1.5rem;
+  display: grid;
+  gap: 0.75rem;
   padding: 0.85rem 0;
   border-top: 1px solid var(--line-soft);
 }
@@ -772,15 +762,14 @@ button:focus-visible {
   margin: 0;
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem 1.35rem;
+  display: grid;
+  gap: 0.75rem;
 }
 
 .sources-list li {
-  display: flex;
-  flex-direction: column;
-  gap: 0.1rem;
+  display: grid;
+  gap: 0.15rem;
+  max-width: 42rem;
 }
 
 .sources-list a {
@@ -788,8 +777,10 @@ button:focus-visible {
   font-weight: 500;
 }
 
-.sources-role {
-  font-size: 0.78rem;
+.sources-note {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
   color: var(--text-muted);
 }
 

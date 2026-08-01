@@ -2,6 +2,7 @@ import {
   CLUSTER_BY_ID,
   CLUSTERS,
   CONSOLIDATED_BTC,
+  EARLY_WAVE,
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
@@ -36,6 +37,17 @@ function groupByCluster(addresses: LiveAddress[]): {
 function GalaxyClusterMeta() {
   return (
     <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          {formatBtc(CLUSTER_BY_ID['galaxy-july30'].stolenBtc)} BTC /{' '}
+          {INCIDENT.victimAddresses.toLocaleString()} addresses
+          <span className="meta-sub">
+            Early reports ~{formatBtc(EARLY_WAVE.btc)} BTC / ~
+            {EARLY_WAVE.addresses.toLocaleString()} wallets
+          </span>
+        </dd>
+      </div>
       <div>
         <dt>Window</dt>
         <dd>
@@ -136,8 +148,8 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
         <p>
           About {formatBtc(ORIGINAL_STOLEN_BTC)} BTC drained across tracked
           clusters, of which {formatBtc(CONSOLIDATED_BTC)} BTC reached these
-          vaults. The gap is mostly miner fees. Clusters may be different
-          operators — attribution is fingerprint / community report.
+          vaults (gap is mostly fees). Clusters may be different operators —
+          attribution is fingerprint / community report.
         </p>
       </div>
 

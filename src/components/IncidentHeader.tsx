@@ -1,11 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  APP_NAME,
-  CLUSTERS,
-  EARLY_WAVE,
-  INCIDENT,
-  ORIGINAL_STOLEN_BTC,
-} from '../data/incident';
+import { APP_NAME, CLUSTERS, ORIGINAL_STOLEN_BTC } from '../data/incident';
 import { formatBtc, formatRelativeTime } from '../lib/format';
 
 type Props = {
@@ -28,8 +22,6 @@ export function IncidentHeader({
   onToggleAlerts,
 }: Props) {
   const [now, setNow] = useState(() => new Date());
-  const galaxy = CLUSTERS.find((c) => c.id === 'galaxy-july30')!;
-  const laterWaves = CLUSTERS.filter((c) => c.id !== 'galaxy-july30');
 
   useEffect(() => {
     if (!lastUpdated) return;
@@ -60,33 +52,6 @@ export function IncidentHeader({
         <p className="subtitle">
           July 2026 seed-entropy sweeps · {formatBtc(ORIGINAL_STOLEN_BTC)} BTC
           tracked across {CLUSTERS.length} clusters
-        </p>
-        <p className="totals-note">
-          <a href={EARLY_WAVE.sourceUrl} target="_blank" rel="noreferrer">
-            Early reports
-          </a>{' '}
-          covered ~{formatBtc(EARLY_WAVE.btc)} BTC across
-          ~{EARLY_WAVE.addresses.toLocaleString()} wallets. Galaxy’s fingerprint
-          set is {formatBtc(galaxy.stolenBtc)} BTC /{' '}
-          {INCIDENT.victimAddresses.toLocaleString()} addresses. Clusters may be
-          different operators.
-        </p>
-        <p className="totals-note">
-          Later waves:{' '}
-          {laterWaves.map((wave, i) => (
-            <span key={wave.id}>
-              {i > 0 ? ' · ' : null}
-              {wave.sourceUrl ? (
-                <a href={wave.sourceUrl} target="_blank" rel="noreferrer">
-                  {formatBtc(wave.stolenBtc)} BTC
-                </a>
-              ) : (
-                formatBtc(wave.stolenBtc) + ' BTC'
-              )}{' '}
-              ({wave.label})
-            </span>
-          ))}
-          .
         </p>
       </div>
 

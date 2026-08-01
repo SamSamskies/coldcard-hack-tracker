@@ -79,28 +79,38 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 export const SOURCES = [
   {
     label: 'Galaxy Research',
-    role: 'On-chain sweep',
+    note: 'Mapped the July 30 fingerprint set: 1,082.65 BTC across 1,196 addresses into four holdings.',
     url: 'https://x.com/glxyresearch/status/2083181683067506899',
   },
   {
     label: 'Kevin Kelbie',
-    role: 'July 31 wave',
+    note: 'July 31 post-scan wave (~45.9 BTC) after Block’s scan window; similar markers, different RBF behavior.',
     url: 'https://x.com/KevinKelbie/status/2083368025864990857',
   },
   {
     label: 'Evan Schoenberg',
-    role: 'Evening wave',
+    note: 'Evening July 31 low-fee (~2 sat/vB) sweeps consolidated into a separate ~0.51 BTC vault.',
     url: 'https://x.com/evands/status/2083505832587587945',
   },
   {
     label: 'Coinkite advisory',
-    role: 'Official guidance',
+    note: 'Official guidance (updated Aug 1): who is exposed, fixed firmware versions, and migration steps.',
     url: 'https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/',
   },
   {
     label: 'Block Engineering',
-    role: 'Root-cause analysis',
+    note: 'Root-cause writeup on the RNG fallback, 32-bit reseed, and blast radius beyond BIP-39 seeds.',
     url: 'https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware',
+  },
+  {
+    label: 'CoinDesk',
+    note: 'Aug 1 reporting on Galaxy’s expanded totals and why further waves remain possible.',
+    url: 'https://www.coindesk.com/tech/2026/08/01/how-bitcoin-cold-wallets-lost-usd70-million-in-an-attack-that-never-touched-the-devices',
+  },
+  {
+    label: 'Clay Garrett',
+    note: 'July 30 operator used a paid blockchain-data account during the sweeps; findings shared with authorities.',
+    url: 'https://x.com/clay_garrett/status/2083247006139503065',
   },
 ] as const;
 
