@@ -72,13 +72,13 @@ export const CLUSTERS: readonly Cluster[] = [
     id: 'evening-july31',
     label: 'Evening wave · July 31',
     /**
-     * Traced across the whole cluster, not just the original vault: 42 external
-     * sweeps landed 1.0088 BTC in cluster addresses (blocks 960425–960571) and
-     * every intermediate is now drained, leaving 1.00962114 BTC on two addresses.
+     * Live stolen stack on watched addresses: evening vault 0.50980268 + hop vault
+     * 0.69135523. Hop grew on Aug 1 when a Jul 31 low-fee victim consolidation
+     * (~0.1915 BTC) finally moved in from an intermediate.
      */
-    stolenBtc: 1.00962114,
+    stolenBtc: 1.20115791,
     date: '2026-07-31',
-    note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31: short-lived collector → 0.51 BTC vault (still held). A parallel set of sweeps consolidated separately, then on Aug 1 pushed 0.41 BTC through the same vault in ~18 min and out to a new address. Distinct from the Kelbie vault.',
+    note: 'Low-fee (~1–2 sat/vB) sweeps. Jul 31 vault (~0.51 BTC) still held. Aug 1: ~0.41 BTC passed through that vault to a hop address, then a delayed ~0.19 BTC victim consolidation joined the hop (now ~0.69 BTC). A separate Ocean (OCEAN.XYZ) miner-payout UTXO also touched the hop and was peeled off — possible same-operator lead, not counted as stolen. Distinct from the Kelbie vault.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -115,8 +115,13 @@ export const SOURCES = [
   },
   {
     label: 'Evan Schoenberg',
-    note: 'Evening July 31 low-fee (~2 sat/vB) sweeps into a separate vault; tracing the Aug 1 pass-through raised the cluster to ~1.01 BTC across two live addresses.',
+    note: 'Evening July 31 low-fee (~2 sat/vB) sweeps into a separate vault; Aug 1 hop consolidation (incl. delayed ~0.19 BTC) raised the watched cluster to ~1.20 BTC.',
     url: 'https://x.com/evands/status/2083505832587587945',
+  },
+  {
+    label: 'Ocean block 960511',
+    note: 'Coinbase of block 960511 (tag OCEAN.XYZ) paid 0.06045759 BTC to a miner address that later sent to the Aug 1 hop vault; that UTXO was peeled off and is not counted as stolen.',
+    url: 'https://mempool.space/block/960511',
   },
   {
     label: 'Tomer Strolight',
@@ -206,9 +211,9 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
   {
     address: 'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s',
     label: 'Aug 1 hop vault',
-    reportBtc: 0.49981846,
+    reportBtc: 0.69135523,
     clusterId: 'evening-july31',
-    note: 'Aug 1 pass-through (0.41 BTC via the evening vault plus 0.09 BTC joined en route); separate coins from the Jul 31 vault balance',
+    note: '0.4998 BTC Aug 1 pass-through + 0.1915 BTC delayed Jul 31 victim consolidation. An Ocean miner payout also landed here and was spent onward — not part of this report balance',
   },
   {
     address: 'bc1qzm5pauxyv7t7vqstzpumqcn066wfjsmev34mf3',
