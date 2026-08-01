@@ -1,7 +1,7 @@
 const FIRMWARE_ROWS = [
   {
     device: 'Mk3',
-    vulnerable: '4.0.1–4.1.9 (~40-bit)',
+    vulnerable: '4.0.1–4.1.9, 5.0.1–5.0.3 (~40-bit)',
     fixed: '4.2.0+',
   },
   {
@@ -32,16 +32,20 @@ const POINTS = [
     text: 'Patching does not repair an existing seed. Generate a new seed on fixed firmware and migrate funds carefully.',
   },
   {
+    label: 'Origin of the seed',
+    text: 'Exposure follows where the seed was generated, not the device holding it today. Seeds imported elsewhere, or whose origin you cannot establish, should be treated as affected.',
+  },
+  {
     label: 'Beyond the main seed',
-    text: 'The same weak RNG also covered paper-wallet keys, Seed XOR masks, and some Key Teleport / clone / Secure Notes material (Block).',
+    text: 'Weak RNG also hit paper-wallet keys, clone / Key Teleport material, and some Secure Notes passwords — even when the BIP-39 seed itself came from dice (WizardSardine / Block).',
   },
   {
     label: 'Lower risk',
-    text: 'At least 50 private dice rolls at seed creation, or a strong unique BIP-39 passphrase (not the device PIN). Still migrate when practical.',
+    text: 'At least 50 private dice rolls at seed creation. A long truly random BIP-39 passphrase (not the device PIN) may buy time, but weak passphrases are not a safe bet — still migrate when practical.',
   },
   {
     label: 'Not this bug',
-    text: 'TAPSIGNER, Opendime, and Satscard use different codebases and are not affected.',
+    text: 'TAPSIGNER, Opendime, and Satscard use different codebases and are not affected. Mk1 and pre-4.0.1 Mk2/Mk3 firmware used the real TRNG.',
   },
 ] as const;
 
@@ -53,9 +57,9 @@ export function RiskChecklist() {
           Am I at risk?
         </h2>
         <p className="risk-lede">
-          Short checklist from Coinkite’s Aug 1 advisory and Block’s root-cause
-          writeup. This tracker does not check your wallet — follow the official
-          steps before moving funds.
+          Short checklist from Coinkite’s Aug 1 advisory, Block’s root-cause
+          writeup, and WizardSardine’s analysis. This tracker does not check
+          your wallet — follow the official steps before moving funds.
         </p>
       </div>
 

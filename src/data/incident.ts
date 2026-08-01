@@ -124,6 +124,16 @@ export const SOURCES = [
     url: 'https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware',
   },
   {
+    label: 'WizardSardine',
+    note: 'Aug 1 deep dive: who is affected (including Mk3 5.0.x), advanced features still broken with dice seeds, and migration guidance.',
+    url: 'https://wizardsardine.com/blog/coldcard-rng-vulnerability/',
+  },
+  {
+    label: 'Kevin Loaec',
+    note: 'Announcement thread for the WizardSardine writeup.',
+    url: 'https://x.com/KLoaec/status/2083579776887922865',
+  },
+  {
     label: 'CoinDesk',
     note: 'Aug 1 reporting on Galaxy’s expanded totals and why further waves remain possible.',
     url: 'https://www.coindesk.com/tech/2026/08/01/how-bitcoin-cold-wallets-lost-usd70-million-in-an-attack-that-never-touched-the-devices',
