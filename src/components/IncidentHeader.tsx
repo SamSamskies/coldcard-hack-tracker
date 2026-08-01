@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { APP_NAME, CLUSTERS, ORIGINAL_STOLEN_BTC } from '../data/incident';
-import { formatBtc, formatRelativeTime } from '../lib/format';
+import { APP_NAME } from '../data/incident';
+import { formatRelativeTime } from '../lib/format';
 
 type Props = {
   lastUpdated: Date | null;
@@ -49,10 +49,7 @@ export function IncidentHeader({
       <div className="brand-block">
         <p className="eyebrow">Live chain monitor</p>
         <h1 className="brand">{APP_NAME}</h1>
-        <p className="subtitle">
-          Seed-entropy sweeps since July 2026 · {formatBtc(ORIGINAL_STOLEN_BTC)}{' '}
-          BTC tracked across {CLUSTERS.length} clusters
-        </p>
+        <p className="subtitle">Seed-entropy sweeps since July 2026</p>
       </div>
 
       <div className="header-controls">

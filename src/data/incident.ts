@@ -126,13 +126,13 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
   {
     address: 'bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r',
     label: 'Holding 1',
-    reportBtc: 562.02020083,
+    reportBtc: 562.02021083,
     clusterId: 'galaxy-july30',
   },
   {
     address: 'bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3',
     label: 'Holding 2',
-    reportBtc: 398.47573857,
+    reportBtc: 398.47575357,
     clusterId: 'galaxy-july30',
   },
   {
