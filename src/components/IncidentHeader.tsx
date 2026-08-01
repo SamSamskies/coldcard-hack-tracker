@@ -8,6 +8,7 @@ type Props = {
   loading: boolean;
   onRefresh: () => void;
   alertsEnabled: boolean;
+  alertsPreference: boolean;
   alertsSupported: boolean;
   alertsPermission: string;
   onToggleAlerts: () => void;
@@ -19,6 +20,7 @@ export function IncidentHeader({
   loading,
   onRefresh,
   alertsEnabled,
+  alertsPreference,
   alertsSupported,
   alertsPermission,
   onToggleAlerts,
@@ -34,18 +36,33 @@ export function IncidentHeader({
 
   const alertsDisabled =
     !alertsSupported || alertsPermission === 'denied';
+  const awaitingPermission =
+    alertsSupported &&
+    !alertsEnabled &&
+    alertsPermission === 'default';
   const alertsTitle = !alertsSupported
     ? 'Browser notifications are not available here'
     : alertsPermission === 'denied'
       ? 'Notifications are blocked in browser settings'
-      : 'Browser notification when holdings or followed hops spend';
+      : alertsEnabled
+        ? 'Browser notification when holdings or followed hops spend'
+        : 'Click to allow notifications when holdings or hops spend';
   const alertsStatus = !alertsSupported
     ? 'Unavailable'
     : alertsPermission === 'denied'
       ? 'Blocked'
       : alertsEnabled
         ? 'On'
-        : 'Off';
+        : awaitingPermission && alertsPreference
+          ? 'Allow'
+          : 'Off';
+  const alertsHint = alertsDisabled
+    ? null
+    : alertsEnabled
+      ? 'Notify when holdings or followed hops spend'
+      : awaitingPermission
+        ? 'Click to grant browser permission'
+        : 'Notify when holdings or followed hops spend';
 
   return (
     <header className="incident-header">
@@ -67,10 +84,8 @@ export function IncidentHeader({
               Alerts
               <span className="alerts-toggle-state">{alertsStatus}</span>
             </span>
-            {!alertsDisabled ? (
-              <span className="alerts-toggle-hint">
-                Notify when holdings or followed hops spend
-              </span>
+            {alertsHint ? (
+              <span className="alerts-toggle-hint">{alertsHint}</span>
             ) : null}
           </span>
           <button

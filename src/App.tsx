@@ -9,7 +9,7 @@ import { useTrackerData } from './hooks/useTrackerData';
 
 export default function App() {
   const data = useTrackerData();
-  const alerts = useMovementAlerts(data.movements);
+  const alerts = useMovementAlerts(data.movements, data.lastUpdated != null);
   const hasData = data.addresses.length > 0;
 
   return (
@@ -21,6 +21,7 @@ export default function App() {
           loading={data.loading}
           onRefresh={data.refresh}
           alertsEnabled={alerts.enabled}
+          alertsPreference={alerts.preference}
           alertsSupported={alerts.supported}
           alertsPermission={alerts.permission}
           onToggleAlerts={() => {

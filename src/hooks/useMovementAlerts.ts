@@ -1,20 +1,29 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { APP_NAME } from '../data/incident';
 import { formatBtc } from '../lib/format';
-import type { Movement } from './useTrackerData';
+import type { Movement } from '../lib/tracker';
+import {
+  advanceAlertWatch,
+  createAlertWatchState,
+  movementKey,
+  type AlertWatchState,
+} from '../lib/movementAlerts';
 
 const STORAGE_KEY = 'coldcard-hack-tracker:alerts';
 
 export type AlertPermission = NotificationPermission | 'unsupported';
 
 export type MovementAlerts = {
+  /** Alerts are armed and the browser has granted notification permission. */
   enabled: boolean;
+  /** Stored opt-in preference (may be true while permission is still pending). */
+  preference: boolean;
   permission: AlertPermission;
   supported: boolean;
   toggle: () => Promise<void>;
 };
 
-function readEnabled(): boolean {
+function readPreference(): boolean {
   try {
     return window.localStorage.getItem(STORAGE_KEY) === '1';
   } catch {
@@ -22,16 +31,12 @@ function readEnabled(): boolean {
   }
 }
 
-function writeEnabled(enabled: boolean) {
+function writePreference(enabled: boolean) {
   try {
     window.localStorage.setItem(STORAGE_KEY, enabled ? '1' : '0');
   } catch {
     // Ignore private-mode / blocked storage.
   }
-}
-
-function movementKey(m: Movement): string {
-  return `${m.txid}:${m.fromAddress}`;
 }
 
 function notifyMovement(m: Movement) {
@@ -54,56 +59,54 @@ function notifyMovement(m: Movement) {
 /**
  * Browser notifications when new outbound spends appear after the first
  * successful poll. Opt-in; preference persisted in localStorage.
+ *
+ * @param ready - True once the tracker has completed at least one poll so the
+ *   initial feed can be baselined without treating it as brand-new movement.
  */
-export function useMovementAlerts(movements: Movement[]): MovementAlerts {
+export function useMovementAlerts(
+  movements: Movement[],
+  ready: boolean,
+): MovementAlerts {
   const supported =
     typeof window !== 'undefined' && 'Notification' in window;
 
-  const [enabled, setEnabled] = useState(false);
+  const [preference, setPreference] = useState(false);
   const [permission, setPermission] = useState<AlertPermission>(() =>
     supported ? Notification.permission : 'unsupported',
   );
 
-  const seenRef = useRef<Set<string> | null>(null);
-  const primedRef = useRef(false);
+  const watchRef = useRef<AlertWatchState>(createAlertWatchState());
+
+  const enabled =
+    preference && supported && permission === 'granted';
 
   useEffect(() => {
     if (!supported) return;
-    setEnabled(readEnabled() && Notification.permission === 'granted');
+    setPreference(readPreference());
     setPermission(Notification.permission);
   }, [supported]);
 
   useEffect(() => {
-    if (!enabled || !supported || Notification.permission !== 'granted') {
-      return;
-    }
+    if (!supported) return;
 
-    const keys = movements.map(movementKey);
-
-    // First snapshot after enable / load: remember without notifying.
-    if (!primedRef.current) {
-      seenRef.current = new Set(keys);
-      primedRef.current = true;
-      return;
-    }
-
-    const seen = seenRef.current ?? new Set<string>();
-    const fresh = movements.filter((m) => !seen.has(movementKey(m)));
-    for (const m of fresh) {
-      seen.add(movementKey(m));
+    const result = advanceAlertWatch(watchRef.current, movements, {
+      enabled,
+      ready,
+    });
+    watchRef.current = result.state;
+    if (!enabled || Notification.permission !== 'granted') return;
+    for (const m of result.toNotify) {
       notifyMovement(m);
     }
-    seenRef.current = seen;
-  }, [movements, enabled, supported]);
+  }, [movements, enabled, supported, ready]);
 
   const toggle = useCallback(async () => {
     if (!supported) return;
 
-    if (enabled) {
-      writeEnabled(false);
-      setEnabled(false);
-      primedRef.current = false;
-      seenRef.current = null;
+    if (preference && permission === 'granted') {
+      writePreference(false);
+      setPreference(false);
+      watchRef.current = createAlertWatchState();
       return;
     }
 
@@ -114,19 +117,21 @@ export function useMovementAlerts(movements: Movement[]): MovementAlerts {
     setPermission(next);
 
     if (next !== 'granted') {
-      writeEnabled(false);
-      setEnabled(false);
+      // Keep preference off so a dismissed prompt does not look "stuck on".
+      writePreference(false);
+      setPreference(false);
+      watchRef.current = createAlertWatchState();
       return;
     }
 
-    writeEnabled(true);
-    primedRef.current = false;
-    seenRef.current = null;
-    setEnabled(true);
-  }, [enabled, supported]);
+    writePreference(true);
+    watchRef.current = createAlertWatchState();
+    setPreference(true);
+  }, [preference, permission, supported]);
 
   return {
     enabled,
+    preference,
     permission: supported ? permission : 'unsupported',
     supported,
     toggle,
