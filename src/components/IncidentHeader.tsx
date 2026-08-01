@@ -50,8 +50,8 @@ export function IncidentHeader({
         <p className="eyebrow">Live chain monitor</p>
         <h1 className="brand">{APP_NAME}</h1>
         <p className="subtitle">
-          July 2026 seed-entropy sweeps · {formatBtc(ORIGINAL_STOLEN_BTC)} BTC
-          tracked across {CLUSTERS.length} clusters
+          Seed-entropy sweeps since July 2026 · {formatBtc(ORIGINAL_STOLEN_BTC)}{' '}
+          BTC tracked across {CLUSTERS.length} clusters
         </p>
       </div>
 

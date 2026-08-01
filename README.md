@@ -1,6 +1,6 @@
 # Coldcard Hack Tracker
 
-Live single-page dashboard for Bitcoin held after the July 2026 Coldcard seed-entropy sweeps.
+Live single-page dashboard for Bitcoin held after Coldcard seed-entropy sweeps since July 2026.
 
 Monitors consolidation vaults across named clusters (Galaxy’s July 30 fingerprint set plus later reported waves) via the public [mempool.space](https://mempool.space) API (no API key). Shows still-held %, BTC/USD value, per-address status, and outbound spends when funds move. Clusters may be different operators.
 
