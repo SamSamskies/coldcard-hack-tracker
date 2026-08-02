@@ -5,6 +5,7 @@ import {
   discoverNextHops,
   heldStats,
   isPostWatch,
+  isSurplusPassThrough,
   movementsFromWatch,
   shouldTrackSeedOutbounds,
   sortMovements,
@@ -129,6 +130,59 @@ describe('movementsFromWatch', () => {
     });
     expect(movementsFromWatch([watch], [[tx]])).toEqual([]);
   });
+
+  it('skips surplus peels that left the report balance intact', () => {
+    const reportSats = 69_135_523;
+    const minerSats = 6_042_459;
+    const fundReport = makeTx({
+      txid: 'fund-report',
+      vin: [{ prevout: { scriptpubkey_address: hop, value: reportSats } }],
+      vout: [{ scriptpubkey_address: vault, value: reportSats }],
+      blockHeight: WATCH_AFTER_BLOCK + 1,
+    });
+    const fundMiner = makeTx({
+      txid: 'fund-miner',
+      vin: [{ prevout: { scriptpubkey_address: hop, value: minerSats } }],
+      vout: [{ scriptpubkey_address: vault, value: minerSats }],
+      blockHeight: WATCH_AFTER_BLOCK + 2,
+    });
+    const peel = makeTx({
+      txid: 'ocean-peel',
+      vin: [{ prevout: { scriptpubkey_address: vault, value: minerSats } }],
+      vout: [{ scriptpubkey_address: hop, value: minerSats - 7_700 }],
+      blockHeight: WATCH_AFTER_BLOCK + 3,
+    });
+    const empty = makeTx({
+      txid: 'empty-stack',
+      vin: [
+        { prevout: { scriptpubkey_address: vault, value: 49_981_846 } },
+        { prevout: { scriptpubkey_address: vault, value: 19_153_677 } },
+      ],
+      vout: [
+        { scriptpubkey_address: hop, value: 45_000_000 },
+        { scriptpubkey_address: hop, value: 24_135_200 },
+      ],
+      confirmed: false,
+    });
+
+    const txs = [empty, peel, fundMiner, fundReport]; // newest-first, as Esplora
+    const seed: WatchTarget = {
+      address: vault,
+      label: 'Aug 1 hop vault',
+      hop: 0,
+      reportBtc: reportSats / 100_000_000,
+    };
+
+    expect(isSurplusPassThrough(vault, seed.reportBtc!, txs, 'ocean-peel')).toBe(
+      true,
+    );
+    expect(
+      isSurplusPassThrough(vault, seed.reportBtc!, txs, 'empty-stack'),
+    ).toBe(false);
+
+    const moves = movementsFromWatch([seed], [txs]);
+    expect(moves.map((m) => m.txid)).toEqual(['empty-stack']);
+  });
 });
 
 describe('discoverNextHops', () => {
@@ -179,6 +233,44 @@ describe('discoverNextHops', () => {
     });
 
     expect(discoverNextHops([hop2], [[tx]], new Set([big]), 8)).toEqual([]);
+  });
+
+  it('does not follow destinations of surplus peels', () => {
+    const reportSats = 50_000_000;
+    const minerSats = 6_000_000;
+    const minerDest = 'bc1qminerxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+    const fund = makeTx({
+      txid: 'fund',
+      vin: [{ prevout: { scriptpubkey_address: big, value: reportSats + minerSats } }],
+      vout: [{ scriptpubkey_address: vault, value: reportSats + minerSats }],
+      blockHeight: WATCH_AFTER_BLOCK + 1,
+    });
+    const peel = makeTx({
+      txid: 'peel',
+      vin: [{ prevout: { scriptpubkey_address: vault, value: minerSats } }],
+      vout: [{ scriptpubkey_address: minerDest, value: minerSats - 1_000 }],
+      blockHeight: WATCH_AFTER_BLOCK + 2,
+    });
+    const empty = makeTx({
+      txid: 'empty',
+      vin: [{ prevout: { scriptpubkey_address: vault, value: reportSats } }],
+      vout: [{ scriptpubkey_address: big, value: reportSats - 1_000 }],
+      confirmed: false,
+    });
+    const seed: WatchTarget = {
+      address: vault,
+      label: 'Vault',
+      hop: 0,
+      reportBtc: reportSats / 100_000_000,
+    };
+
+    const next = discoverNextHops(
+      [seed],
+      [[empty, peel, fund]],
+      new Set([vault]),
+      8,
+    );
+    expect(next.map((w) => w.address)).toEqual([big]);
   });
 });
 

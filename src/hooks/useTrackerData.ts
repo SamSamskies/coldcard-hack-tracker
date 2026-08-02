@@ -285,6 +285,7 @@ export function useTrackerData(): TrackerData {
         address: h.address,
         label: h.label,
         hop: 0,
+        reportBtc: h.reportBtc,
       });
       activeAddrs.push(h.address);
     }

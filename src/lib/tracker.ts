@@ -2,6 +2,7 @@ import {
   MAX_DESTINATIONS_PER_SPEND,
   MAX_HOP_DEPTH,
   MIN_HOP_FOLLOW_SATS,
+  SATS_PER_BTC,
   WATCH_AFTER_BLOCK,
 } from '../data/incident';
 import { outboundFromAddress, satsToBtc, type Tx } from './mempool';
@@ -25,6 +26,12 @@ export type WatchTarget = {
   address: string;
   label: string;
   hop: number;
+  /**
+   * Seed holdings only. When set, outbounds that leave this report balance
+   * intact (surplus pass-through) are ignored — even after the vault later
+   * empties and seed tracking turns on.
+   */
+  reportBtc?: number;
 };
 
 export function statusFor(balanceBtc: number, reportBtc: number): AddressStatus {
@@ -52,6 +59,65 @@ export function isPostWatch(tx: Tx): boolean {
   );
 }
 
+function txChronologicalKey(tx: Tx): number {
+  if (!tx.status.confirmed) return Number.MAX_SAFE_INTEGER;
+  return tx.status.block_height ?? tx.status.block_time ?? 0;
+}
+
+function addressDeltaSats(tx: Tx, address: string): number {
+  const spent = tx.vin
+    .filter((v) => v.prevout?.scriptpubkey_address === address)
+    .reduce((sum, v) => sum + (v.prevout?.value ?? 0), 0);
+  const received = tx.vout
+    .filter((o) => o.scriptpubkey_address === address)
+    .reduce((sum, o) => sum + o.value, 0);
+  return received - spent;
+}
+
+/**
+ * True when this outbound left the address still holding ~its reported stack
+ * (e.g. Ocean miner peel through the Aug 1 hop vault).
+ */
+export function isSurplusPassThrough(
+  address: string,
+  reportBtc: number,
+  txs: readonly Tx[],
+  txid: string,
+): boolean {
+  const thresholdSats = reportBtc * SATS_PER_BTC * 0.99;
+  const ordered = [...txs].sort((a, b) => {
+    const ka = txChronologicalKey(a);
+    const kb = txChronologicalKey(b);
+    if (ka !== kb) return ka - kb;
+    return a.txid.localeCompare(b.txid);
+  });
+
+  let balanceSats = 0;
+  for (const tx of ordered) {
+    balanceSats += addressDeltaSats(tx, address);
+    if (tx.txid !== txid) continue;
+    if (outboundFromAddress(tx, address).amountSats <= 0) return false;
+    return balanceSats >= thresholdSats;
+  }
+  return false;
+}
+
+function shouldEmitOutbound(
+  watch: WatchTarget,
+  txs: readonly Tx[],
+  tx: Tx,
+): boolean {
+  if (!isPostWatch(tx)) return false;
+  if (outboundFromAddress(tx, watch.address).amountSats <= 0) return false;
+  if (
+    watch.reportBtc != null &&
+    isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
+  ) {
+    return false;
+  }
+  return true;
+}
+
 export function movementsFromWatch(
   watches: readonly WatchTarget[],
   txLists: Tx[][],
@@ -59,10 +125,10 @@ export function movementsFromWatch(
   const items: Movement[] = [];
 
   watches.forEach((w, i) => {
-    for (const tx of txLists[i] ?? []) {
+    const txs = txLists[i] ?? [];
+    for (const tx of txs) {
+      if (!shouldEmitOutbound(w, txs, tx)) continue;
       const { amountSats, destinations } = outboundFromAddress(tx, w.address);
-      if (amountSats <= 0) continue;
-      if (!isPostWatch(tx)) continue;
 
       items.push({
         txid: tx.txid,
@@ -102,9 +168,10 @@ export function discoverNextHops(
   watches.forEach((w, i) => {
     if (w.hop >= MAX_HOP_DEPTH) return;
 
-    for (const tx of txLists[i] ?? []) {
-      const { amountSats, recipients } = outboundFromAddress(tx, w.address);
-      if (amountSats <= 0 || !isPostWatch(tx)) continue;
+    const txs = txLists[i] ?? [];
+    for (const tx of txs) {
+      if (!shouldEmitOutbound(w, txs, tx)) continue;
+      const { recipients } = outboundFromAddress(tx, w.address);
 
       for (const r of recipients.slice(0, MAX_DESTINATIONS_PER_SPEND)) {
         if (r.valueSats < MIN_HOP_FOLLOW_SATS) continue;

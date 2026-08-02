@@ -359,12 +359,59 @@ function isPostWatch(tx) {
   return !tx.status.confirmed || (height != null && height > WATCH_AFTER_BLOCK);
 }
 
+function txChronologicalKey(tx) {
+  if (!tx.status.confirmed) return Number.MAX_SAFE_INTEGER;
+  return tx.status.block_height ?? tx.status.block_time ?? 0;
+}
+
+function addressDeltaSats(tx, address) {
+  const spent = tx.vin
+    .filter((v) => v.prevout?.scriptpubkey_address === address)
+    .reduce((sum, v) => sum + (v.prevout?.value ?? 0), 0);
+  const received = tx.vout
+    .filter((o) => o.scriptpubkey_address === address)
+    .reduce((sum, o) => sum + o.value, 0);
+  return received - spent;
+}
+
+/** Outbound that left the reported stack intact (surplus peel). */
+function isSurplusPassThrough(address, reportBtc, txs, txid) {
+  const thresholdSats = reportBtc * SATS_PER_BTC * 0.99;
+  const ordered = [...txs].sort((a, b) => {
+    const ka = txChronologicalKey(a);
+    const kb = txChronologicalKey(b);
+    if (ka !== kb) return ka - kb;
+    return a.txid.localeCompare(b.txid);
+  });
+  let balanceSats = 0;
+  for (const tx of ordered) {
+    balanceSats += addressDeltaSats(tx, address);
+    if (tx.txid !== txid) continue;
+    if (outboundFromAddress(tx, address).amountSats <= 0) return false;
+    return balanceSats >= thresholdSats;
+  }
+  return false;
+}
+
+function shouldEmitOutbound(watch, txs, tx) {
+  if (!isPostWatch(tx)) return false;
+  if (outboundFromAddress(tx, watch.address).amountSats <= 0) return false;
+  if (
+    watch.reportBtc != null &&
+    isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
+  ) {
+    return false;
+  }
+  return true;
+}
+
 function movementsFromWatch(watches, txLists) {
   const items = [];
   watches.forEach((w, i) => {
-    for (const tx of txLists[i] ?? []) {
+    const txs = txLists[i] ?? [];
+    for (const tx of txs) {
+      if (!shouldEmitOutbound(w, txs, tx)) continue;
       const { amountSats, destinations } = outboundFromAddress(tx, w.address);
-      if (amountSats <= 0 || !isPostWatch(tx)) continue;
       items.push({
         txid: tx.txid,
         fromAddress: w.address,
@@ -386,25 +433,19 @@ function discoverNextHops(watches, txLists, known, slotsLeft) {
   const scored = [];
   watches.forEach((w, i) => {
     if (w.hop >= MAX_HOP_DEPTH) return;
-    for (const tx of txLists[i] ?? []) {
-      if (!isPostWatch(tx)) continue;
-      const spent = tx.vin
-        .filter((v) => v.prevout?.scriptpubkey_address === w.address)
-        .reduce((sum, v) => sum + (v.prevout?.value ?? 0), 0);
-      if (spent === 0) continue;
-      const recipients = [];
+    const txs = txLists[i] ?? [];
+    for (const tx of txs) {
+      if (!shouldEmitOutbound(w, txs, tx)) continue;
+      const { destinations } = outboundFromAddress(tx, w.address);
       const byAddr = new Map();
       for (const o of tx.vout) {
         const dest = o.scriptpubkey_address;
         if (!dest || dest === w.address) continue;
         byAddr.set(dest, (byAddr.get(dest) ?? 0) + o.value);
       }
-      for (const [addr, valueSats] of byAddr) {
-        if (valueSats < MIN_HOP_FOLLOW_SATS) continue;
-        if (known.has(addr)) continue;
-        recipients.push({ address: addr, valueSats });
-      }
-      recipients.sort((a, b) => b.valueSats - a.valueSats);
+      const recipients = destinations
+        .map((addr) => ({ address: addr, valueSats: byAddr.get(addr) ?? 0 }))
+        .filter((r) => r.valueSats >= MIN_HOP_FOLLOW_SATS && !known.has(r.address));
       for (const r of recipients.slice(0, MAX_DESTINATIONS_PER_SPEND)) {
         scored.push({
           address: r.address,
@@ -517,7 +558,12 @@ async function main() {
         ok: true,
       });
       if (statusFor(balanceBtc, h.reportBtc) !== 'held') {
-        activeSeeds.push({ address: h.address, label: h.label, hop: 0 });
+        activeSeeds.push({
+          address: h.address,
+          label: h.label,
+          hop: 0,
+          reportBtc: h.reportBtc,
+        });
       }
       continue;
     }
@@ -534,7 +580,12 @@ async function main() {
       });
       const balanceBtc = prev.balanceSats / SATS_PER_BTC;
       if (statusFor(balanceBtc, h.reportBtc) !== 'held') {
-        activeSeeds.push({ address: h.address, label: h.label, hop: 0 });
+        activeSeeds.push({
+          address: h.address,
+          label: h.label,
+          hop: 0,
+          reportBtc: h.reportBtc,
+        });
       }
       continue;
     }

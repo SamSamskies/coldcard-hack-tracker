@@ -437,19 +437,6 @@
       ],
       "hop": 0,
       "confirmed": false
-    },
-    {
-      "txid": "24f4b236bc47fc2ad85287e8636e9a14ba55e136ff3bf8b452f6d6b92d4e5187",
-      "fromAddress": "bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s",
-      "fromLabel": "Aug 1 hop vault",
-      "amountBtc": 0.06042459,
-      "destinations": [
-        "bc1qlryk6u4f89r89qqp99rm4k6u8hr7tmyff79edm"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 960611,
-      "blockTime": 1785611978
     }
   ]
 }
