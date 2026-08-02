@@ -5,13 +5,17 @@ import {
   truncateTxid,
 } from '../lib/format';
 import { explorerAddressUrl, explorerTxUrl } from '../lib/mempool';
-import { MAX_HOP_DEPTH } from '../data/incident';
+import { KNOWN_ADDRESS_LABELS, MAX_HOP_DEPTH } from '../data/incident';
 import type { Movement } from '../hooks/useTrackerData';
 
 type Props = {
   movements: Movement[];
   loading: boolean;
 };
+
+function destinationLabel(address: string): string | undefined {
+  return KNOWN_ADDRESS_LABELS[address];
+}
 
 export function MovementFeed({ movements, loading }: Props) {
   return (
@@ -76,19 +80,23 @@ export function MovementFeed({ movements, loading }: Props) {
                 {m.destinations.length > 0 ? (
                   <p className="movement-dest muted">
                     To{' '}
-                    {m.destinations.slice(0, 3).map((d, i) => (
-                      <span key={d}>
-                        {i > 0 ? ', ' : ''}
-                        <a
-                          className="mono"
-                          href={explorerAddressUrl(d)}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {truncateAddress(d, 8, 4)}
-                        </a>
-                      </span>
-                    ))}
+                    {m.destinations.slice(0, 3).map((d, i) => {
+                      const known = destinationLabel(d);
+                      return (
+                        <span key={d}>
+                          {i > 0 ? ', ' : ''}
+                          {known ? <span>{known} </span> : null}
+                          <a
+                            className="mono"
+                            href={explorerAddressUrl(d)}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            {truncateAddress(d, 8, 4)}
+                          </a>
+                        </span>
+                      );
+                    })}
                     {m.destinations.length > 3
                       ? ` +${m.destinations.length - 3} more`
                       : ''}

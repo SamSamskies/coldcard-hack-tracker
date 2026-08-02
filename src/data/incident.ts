@@ -129,7 +129,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 1.20115791,
     date: '2026-07-31',
-    note: 'Low-fee (~1–2 sat/vB) sweeps. Both watched holdings (~1.20 BTC) emptied Aug 1–2 and are peeling toward cash-out. Stolen hops and the Ocean (OCEAN.XYZ) miner peel that touched the Aug 1 hop vault later consolidated into the same busy P2SH ([3KMmeqPe…](address:3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8)) — same-operator link; Ocean sats not counted as stolen. Distinct from Galaxy Wave 2.',
+    note: 'Low-fee (~1–2 sat/vB) sweeps. Both watched holdings (~1.20 BTC) emptied Aug 1–2 and are peeling toward cash-out. Stolen hops and the Ocean (OCEAN.XYZ) miner peel that touched the Aug 1 hop vault later consolidated into the same busy P2SH ([3KMmeqPe…](address:3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8)) — same-operator link; Ocean sats not counted as stolen. Aug 2 evening-vault peel: ~0.24 BTC sibling hopped into THORChain Asgard ([bc1qp6yzm…](address:bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794)) via [936c5f7d…](https://mempool.space/tx/936c5f7d85397a52c56e75a3e2c4b526ab1812893ba5a95fe56b7dc791cd766c), swapped to ETH at [0x6A08B5B2…](https://etherscan.io/address/0x6A08B5B20F23FcFE09f5da506Be59CAD1eC0df06), then swept to consolidator [0xC61F8Df6…](https://etherscan.io/address/0xC61F8Df65aCED169C8E2bFb8119FDeAf149B20f1); ~0.27 BTC sibling still unspent at [bc1qdt6c…](address:bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw). Distinct from Galaxy Wave 2.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -292,7 +292,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
-    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2; onward peels in progress',
+    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2. One peel (~0.24 BTC) exited via THORChain ([bc1qp6yzm…](address:bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794)) → ETH [0x6A08B5B2…](https://etherscan.io/address/0x6A08B5B20F23FcFE09f5da506Be59CAD1eC0df06) → consolidator [0xC61F8Df6…](https://etherscan.io/address/0xC61F8Df65aCED169C8E2bFb8119FDeAf149B20f1); sibling ~0.27 BTC still at [bc1qdt6c…](address:bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw)',
   },
   {
     address: 'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s',
@@ -363,6 +363,15 @@ export const SNAPSHOT_REFRESH_INTERVAL_MS = 5 * 60_000;
 export const SATS_PER_BTC = 100_000_000;
 /** Primary wave funds reported unspent at this block; later spends count as movement. */
 export const WATCH_AFTER_BLOCK = 960_400;
+
+/**
+ * Known cash-out / infrastructure addresses that may appear in the movement
+ * feed. Labels help trackers spot exits the hop follower may not reach.
+ */
+export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
+  bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794: 'THORChain BTC vault',
+  '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH cash-out hub',
+};
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
 export const MAX_HOP_DEPTH = 2;
