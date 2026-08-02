@@ -7,6 +7,7 @@ import {
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
+  WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
   type ClusterId,
 } from '../data/incident';
@@ -36,23 +37,18 @@ function groupByCluster(addresses: LiveAddress[]): {
   }));
 }
 
+/** Shared Galaxy Research markers: Scope / Blocks / Fee, plus wave-specific rows. */
 function GalaxyWave1Meta() {
+  const wave = CLUSTER_BY_ID['galaxy-july30'];
   return (
     <dl className="cluster-meta">
       <div>
         <dt>Scope</dt>
         <dd>
           <span className="meta-primary">
-            {formatBtc(CLUSTER_BY_ID['galaxy-july30'].stolenBtc)} BTC ·{' '}
+            {formatBtc(wave.stolenBtc)} BTC ·{' '}
             {INCIDENT.victimAddresses.toLocaleString()} addresses
           </span>
-        </dd>
-      </div>
-      <div>
-        <dt>Window</dt>
-        <dd>
-          <span className="meta-primary">{INCIDENT.dateLabel}</span>
-          <span className="meta-sub">{INCIDENT.windowUtc}</span>
         </dd>
       </div>
       <div>
@@ -65,16 +61,23 @@ function GalaxyWave1Meta() {
         </dd>
       </div>
       <div>
-        <dt>Fee signature</dt>
+        <dt>Fee</dt>
         <dd>
           <span className="meta-primary">
-            {INCIDENT.feeSatPerVb.toFixed(1)} sat/vB · no change
+            {INCIDENT.feeSatPerVb.toFixed(0)} sat/vB · no change
           </span>
           <span className="meta-sub">{INCIDENT.feeOverpayNote}</span>
         </dd>
       </div>
       <div>
-        <dt>Victim paths</dt>
+        <dt>Window</dt>
+        <dd>
+          <span className="meta-primary">{INCIDENT.dateLabel}</span>
+          <span className="meta-sub">{INCIDENT.windowUtc}</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Paths</dt>
         <dd>
           <span className="meta-primary">
             {INCIDENT.victimsByPath.bip84.toLocaleString()} BIP-84
@@ -89,51 +92,106 @@ function GalaxyWave1Meta() {
   );
 }
 
+function GalaxyWave2Meta() {
+  const wave = CLUSTER_BY_ID['galaxy-july31'];
+  const fp = WAVE2_FINGERPRINT;
+  return (
+    <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(wave.stolenBtc)} BTC ·{' '}
+            {fp.victimAddresses.toLocaleString()} addresses
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Blocks</dt>
+        <dd>
+          <span className="meta-primary">
+            {fp.blockStart.toLocaleString()}–{fp.blockEnd.toLocaleString()}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fee</dt>
+        <dd>
+          <span className="meta-primary">
+            {fp.feeSatPerVb[0]} and {fp.feeSatPerVb[1]} sat/vB
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Holdings</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(fp.vaultBtc)} BTC vault
+          </span>
+          <span className="meta-sub">
+            {formatBtc(fp.collectorBtc)} BTC collector unmoved
+          </span>
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
 function GalaxyWave3Meta() {
+  const wave = CLUSTER_BY_ID['galaxy-wave3'];
   const fp = WAVE3_FINGERPRINT;
   return (
-    <div className="cashout-flow">
-      <p className="cashout-flow-label">Wave 3 attribution</p>
-      <dl className="cluster-meta">
-        <div>
-          <dt>Watched</dt>
-          <dd>
-            <span className="meta-primary">
-              {fp.matchedVaults.toLocaleString()} P2WSH ·{' '}
-              {formatBtc(fp.matchedHeldBtc)} BTC
-            </span>
-            <span className="meta-sub">
-              ≥ {formatBtc(fp.minWatchBtc)} BTC · Galaxy ~
-              {fp.galaxyVaults} / ~{formatBtc(fp.galaxyHeldBtc)} BTC
-            </span>
-          </dd>
-        </div>
-        <div>
-          <dt>Blocks</dt>
-          <dd>
-            <span className="meta-primary">
-              {fp.blockStart.toLocaleString()}–{fp.blockEnd.toLocaleString()}
-            </span>
-          </dd>
-        </div>
-        <div>
-          <dt>Fee window</dt>
-          <dd>
-            <span className="meta-primary">
-              {fp.feeSatPerVbMin}–{fp.feeSatPerVbMax} sat/vB
-            </span>
-            <span className="meta-sub">Galaxy: ~200 sat/vB</span>
-          </dd>
-        </div>
-        <div>
-          <dt>Pattern</dt>
-          <dd>
-            <span className="meta-primary">park → P2WSH</span>
-            <span className="meta-sub">RNG map cross-check</span>
-          </dd>
-        </div>
-      </dl>
-    </div>
+    <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(wave.stolenBtc)} BTC · ~
+            {fp.victimAddresses.toLocaleString()} addresses
+          </span>
+          <span className="meta-sub">
+            Galaxy ~{fp.galaxyVaults} vaults / ~
+            {formatBtc(fp.galaxyHeldBtc)} BTC
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Blocks</dt>
+        <dd>
+          <span className="meta-primary">
+            {fp.blockStart.toLocaleString()}–{fp.blockEnd.toLocaleString()}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fee</dt>
+        <dd>
+          <span className="meta-primary">
+            {fp.feeSatPerVbMin}–{fp.feeSatPerVbMax} sat/vB
+          </span>
+          <span className="meta-sub">Galaxy: ~200 sat/vB</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Watched</dt>
+        <dd>
+          <span className="meta-primary">
+            {fp.matchedVaults.toLocaleString()} P2WSH ·{' '}
+            {formatBtc(fp.matchedHeldBtc)} BTC
+          </span>
+          <span className="meta-sub">
+            ≥ {formatBtc(fp.minWatchBtc)} BTC each
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Pattern</dt>
+        <dd>
+          <span className="meta-primary">park → P2WSH</span>
+          <span className="meta-sub">RNG map cross-check</span>
+        </dd>
+      </div>
+    </dl>
   );
 }
 
@@ -361,6 +419,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                 </div>
                 <LinkedNote className="cluster-note" text={cluster.note} />
                 {clusterId === 'galaxy-july30' ? <GalaxyWave1Meta /> : null}
+                {clusterId === 'galaxy-july31' ? <GalaxyWave2Meta /> : null}
                 {clusterId === 'evening-july31' ? <EveningCashoutFlow /> : null}
                 {isWave3 ? <GalaxyWave3Meta /> : null}
               </header>

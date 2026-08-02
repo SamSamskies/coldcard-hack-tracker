@@ -7,6 +7,7 @@ import {
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
+  WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
   type ClusterId,
 } from '../data/incident';
@@ -69,6 +70,17 @@ describe('incident data invariants', () => {
       // Holdings can be slightly under stolen (fees) but should not exceed it.
       expect(held).toBeLessThanOrEqual(cluster.stolenBtc + 1e-8);
     }
+  });
+
+  it('keeps Wave 2 fingerprint holdings aligned with watched addresses', () => {
+    const wave2 = HOLDING_ADDRESSES.filter((h) => h.clusterId === 'galaxy-july31');
+    expect(wave2).toHaveLength(2);
+    expect(
+      WAVE2_FINGERPRINT.vaultBtc + WAVE2_FINGERPRINT.collectorBtc,
+    ).toBeCloseTo(
+      wave2.reduce((s, h) => s + h.reportBtc, 0),
+      8,
+    );
   });
 
   it('watches higher-value fingerprint-matched Wave 3 vaults only', () => {

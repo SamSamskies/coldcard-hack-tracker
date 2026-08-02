@@ -37,6 +37,8 @@ export const WAVE3_FINGERPRINT = {
   blockEnd: 960_471,
   feeSatPerVbMin: 180,
   feeSatPerVbMax: 220,
+  /** Galaxy’s Wave 3 victim count from their Aug 1 map. */
+  victimAddresses: 1912,
   galaxyVaults: 293,
   galaxyHeldBtc: 207.73,
   matchedVaults: WAVE3_VAULT_COUNT,
@@ -44,6 +46,17 @@ export const WAVE3_FINGERPRINT = {
   minWatchBtc: WAVE3_MIN_WATCH_BTC,
   summary:
     'Not Galaxy’s published address list. Matched their Wave 3 fingerprint (blocks 960396–960471, ~180–220 sat/vB, park → P2WSH vault), cross-checked against the public COLDCARD RNG chain map, then kept only higher-value vaults (≥ 0.5 BTC) so the cron snapshot stays reliable on public explorers. Smaller vaults are omitted on purpose. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC.',
+} as const;
+
+/** Galaxy Wave 2 markers from their Aug 1 map. */
+export const WAVE2_FINGERPRINT = {
+  blockStart: 960_345,
+  blockEnd: 960_369,
+  victimAddresses: 1478,
+  /** Two fee bands in the same wave. */
+  feeSatPerVb: [50, 10] as const,
+  vaultBtc: 45.90251994,
+  collectorBtc: 30.18476329,
 } as const;
 
 /** Primary July 30 window (Galaxy Wave 1) mapped from Block’s fingerprint. */
@@ -100,7 +113,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 1 · July 30',
     stolenBtc: 1082.65,
     date: '2026-07-30',
-    note: 'Blocks 960183–960191 · fixed 30 sat/vB · four consolidation holdings.',
+    note: 'Four consolidation holdings. Multi-path key-scan signature (BIP-84/49/44).',
     sourceUrl: 'https://x.com/glxyresearch/status/2083181683067506899',
   },
   {
@@ -108,7 +121,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 2 · July 31',
     stolenBtc: 76.16,
     date: '2026-07-31',
-    note: 'Blocks 960345–960369 · 1,478 addresses · fees 50 and 10 sat/vB. ~45.90 BTC consolidated to the watched vault; ~30.18 BTC still at the unmoved collector.',
+    note: 'Two fee bands into a watched vault plus an unmoved collector.',
     sourceUrl: 'https://x.com/glxyresearch/status/2083560940469981591',
   },
   {
@@ -116,7 +129,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 3 · Jul 31–Aug 1',
     stolenBtc: 208.24,
     date: '2026-07-31',
-    note: `Blocks 960396–960471 · Galaxy: ~1,912 victims, ~200 sat/vB, 293 park→P2WSH vaults (~207.73 BTC). Not Galaxy’s published list — fingerprint-matched + RNG chain map, then ≥ ${WAVE3_MIN_WATCH_BTC} BTC only (attribution below).`,
+    note: `Not Galaxy’s published list — fingerprint-matched + RNG chain map, then ≥ ${WAVE3_MIN_WATCH_BTC} BTC only.`,
     sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
   },
   {
