@@ -70,7 +70,8 @@ export type ClusterId =
   | 'galaxy-july31'
   | 'galaxy-wave3'
   | 'evening-july31'
-  | 'morning-aug1';
+  | 'morning-aug1'
+  | 'early-aug2';
 
 export type Cluster = {
   id: ClusterId;
@@ -90,6 +91,8 @@ export type Cluster = {
 /**
  * Named consolidation clusters. Galaxy Waves 1–3 are attributed to the same
  * operator; evening/morning waves may differ (fingerprint / community report).
+ * Early Aug 2 consolidation matches the weak-seed sweep profile but is not a
+ * Galaxy-published wave.
  */
 export const CLUSTERS: readonly Cluster[] = [
   {
@@ -136,6 +139,18 @@ export const CLUSTERS: readonly Cluster[] = [
     date: '2026-08-01',
     note: 'Blocks 960518–960523. Direct victim sweeps (~15–50 sat/vB) into one vault; honey-pot / duress-wallet report (Mk4 claim later withdrawn — seed was Mk3-origin).',
     sourceUrl: 'https://x.com/TomerStrolight/status/2083578868191957292',
+  },
+  {
+    id: 'early-aug2',
+    label: 'Early Aug 2 consolidation',
+    /**
+     * Sum of 902 victim inputs in the consolidation tx. ~0.0057 BTC burned as
+     * fees; 64.90373764 BTC landed in the watched vault.
+     */
+    stolenBtc: 64.90947964,
+    date: '2026-08-02',
+    note: 'Confirmed 04:03 UTC Aug 2 · block 960668 · ~9 sat/vB · 902 inputs from 795 addresses into one P2WPKH. Multi-path mix (P2WPKH/P2PKH/P2SH); sampled inputs long-dormant and funded after the March 2021 vuln window. Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 victim report.',
+    sourceUrl: 'https://x.com/mariusoffchain/status/2083814011859030252',
   },
 ] as const;
 
@@ -185,6 +200,11 @@ export const SOURCES = [
     label: 'Tomer Strolight',
     note: 'Aug 1 morning wave: duress-wallet honey pot swept into a ~0.33 BTC vault; Mk4 attribution later corrected to Mk3-origin seed.',
     url: 'https://x.com/TomerStrolight/status/2083578868191957292',
+  },
+  {
+    label: 'Marius Offchain',
+    note: 'Early Aug 2 consolidation (04:03 UTC): ~65 BTC from ~795 addresses into one vault (community Mk2 drain report); not a Galaxy-published wave.',
+    url: 'https://x.com/mariusoffchain/status/2083814011859030252',
   },
   {
     label: 'Coinkite advisory',
@@ -287,6 +307,13 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     reportBtc: 0.33203236,
     clusterId: 'morning-aug1',
     note: '0.33203236 BTC from 16 victim sweeps; still unspent',
+  },
+  {
+    address: 'bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m',
+    label: 'Aug 2 vault',
+    reportBtc: 64.90373764,
+    clusterId: 'early-aug2',
+    note: '64.90373764 BTC consolidated from 902 inputs (795 addresses) at 04:03 UTC Aug 2; still unspent',
   },
 ];
 
