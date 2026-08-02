@@ -47,7 +47,7 @@ const POINTS = [
   },
   {
     label: 'Lower risk',
-    text: 'At least 50 private dice rolls at seed creation. A long truly random BIP-39 passphrase (not the device PIN) may buy time, but weak passphrases are not a safe bet — still migrate when practical.',
+    text: 'At least 50 private dice rolls at seed creation. A long truly random BIP-39 passphrase (not the device PIN) may buy time, but weak passphrases are not enough — [BTC Sessions](https://x.com/BTCsessions/status/2084024733511921691) reported a confirmed Mk3 drain with a two-word passphrase. Still migrate when practical.',
   },
   {
     label: 'Not this bug',
