@@ -5,7 +5,8 @@ description: >-
   wave fingerprints, consolidation vaults, collectors, hop cash-outs, and
   snapshot data. Use when researching the Coldcard RNG/seed-entropy hack,
   finding or verifying BTC addresses, updating incident.ts or wave3Vaults.ts,
-  investigating a new wave, or refreshing on-chain facts for this repo.
+  investigating a new wave, checking X/Reddit/community reports, or refreshing
+  on-chain facts for this repo.
 ---
 
 # Coldcard Hack Research
@@ -25,8 +26,9 @@ Canonical facts live in code; explorers only supply live balances.
 1. **Read repo first** — `src/data/incident.ts`, `src/data/wave3Vaults.ts`, tests, README. Do not invent addresses that contradict existing clusters.
 2. **Firecrawl** — search/scrape articles, advisories, and any public pages. Prefer writing to `.firecrawl/` (already gitignored).
 3. **X/Twitter** — scrape via **[xcancel.com](https://xcancel.com/)** first: rewrite `https://x.com/...` → `https://xcancel.com/...` (same path). It usually returns readable thread text plus original media URLs (`pbs.twimg.com/...name=orig`) needed for Galaxy chart OCR. Keep the canonical `x.com` URL in `sourceUrl` citations. If xcancel fails, try `x.com` directly, then ask the user for text/screenshot. Never guess totals from a broken scrape.
-4. **On-chain** — public Esplora only. Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
-5. **OCR** — for chart images (Galaxy maps), use local Vision/OCR; do not trust eyeballed BTC figures.
+4. **Reddit** — search `r/Bitcoin`, `r/BitcoinBeginners`, `r/coldcard`, and general web results for Coldcard / sweep / consolidation posts. Community reports often land here before press. Treat posts as leads only: pull primary X/blog links and verify on-chain before editing data. Prefer old.reddit.com or Firecrawl scrape of the thread URL when the redesign is noisy.
+5. **On-chain** — public Esplora only. Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
+6. **OCR** — for chart images (Galaxy maps), use local Vision/OCR; do not trust eyeballed BTC figures.
 
 Details: [reference.md](reference.md).
 
@@ -48,12 +50,12 @@ Galaxy Waves 1–3 `stolenBtc` must continue to sum to `GALAXY.totalStolenBtc` (
 Task:
 - [ ] Identify claim (new wave / new vault / cash-out / total update)
 - [ ] Locate primary source (Galaxy X, community reporter, advisory)
+- [ ] Check Reddit for corroborating / earlier community leads
 - [ ] Extract fingerprint: blocks, fee sat/vB, structure (1-out sweep, park→P2WSH, etc.)
 - [ ] Cross-check on-chain (address balance, funding txs, fee rates)
 - [ ] Decide: core holding vs Wave 3 watch vs label-only
 - [ ] Edit data + tests; run npm test; optionally npm run snapshot
 ```
-
 ### Classifying addresses
 
 | Role | Meaning | Where it goes |
