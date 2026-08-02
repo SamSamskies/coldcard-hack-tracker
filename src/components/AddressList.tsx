@@ -92,19 +92,18 @@ function GalaxyWave1Meta() {
 function GalaxyWave3Meta() {
   const fp = WAVE3_FINGERPRINT;
   return (
-    <div className="fingerprint-callout">
-      <p className="fingerprint-title">Why these look like stolen Wave 3 funds</p>
-      <p className="fingerprint-body">{fp.summary}</p>
+    <div className="cashout-flow">
+      <p className="cashout-flow-label">Wave 3 attribution</p>
       <dl className="cluster-meta">
         <div>
           <dt>Watched</dt>
           <dd>
             <span className="meta-primary">
-              {fp.matchedVaults.toLocaleString()} P2WSH vaults ·{' '}
+              {fp.matchedVaults.toLocaleString()} P2WSH ·{' '}
               {formatBtc(fp.matchedHeldBtc)} BTC
             </span>
             <span className="meta-sub">
-              ≥ {formatBtc(fp.minWatchBtc)} BTC each · snapshot · Galaxy ~
+              ≥ {formatBtc(fp.minWatchBtc)} BTC · Galaxy ~
               {fp.galaxyVaults} / ~{formatBtc(fp.galaxyHeldBtc)} BTC
             </span>
           </dd>
@@ -121,7 +120,7 @@ function GalaxyWave3Meta() {
           <dt>Fee window</dt>
           <dd>
             <span className="meta-primary">
-              {fp.feeSatPerVbMin}–{fp.feeSatPerVbMax} sat/vB · no change
+              {fp.feeSatPerVbMin}–{fp.feeSatPerVbMax} sat/vB
             </span>
             <span className="meta-sub">Galaxy: ~200 sat/vB</span>
           </dd>
@@ -129,8 +128,8 @@ function GalaxyWave3Meta() {
         <div>
           <dt>Pattern</dt>
           <dd>
-            <span className="meta-primary">park → P2WSH vault</span>
-            <span className="meta-sub">still funded at match time</span>
+            <span className="meta-primary">park → P2WSH</span>
+            <span className="meta-sub">RNG map cross-check</span>
           </dd>
         </div>
       </dl>

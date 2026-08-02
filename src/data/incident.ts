@@ -116,7 +116,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 3 · Jul 31–Aug 1',
     stolenBtc: 208.24,
     date: '2026-07-31',
-    note: `Blocks 960396–960471 · Galaxy: ~1,912 victims, ~200 sat/vB, 293 park→P2WSH vaults (~207.73 BTC). Watching ${WAVE3_VAULT_COUNT} higher-value fingerprint matches (≥ ${WAVE3_MIN_WATCH_BTC} BTC each, ~${WAVE3_VAULT_REPORT_BTC.toFixed(2)} BTC) — see attribution below.`,
+    note: `Blocks 960396–960471 · Galaxy: ~1,912 victims, ~200 sat/vB, 293 park→P2WSH vaults (~207.73 BTC). Not Galaxy’s published list — fingerprint-matched + RNG chain map, then ≥ ${WAVE3_MIN_WATCH_BTC} BTC only (attribution below).`,
     sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
   },
   {
