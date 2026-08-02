@@ -928,16 +928,15 @@ button:focus-visible {
   opacity: 0.55;
 }
 
-.cashout-parked {
-  white-space: nowrap;
+.cashout-note {
+  white-space: normal;
 }
 
-@media (max-width: 719px) {
-  .cashout-parked {
-    display: block;
-    margin-top: 0.2rem;
-    white-space: normal;
-  }
+.cashout-parked {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.76rem;
+  color: var(--text-muted);
 }
 
 .address-table-wrap.is-scrollable {

@@ -201,8 +201,21 @@ function EveningCashoutFlow() {
             >
               0xC61F…
             </a>
+            <span className="cashout-note">
+              {' '}
+              · also ~3.6 ETH via{' '}
+              <a
+                className="mono note-link"
+                href="https://etherscan.io/address/0x3bDB03ad7363152DFBc185Ee23eBC93F0CF93fd1"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Orbiter Bridge 3
+              </a>{' '}
+              peels
+            </span>
             <span className="cashout-parked">
-              · ~0.27 still at{' '}
+              Sibling ~0.27 BTC still at{' '}
               <a
                 className="mono note-link"
                 href={explorerAddressUrl(
