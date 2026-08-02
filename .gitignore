@@ -21,6 +21,7 @@ scripts/wave3-out/
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+.cursor/
 .idea
 .DS_Store
 *.suo
