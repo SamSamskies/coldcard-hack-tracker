@@ -25,6 +25,8 @@ export type TxStatus = {
 };
 
 export type TxVin = {
+  /** Previous txid when the explorer includes it (needed for same-block ordering). */
+  txid?: string;
   prevout?: {
     scriptpubkey_address?: string;
     value: number;

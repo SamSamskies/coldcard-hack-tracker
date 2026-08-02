@@ -64,6 +64,70 @@ function txChronologicalKey(tx: Tx): number {
   return tx.status.block_height ?? tx.status.block_time ?? 0;
 }
 
+function compareTxChronology(a: Tx, b: Tx): number {
+  const ka = txChronologicalKey(a);
+  const kb = txChronologicalKey(b);
+  if (ka !== kb) return ka - kb;
+  return a.txid.localeCompare(b.txid);
+}
+
+/**
+ * Oldest-first, with same-block parents before children (via vin.txid).
+ * Needed when a surplus deposit and its peel land in the same block —
+ * lexicographic txid order alone can put the peel first and break the filter.
+ */
+export function orderTxsForBalance(txs: readonly Tx[]): Tx[] {
+  if (txs.length <= 1) return [...txs];
+
+  const byId = new Map(txs.map((t) => [t.txid, t]));
+  const ids = new Set(byId.keys());
+  const indegree = new Map<string, number>();
+  const children = new Map<string, string[]>();
+
+  for (const t of txs) {
+    indegree.set(t.txid, 0);
+    children.set(t.txid, []);
+  }
+
+  for (const t of txs) {
+    const seenParents = new Set<string>();
+    for (const vin of t.vin) {
+      const parent = vin.txid;
+      if (!parent || !ids.has(parent) || seenParents.has(parent)) continue;
+      seenParents.add(parent);
+      children.get(parent)!.push(t.txid);
+      indegree.set(t.txid, (indegree.get(t.txid) ?? 0) + 1);
+    }
+  }
+
+  const ready = txs
+    .filter((t) => (indegree.get(t.txid) ?? 0) === 0)
+    .sort(compareTxChronology);
+  const out: Tx[] = [];
+
+  while (ready.length > 0) {
+    const t = ready.shift()!;
+    out.push(t);
+    for (const childId of children.get(t.txid) ?? []) {
+      const next = (indegree.get(childId) ?? 1) - 1;
+      indegree.set(childId, next);
+      if (next === 0) {
+        const child = byId.get(childId);
+        if (child) {
+          ready.push(child);
+          ready.sort(compareTxChronology);
+        }
+      }
+    }
+  }
+
+  if (out.length < txs.length) {
+    const seen = new Set(out.map((t) => t.txid));
+    out.push(...txs.filter((t) => !seen.has(t.txid)).sort(compareTxChronology));
+  }
+  return out;
+}
+
 function addressDeltaSats(tx: Tx, address: string): number {
   const spent = tx.vin
     .filter((v) => v.prevout?.scriptpubkey_address === address)
@@ -85,12 +149,7 @@ export function isSurplusPassThrough(
   txid: string,
 ): boolean {
   const thresholdSats = reportBtc * SATS_PER_BTC * 0.99;
-  const ordered = [...txs].sort((a, b) => {
-    const ka = txChronologicalKey(a);
-    const kb = txChronologicalKey(b);
-    if (ka !== kb) return ka - kb;
-    return a.txid.localeCompare(b.txid);
-  });
+  const ordered = orderTxsForBalance(txs);
 
   let balanceSats = 0;
   for (const tx of ordered) {

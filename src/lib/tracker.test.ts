@@ -7,6 +7,7 @@ import {
   isPostWatch,
   isSurplusPassThrough,
   movementsFromWatch,
+  orderTxsForBalance,
   shouldTrackSeedOutbounds,
   sortMovements,
   statusFor,
@@ -141,16 +142,21 @@ describe('movementsFromWatch', () => {
       blockHeight: WATCH_AFTER_BLOCK + 1,
     });
     const fundMiner = makeTx({
-      txid: 'fund-miner',
+      txid: 'zz-fund-miner', // sorts after peel by txid; same block as peel
       vin: [{ prevout: { scriptpubkey_address: hop, value: minerSats } }],
       vout: [{ scriptpubkey_address: vault, value: minerSats }],
       blockHeight: WATCH_AFTER_BLOCK + 2,
     });
     const peel = makeTx({
-      txid: 'ocean-peel',
-      vin: [{ prevout: { scriptpubkey_address: vault, value: minerSats } }],
+      txid: 'aa-ocean-peel', // would sort before fund by txid without topo order
+      vin: [
+        {
+          txid: 'zz-fund-miner',
+          prevout: { scriptpubkey_address: vault, value: minerSats },
+        },
+      ],
       vout: [{ scriptpubkey_address: hop, value: minerSats - 7_700 }],
-      blockHeight: WATCH_AFTER_BLOCK + 3,
+      blockHeight: WATCH_AFTER_BLOCK + 2,
     });
     const empty = makeTx({
       txid: 'empty-stack',
@@ -173,9 +179,15 @@ describe('movementsFromWatch', () => {
       reportBtc: reportSats / 100_000_000,
     };
 
-    expect(isSurplusPassThrough(vault, seed.reportBtc!, txs, 'ocean-peel')).toBe(
-      true,
-    );
+    expect(orderTxsForBalance(txs).map((t) => t.txid)).toEqual([
+      'fund-report',
+      'zz-fund-miner',
+      'aa-ocean-peel',
+      'empty-stack',
+    ]);
+    expect(
+      isSurplusPassThrough(vault, seed.reportBtc!, txs, 'aa-ocean-peel'),
+    ).toBe(true);
     expect(
       isSurplusPassThrough(vault, seed.reportBtc!, txs, 'empty-stack'),
     ).toBe(false);
