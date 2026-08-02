@@ -95,7 +95,7 @@ export function StolenTimeline({ usdPrice }: Props) {
           </p>
           <p className="timeline-total-usd">
             {usdPrice != null
-              ? `${formatUsd(ORIGINAL_STOLEN_BTC * usdPrice)} at spot`
+              ? formatUsd(ORIGINAL_STOLEN_BTC * usdPrice)
               : 'Across tracked clusters'}
           </p>
           <p className="timeline-total-note">
