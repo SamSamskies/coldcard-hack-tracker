@@ -6,6 +6,7 @@ import {
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
+  WAVE3_FINGERPRINT,
   type ClusterId,
 } from '../data/incident';
 import { formatBtc, formatUsd, truncateAddress } from '../lib/format';
@@ -87,6 +88,55 @@ function GalaxyWave1Meta() {
   );
 }
 
+function GalaxyWave3Meta() {
+  const fp = WAVE3_FINGERPRINT;
+  return (
+    <div className="fingerprint-callout">
+      <p className="fingerprint-title">Why these look like stolen Wave 3 funds</p>
+      <p className="fingerprint-body">{fp.summary}</p>
+      <dl className="cluster-meta">
+        <div>
+          <dt>Watched</dt>
+          <dd>
+            <span className="meta-primary">
+              {fp.matchedVaults.toLocaleString()} P2WSH vaults ·{' '}
+              {formatBtc(fp.matchedHeldBtc)} BTC
+            </span>
+            <span className="meta-sub">
+              snapshot · Galaxy ~{fp.galaxyVaults} / ~
+              {formatBtc(fp.galaxyHeldBtc)} BTC
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt>Blocks</dt>
+          <dd>
+            <span className="meta-primary">
+              {fp.blockStart.toLocaleString()}–{fp.blockEnd.toLocaleString()}
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt>Fee window</dt>
+          <dd>
+            <span className="meta-primary">
+              {fp.feeSatPerVbMin}–{fp.feeSatPerVbMax} sat/vB · no change
+            </span>
+            <span className="meta-sub">Galaxy: ~200 sat/vB</span>
+          </dd>
+        </div>
+        <div>
+          <dt>Pattern</dt>
+          <dd>
+            <span className="meta-primary">park → P2WSH vault</span>
+            <span className="meta-sub">still funded at match time</span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 function AddressRow({
   address: a,
   usdPrice,
@@ -144,7 +194,7 @@ function TableHead() {
 
 export function AddressList({ addresses, usdPrice, loading }: Props) {
   const groups = groupByCluster(addresses);
-  const unwatchedBtc = ORIGINAL_STOLEN_BTC - CONSOLIDATED_BTC;
+  const watchedGap = ORIGINAL_STOLEN_BTC - CONSOLIDATED_BTC;
 
   return (
     <section className="panel" aria-labelledby="addresses-heading">
@@ -155,10 +205,11 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
           clusters. Galaxy’s same-operator total is{' '}
           {formatBtc(GALAXY.totalStolenBtc)} BTC across{' '}
           {GALAXY.victimAddresses.toLocaleString()} addresses.{' '}
-          {formatBtc(CONSOLIDATED_BTC)} BTC sits in addresses we poll live; the
-          remaining ~{formatBtc(unwatchedBtc)} BTC is mostly Galaxy Wave 3’s
-          293 P2WSH vaults plus fees. Evening/morning waves may be different
-          operators.
+          {formatBtc(CONSOLIDATED_BTC)} BTC is in watched holdings (core vaults
+          live-polled; {WAVE3_FINGERPRINT.matchedVaults} Wave 3 vaults from the
+          cron snapshot). The remaining ~{formatBtc(watchedGap)} BTC is mostly
+          unmatched Wave 3 vaults plus fees. Evening/morning waves may be
+          different operators.
         </p>
       </div>
 
@@ -167,7 +218,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
           <table className="address-table">
             <TableHead />
             <tbody>
-              {Array.from({ length: HOLDING_ADDRESSES.length }, (_, i) => (
+              {Array.from({ length: Math.min(HOLDING_ADDRESSES.length, 12) }, (_, i) => (
                 <tr key={i} className="skeleton-row">
                   <td colSpan={6}>Loading address…</td>
                 </tr>
@@ -179,6 +230,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
         groups.map(({ clusterId, rows }) => {
           const cluster = CLUSTER_BY_ID[clusterId];
           const headingId = `cluster-${clusterId}`;
+          const isWave3 = clusterId === 'galaxy-wave3';
 
           return (
             <article
@@ -190,6 +242,12 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                 <div className="cluster-head-top">
                   <h3 className="cluster-label" id={headingId}>
                     {cluster.label}
+                    {isWave3 && rows.length > 0 ? (
+                      <span className="cluster-count">
+                        {' '}
+                        · {rows.length} vaults
+                      </span>
+                    ) : null}
                   </h3>
                   {cluster.sourceUrl ? (
                     <a
@@ -204,6 +262,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                 </div>
                 <p className="cluster-note">{cluster.note}</p>
                 {clusterId === 'galaxy-july30' ? <GalaxyWave1Meta /> : null}
+                {isWave3 ? <GalaxyWave3Meta /> : null}
               </header>
 
               {rows.length === 0 ? (
@@ -212,7 +271,9 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                   {formatBtc(cluster.stolenBtc)} BTC in Galaxy’s total).
                 </p>
               ) : (
-                <div className="address-table-wrap">
+                <div
+                  className={`address-table-wrap${isWave3 ? ' is-scrollable' : ''}`}
+                >
                   <table className="address-table">
                     <TableHead />
                     <tbody>

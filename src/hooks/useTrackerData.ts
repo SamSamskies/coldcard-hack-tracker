@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  ADDRESS_FETCH_CONCURRENCY,
   CONSOLIDATED_BTC,
+  CORE_HOLDING_ADDRESSES,
   HOLDING_ADDRESSES,
   MAX_HOP_DEPTH,
   MAX_HOP_WATCH_ADDRESSES,
   REFRESH_INTERVAL_MS,
+  SATS_PER_BTC,
+  SNAPSHOT_REFRESH_INTERVAL_MS,
   type HoldingAddress,
 } from '../data/incident';
 import {
@@ -17,6 +21,8 @@ import {
   type AddressResponse,
   type Tx,
 } from '../lib/mempool';
+import { mapPool } from '../lib/pool';
+import { fetchSnapshot, type Snapshot } from '../lib/snapshot';
 import {
   discoverNextHops,
   heldStats,
@@ -48,6 +54,7 @@ export type TrackerData = {
   movements: Movement[];
   lastMovement: Movement | null;
   lastUpdated: Date | null;
+  snapshotUpdatedAt: Date | null;
   source: string | null;
   loading: boolean;
   error: string | null;
@@ -62,167 +69,332 @@ function utxoEstimate(addr: AddressResponse): number {
   );
 }
 
+function reportAsLive(h: HoldingAddress, prev?: LiveAddress): LiveAddress {
+  if (prev) return { ...prev, flash: false };
+  const balanceSats = Math.round(h.reportBtc * SATS_PER_BTC);
+  return {
+    ...h,
+    balanceBtc: h.reportBtc,
+    balanceSats,
+    utxoCount: 0,
+    status: 'held',
+  };
+}
+
+function liveFromSats(
+  h: HoldingAddress,
+  balanceSats: number,
+  utxoCount: number,
+  prevBalance: number | undefined,
+): LiveAddress {
+  const balanceBtc = satsToBtc(balanceSats);
+  const changed = prevBalance !== undefined && prevBalance !== balanceSats;
+  return {
+    ...h,
+    balanceBtc,
+    balanceSats,
+    utxoCount,
+    status: statusFor(balanceBtc, h.reportBtc),
+    flash: changed,
+  };
+}
+
+function dedupeMovements(items: Movement[]): Movement[] {
+  const seen = new Set<string>();
+  const out: Movement[] = [];
+  for (const m of sortMovements(items)) {
+    const key = `${m.txid}:${m.fromAddress}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(m);
+  }
+  return out;
+}
+
 export function useTrackerData(): TrackerData {
   const [addresses, setAddresses] = useState<LiveAddress[]>([]);
   const [usdPrice, setUsdPrice] = useState<number | null>(null);
   const [movements, setMovements] = useState<Movement[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [snapshotUpdatedAt, setSnapshotUpdatedAt] = useState<Date | null>(null);
   const [source, setSource] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const prevBalances = useRef<Map<string, number>>(new Map());
   const flashTimers = useRef<Map<string, number>>(new Map());
-  /** Destinations discovered from prior polls; survives a single missed tx page. */
   const hopWatchRef = useRef<Map<string, WatchTarget>>(new Map());
+  const addressesRef = useRef<LiveAddress[]>([]);
+  const snapshotMovementsRef = useRef<Movement[]>([]);
+  const liveMovementsRef = useRef<Movement[]>([]);
+  const snapshotAtRef = useRef(0);
+  const liveSourceRef = useRef<string | null>(null);
+  const hasSnapshotRef = useRef(false);
 
-  const refresh = useCallback(async () => {
-    try {
-      setError(null);
+  const scheduleFlashClear = useCallback((address: string) => {
+    const existing = flashTimers.current.get(address);
+    if (existing) window.clearTimeout(existing);
+    const t = window.setTimeout(() => {
+      setAddresses((curr) =>
+        curr.map((a) => (a.address === address ? { ...a, flash: false } : a)),
+      );
+      flashTimers.current.delete(address);
+    }, 1600);
+    flashTimers.current.set(address, t);
+  }, []);
 
-      const seedWatches: WatchTarget[] = HOLDING_ADDRESSES.map((h) => ({
+  const publishMovements = useCallback(() => {
+    setMovements(
+      dedupeMovements([
+        ...snapshotMovementsRef.current,
+        ...liveMovementsRef.current,
+      ]),
+    );
+  }, []);
+
+  const updateSourceLabel = useCallback(() => {
+    const live = liveSourceRef.current;
+    if (live && hasSnapshotRef.current) {
+      setSource(`${live} · Wave 3 snapshot`);
+    } else if (live) {
+      setSource(live);
+    } else if (hasSnapshotRef.current) {
+      setSource('snapshot');
+    }
+  }, []);
+
+  /** Apply snapshot to Wave 3 rows; optionally seed core if we have no live data yet. */
+  const applySnapshot = useCallback(
+    (snapshot: Snapshot, opts: { seedCore: boolean }) => {
+      const prevByAddr = new Map(
+        addressesRef.current.map((a) => [a.address, a]),
+      );
+      const snapByAddr = new Map(
+        snapshot.addresses.map((a) => [a.address, a]),
+      );
+      const hasLiveCore = addressesRef.current.some(
+        (a) => a.clusterId !== 'galaxy-wave3',
+      );
+
+      const live = HOLDING_ADDRESSES.map((h) => {
+        const isWave3 = h.clusterId === 'galaxy-wave3';
+        const shouldSeed =
+          isWave3 || (opts.seedCore && !hasLiveCore) || !prevByAddr.has(h.address);
+
+        if (!shouldSeed && !isWave3) {
+          return reportAsLive(h, prevByAddr.get(h.address));
+        }
+
+        const row = snapByAddr.get(h.address);
+        if (!row) return reportAsLive(h, prevByAddr.get(h.address));
+
+        const prev = prevBalances.current.get(h.address);
+        prevBalances.current.set(h.address, row.balanceSats);
+        const next = liveFromSats(h, row.balanceSats, row.utxoCount, prev);
+        if (next.flash) scheduleFlashClear(h.address);
+        return next;
+      });
+
+      addressesRef.current = live;
+      snapshotMovementsRef.current = snapshot.movements;
+      snapshotAtRef.current = Date.parse(snapshot.updatedAt) || Date.now();
+      hasSnapshotRef.current = true;
+      setAddresses(live);
+      setSnapshotUpdatedAt(new Date(snapshotAtRef.current));
+      if (snapshot.usdPrice != null) setUsdPrice(snapshot.usdPrice);
+      publishMovements();
+      if (!liveSourceRef.current) {
+        setLastUpdated(new Date(snapshotAtRef.current));
+      }
+      updateSourceLabel();
+    },
+    [publishMovements, scheduleFlashClear, updateSourceLabel],
+  );
+
+  const refreshSnapshot = useCallback(async () => {
+    const snapshot = await fetchSnapshot();
+    if (!snapshot) return false;
+    const t = Date.parse(snapshot.updatedAt) || 0;
+    const seedCore = addressesRef.current.length === 0;
+    if (!seedCore && t && t <= snapshotAtRef.current) return true;
+    applySnapshot(snapshot, { seedCore });
+    return true;
+  }, [applySnapshot]);
+
+  const refreshLive = useCallback(async () => {
+    const prevByAddr = new Map(
+      addressesRef.current.map((a) => [a.address, a]),
+    );
+
+    const [summaryResults, price] = await Promise.all([
+      mapPool(CORE_HOLDING_ADDRESSES, ADDRESS_FETCH_CONCURRENCY, async (h) => {
+        try {
+          return await fetchAddress(h.address);
+        } catch {
+          return null;
+        }
+      }),
+      fetchUsdPrice().catch(() => null),
+    ]);
+
+    const summaryByAddr = new Map<string, AddressResponse>();
+    CORE_HOLDING_ADDRESSES.forEach((h, i) => {
+      const summary = summaryResults[i];
+      if (summary) summaryByAddr.set(h.address, summary);
+    });
+
+    const coreOk = CORE_HOLDING_ADDRESSES.some((h) =>
+      summaryByAddr.has(h.address),
+    );
+    if (!coreOk) {
+      throw new Error(
+        'Could not load core holding balances from any explorer',
+      );
+    }
+
+    const live: LiveAddress[] = HOLDING_ADDRESSES.map((h) => {
+      if (h.clusterId === 'galaxy-wave3') {
+        return reportAsLive(h, prevByAddr.get(h.address));
+      }
+
+      const summary = summaryByAddr.get(h.address);
+      if (!summary) {
+        return reportAsLive(h, prevByAddr.get(h.address));
+      }
+
+      const balanceSats = addressBalanceSats(summary);
+      const prev = prevBalances.current.get(h.address);
+      const row = liveFromSats(
+        h,
+        balanceSats,
+        Math.max(0, utxoEstimate(summary)),
+        prev,
+      );
+      prevBalances.current.set(h.address, balanceSats);
+      if (row.flash) scheduleFlashClear(h.address);
+      return row;
+    });
+
+    const activeSeeds: WatchTarget[] = [];
+    const activeAddrs: string[] = [];
+    for (const h of CORE_HOLDING_ADDRESSES) {
+      const summary = summaryByAddr.get(h.address);
+      if (!summary) continue;
+      const balanceBtc = satsToBtc(addressBalanceSats(summary));
+      if (!shouldTrackSeedOutbounds(balanceBtc, h.reportBtc)) continue;
+      activeSeeds.push({
         address: h.address,
         label: h.label,
         hop: 0,
-      }));
-
-      const [summaries, price, ...seedTxLists] = await Promise.all([
-        Promise.all(HOLDING_ADDRESSES.map((h) => fetchAddress(h.address))),
-        fetchUsdPrice().catch(() => null),
-        ...HOLDING_ADDRESSES.map((h) =>
-          fetchAddressTxs(h.address).catch(() => [] as Tx[]),
-        ),
-      ]);
-
-      // Ignore outbounds from vaults that still hold their reportBtc. Those are
-      // later surplus / unrelated churn, not the reported stolen stack moving.
-      const reportTouched = new Set(
-        HOLDING_ADDRESSES.filter((h, i) => {
-          const balanceBtc = satsToBtc(addressBalanceSats(summaries[i]));
-          return shouldTrackSeedOutbounds(balanceBtc, h.reportBtc);
-        }).map((h) => h.address),
-      );
-
-      const activeSeeds: WatchTarget[] = [];
-      const activeSeedTxLists: Tx[][] = [];
-      seedWatches.forEach((w, i) => {
-        if (!reportTouched.has(w.address)) return;
-        activeSeeds.push(w);
-        activeSeedTxLists.push((seedTxLists as Tx[][])[i] ?? []);
       });
+      activeAddrs.push(h.address);
+    }
 
-      const known = new Set(seedWatches.map((w) => w.address));
-      const allMovements = movementsFromWatch(activeSeeds, activeSeedTxLists);
+    const activeSeedTxLists = await mapPool(
+      activeAddrs,
+      ADDRESS_FETCH_CONCURRENCY,
+      (addr) => fetchAddressTxs(addr).catch(() => [] as Tx[]),
+    );
 
-      // Only follow hops from report-impacting spends (rebuild each poll).
-      hopWatchRef.current.clear();
-      const freshHops = discoverNextHops(
-        activeSeeds,
-        activeSeedTxLists,
-        known,
-        MAX_HOP_WATCH_ADDRESSES,
+    const known = new Set(HOLDING_ADDRESSES.map((h) => h.address));
+    const allMovements = movementsFromWatch(activeSeeds, activeSeedTxLists);
+
+    hopWatchRef.current.clear();
+    const freshHops = discoverNextHops(
+      activeSeeds,
+      activeSeedTxLists,
+      known,
+      MAX_HOP_WATCH_ADDRESSES,
+    );
+    for (const hop of freshHops) {
+      hopWatchRef.current.set(hop.address, hop);
+      known.add(hop.address);
+    }
+
+    let hopWatches = [...hopWatchRef.current.values()]
+      .filter((w) => w.hop >= 1 && w.hop <= MAX_HOP_DEPTH)
+      .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
+      .slice(0, MAX_HOP_WATCH_ADDRESSES);
+
+    for (const w of hopWatches) known.add(w.address);
+
+    for (let round = 0; round < MAX_HOP_DEPTH && hopWatches.length > 0; round++) {
+      const hopTxLists = await mapPool(
+        hopWatches,
+        ADDRESS_FETCH_CONCURRENCY,
+        (w) => fetchAddressTxs(w.address).catch(() => [] as Tx[]),
       );
-      for (const hop of freshHops) {
+      allMovements.push(...movementsFromWatch(hopWatches, hopTxLists));
+
+      const slotsLeft = MAX_HOP_WATCH_ADDRESSES - hopWatchRef.current.size;
+      const next = discoverNextHops(hopWatches, hopTxLists, known, slotsLeft);
+      if (next.length === 0) break;
+
+      for (const hop of next) {
         hopWatchRef.current.set(hop.address, hop);
         known.add(hop.address);
       }
 
-      let hopWatches = [...hopWatchRef.current.values()]
-        .filter((w) => w.hop >= 1 && w.hop <= MAX_HOP_DEPTH)
+      hopWatches = next;
+    }
+
+    const keep = new Set(
+      [...hopWatchRef.current.values()]
         .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
-        .slice(0, MAX_HOP_WATCH_ADDRESSES);
+        .slice(0, MAX_HOP_WATCH_ADDRESSES)
+        .map((w) => w.address),
+    );
+    for (const addr of [...hopWatchRef.current.keys()]) {
+      if (!keep.has(addr)) hopWatchRef.current.delete(addr);
+    }
 
-      for (const w of hopWatches) known.add(w.address);
+    addressesRef.current = live;
+    liveMovementsRef.current = allMovements;
+    liveSourceRef.current = activeHostName();
+    setAddresses(live);
+    if (price != null) setUsdPrice(price);
+    publishMovements();
+    setLastUpdated(new Date());
+    updateSourceLabel();
+  }, [publishMovements, scheduleFlashClear, updateSourceLabel]);
 
-      // Iteratively deepen: hop 1 spends can reveal hop 2 destinations.
-      for (let round = 0; round < MAX_HOP_DEPTH && hopWatches.length > 0; round++) {
-        const hopTxLists = await Promise.all(
-          hopWatches.map((w) =>
-            fetchAddressTxs(w.address).catch(() => [] as Tx[]),
-          ),
-        );
-        allMovements.push(...movementsFromWatch(hopWatches, hopTxLists));
+  const refresh = useCallback(async () => {
+    setError(null);
+    try {
+      const hadSnapshot = await refreshSnapshot();
+      if (hadSnapshot) setLoading(false);
 
-        const slotsLeft = MAX_HOP_WATCH_ADDRESSES - hopWatchRef.current.size;
-        const next = discoverNextHops(hopWatches, hopTxLists, known, slotsLeft);
-        if (next.length === 0) break;
-
-        for (const hop of next) {
-          hopWatchRef.current.set(hop.address, hop);
-          known.add(hop.address);
-        }
-
-        hopWatches = next;
-      }
-
-      // Prune ref to the capped set we actually care about.
-      const keep = new Set(
-        [...hopWatchRef.current.values()]
-          .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
-          .slice(0, MAX_HOP_WATCH_ADDRESSES)
-          .map((w) => w.address),
-      );
-      for (const addr of [...hopWatchRef.current.keys()]) {
-        if (!keep.has(addr)) hopWatchRef.current.delete(addr);
-      }
-
-      const live: LiveAddress[] = HOLDING_ADDRESSES.map((h, i) => {
-        const summary = summaries[i];
-        const balanceSats = addressBalanceSats(summary);
-        const balanceBtc = satsToBtc(balanceSats);
-        const prev = prevBalances.current.get(h.address);
-        const changed = prev !== undefined && prev !== balanceSats;
-        prevBalances.current.set(h.address, balanceSats);
-
-        if (changed) {
-          const existing = flashTimers.current.get(h.address);
-          if (existing) window.clearTimeout(existing);
-          const t = window.setTimeout(() => {
-            setAddresses((curr) =>
-              curr.map((a) =>
-                a.address === h.address ? { ...a, flash: false } : a,
-              ),
-            );
-            flashTimers.current.delete(h.address);
-          }, 1600);
-          flashTimers.current.set(h.address, t);
-        }
-
-        return {
-          ...h,
-          balanceBtc,
-          balanceSats,
-          utxoCount: Math.max(0, utxoEstimate(summary)),
-          status: statusFor(balanceBtc, h.reportBtc),
-          flash: changed,
-        };
-      });
-
-      setAddresses(live);
-      if (price != null) setUsdPrice(price);
-      setMovements(sortMovements(allMovements));
-      setLastUpdated(new Date());
-      setSource(activeHostName());
+      await refreshLive();
       setLoading(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load chain data');
+      if (addressesRef.current.length === 0) {
+        setError(e instanceof Error ? e.message : 'Failed to load chain data');
+      }
       setLoading(false);
     }
-  }, []);
+  }, [refreshLive, refreshSnapshot]);
 
   useEffect(() => {
     const timers = flashTimers.current;
     void refresh();
-    const id = window.setInterval(() => void refresh(), REFRESH_INTERVAL_MS);
+    const liveId = window.setInterval(
+      () => {
+        void refreshLive().catch(() => {
+          /* keep last good core data */
+        });
+      },
+      REFRESH_INTERVAL_MS,
+    );
+    const snapId = window.setInterval(() => {
+      void refreshSnapshot();
+    }, SNAPSHOT_REFRESH_INTERVAL_MS);
     return () => {
-      window.clearInterval(id);
+      window.clearInterval(liveId);
+      window.clearInterval(snapId);
       for (const t of timers.values()) window.clearTimeout(t);
     };
-  }, [refresh]);
+  }, [refresh, refreshLive, refreshSnapshot]);
 
   const heldBtc = addresses.reduce((s, a) => s + a.balanceBtc, 0);
-  // Measured against what reached the holding addresses, so sweep fees
-  // are not reported as movement. Surplus that arrives and leaves while the
-  // report balance remains is ignored in the movement feed as well.
   const { movedBtc, heldPct } = heldStats(heldBtc, CONSOLIDATED_BTC);
 
   const lastMovement =
@@ -237,6 +409,7 @@ export function useTrackerData(): TrackerData {
     movements,
     lastMovement,
     lastUpdated,
+    snapshotUpdatedAt,
     source,
     loading,
     error,

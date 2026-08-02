@@ -1,3 +1,10 @@
+import {
+  WAVE3_MIN_WATCH_BTC,
+  WAVE3_VAULT_COUNT,
+  WAVE3_VAULT_REPORT_BTC,
+  WAVE3_VAULTS,
+} from './wave3Vaults';
+
 export const APP_NAME = 'Coldcard Hack Tracker';
 
 /** First public wave (Hamilton) before Galaxy’s fuller fingerprint set. */
@@ -15,8 +22,27 @@ export const EARLY_WAVE = {
 export const GALAXY = {
   totalStolenBtc: 1367.05,
   victimAddresses: 4585,
-  holdingAddresses: 7 + 293, // 4 W1 finals + 2 W2 + 293 W3 P2WSH vaults
+  /** Galaxy’s reported finals; our live Wave 3 watch list is a partial reconstruct. */
+  holdingAddresses: 7 + 293,
   sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
+} as const;
+
+/**
+ * How we built the Wave 3 watch list. Galaxy did not publish the 293 vault
+ * addresses; these were reconstructed from their public fingerprint.
+ */
+export const WAVE3_FINGERPRINT = {
+  blockStart: 960_396,
+  blockEnd: 960_471,
+  feeSatPerVbMin: 180,
+  feeSatPerVbMax: 220,
+  galaxyVaults: 293,
+  galaxyHeldBtc: 207.73,
+  matchedVaults: WAVE3_VAULT_COUNT,
+  matchedHeldBtc: WAVE3_VAULT_REPORT_BTC,
+  minWatchBtc: WAVE3_MIN_WATCH_BTC,
+  summary:
+    'Not Galaxy’s published address list. Matched their Wave 3 fingerprint: blocks 960396–960471, ~180–220 sat/vB no-change sweeps into fresh parks, then hops to still-funded native P2WSH vaults. Balances come from a server snapshot (cron), not live browser polls. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC.',
 } as const;
 
 /** Primary July 30 window (Galaxy Wave 1) mapped from Block’s fingerprint. */
@@ -86,7 +112,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 3 · Jul 31–Aug 1',
     stolenBtc: 208.24,
     date: '2026-07-31',
-    note: 'Blocks 960396–960471 · 1,912 addresses · ~10 sat/vB · 293 one-to-one parks into 293 P2WSH vaults (~207.73 BTC held). No shared collector — not individually watched here.',
+    note: `Blocks 960396–960471 · Galaxy: ~1,912 victims, ~200 sat/vB, 293 park→P2WSH vaults (~207.73 BTC). Watching ${WAVE3_VAULT_COUNT} fingerprint-matched P2WSH vaults (~${WAVE3_VAULT_REPORT_BTC.toFixed(2)} BTC) — see attribution below.`,
     sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
   },
   {
@@ -199,7 +225,8 @@ export type HoldingAddress = {
   note?: string;
 };
 
-export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
+/** Wave 1/2 + community vaults — live-polled in the browser. */
+export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
   {
     address: 'bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r',
     label: 'Holding 1',
@@ -260,18 +287,35 @@ export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     clusterId: 'morning-aug1',
     note: '0.33203236 BTC from 16 victim sweeps; still unspent',
   },
-] as const;
+];
+
+const WAVE3_HOLDING_ADDRESSES: readonly HoldingAddress[] = WAVE3_VAULTS.map(
+  (v) => ({
+    address: v.address,
+    label: v.label,
+    reportBtc: v.reportBtc,
+    clusterId: 'galaxy-wave3' as const,
+  }),
+);
+
+export const HOLDING_ADDRESSES: readonly HoldingAddress[] = [
+  ...CORE_HOLDING_ADDRESSES,
+  ...WAVE3_HOLDING_ADDRESSES,
+];
 
 /**
  * What actually landed in watched holding addresses. Lower than
  * ORIGINAL_STOLEN_BTC because sweep/consolidation fees burned sats and because
- * Galaxy Wave 3 (293 P2WSH vaults) is not individually watched, so this is the
+ * the Wave 3 watch list is a partial fingerprint reconstruct, so this is the
  * baseline for "is the watched stack still there".
  */
 export const CONSOLIDATED_BTC = HOLDING_ADDRESSES.reduce(
   (sum, h) => sum + h.reportBtc,
   0,
 );
+
+/** Cap parallel mempool address polls for live core holdings. */
+export const ADDRESS_FETCH_CONCURRENCY = 4;
 
 /**
  * Some networks and DNS resolvers block mempool.space, so fall through to
@@ -284,7 +328,10 @@ export const MEMPOOL_HOSTS = [
 ] as const;
 
 export const REQUEST_TIMEOUT_MS = 8_000;
+/** Live refresh for core holdings (Wave 3 uses /snapshot.json from cron). */
 export const REFRESH_INTERVAL_MS = 60_000;
+/** How often to re-fetch the cron snapshot for Wave 3 balances. */
+export const SNAPSHOT_REFRESH_INTERVAL_MS = 5 * 60_000;
 export const SATS_PER_BTC = 100_000_000;
 /** Primary wave funds reported unspent at this block; later spends count as movement. */
 export const WATCH_AFTER_BLOCK = 960_400;

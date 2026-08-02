@@ -1,0 +1,40 @@
+name: Refresh balance snapshot
+
+on:
+  schedule:
+    # Public runners can delay cron; ~15m target.
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/data/incident.ts'
+      - 'src/data/wave3Vaults.ts'
+      - 'scripts/build-snapshot.mjs'
+      - '.github/workflows/snapshot.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: balance-snapshot
+  cancel-in-progress: true
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build snapshot
+        run: node scripts/build-snapshot.mjs
+
+      - name: Commit snapshot
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: refresh balance snapshot'
+          file_pattern: public/snapshot.json
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com

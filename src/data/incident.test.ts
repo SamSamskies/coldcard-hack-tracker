@@ -7,8 +7,10 @@ import {
   HOLDING_ADDRESSES,
   INCIDENT,
   ORIGINAL_STOLEN_BTC,
+  WAVE3_FINGERPRINT,
   type ClusterId,
 } from '../data/incident';
+import { WAVE3_VAULT_COUNT } from './wave3Vaults';
 
 describe('incident data invariants', () => {
   it('sums cluster stolen BTC into ORIGINAL_STOLEN_BTC', () => {
@@ -65,8 +67,15 @@ describe('incident data invariants', () => {
         0,
       );
       // Holdings can be slightly under stolen (fees) but should not exceed it.
-      // Some clusters (e.g. Wave 3) have no watched holdings yet.
       expect(held).toBeLessThanOrEqual(cluster.stolenBtc + 1e-8);
     }
+  });
+
+  it('watches the fingerprint-matched Wave 3 vault set', () => {
+    const wave3 = HOLDING_ADDRESSES.filter((h) => h.clusterId === 'galaxy-wave3');
+    expect(wave3).toHaveLength(WAVE3_VAULT_COUNT);
+    expect(WAVE3_FINGERPRINT.matchedVaults).toBe(WAVE3_VAULT_COUNT);
+    expect(WAVE3_FINGERPRINT.matchedVaults).toBeLessThan(WAVE3_FINGERPRINT.galaxyVaults);
+    expect(WAVE3_FINGERPRINT.matchedHeldBtc).toBeLessThan(WAVE3_FINGERPRINT.galaxyHeldBtc);
   });
 });

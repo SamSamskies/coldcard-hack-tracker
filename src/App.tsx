@@ -9,17 +9,14 @@ import { useTrackerData } from './hooks/useTrackerData';
 
 export default function App() {
   const data = useTrackerData();
-  const alerts = useMovementAlerts(data.movements, data.lastUpdated != null);
   const hasData = data.addresses.length > 0;
+  const alerts = useMovementAlerts(data.movements, hasData);
 
   return (
     <div className="app-shell">
       <div className="atmosphere" aria-hidden="true" />
       <main className="dashboard">
         <IncidentHeader
-          lastUpdated={data.lastUpdated}
-          loading={data.loading}
-          onRefresh={data.refresh}
           alertsEnabled={alerts.enabled}
           alertsPreference={alerts.preference}
           alertsSupported={alerts.supported}
@@ -70,11 +67,22 @@ export default function App() {
 
         <footer className="site-footer">
           <p>
-            Balances and transactions via{' '}
+            Core vaults live via{' '}
             <span className="mono">{data.source ?? 'mempool.space'}</span>
-            {data.source && data.source !== 'mempool.space'
-              ? ' (fallback mirror)'
-              : ''}
+            {data.snapshotUpdatedAt ? (
+              <>
+                ; Wave 3 from cron snapshot (
+                <span className="mono">
+                  {data.snapshotUpdatedAt.toLocaleString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </span>
+                )
+              </>
+            ) : null}
             . Incident facts from Galaxy Research and community cluster reports.
             Not affiliated with Coinkite or Coldcard.
           </p>

@@ -109,16 +109,33 @@ function resolveHost(): Promise<string> {
 }
 
 async function fetchJson<T>(path: string): Promise<T> {
-  const host = await resolveHost();
-  try {
-    const res = await getWithTimeout(`${host}${path}`);
-    if (!res.ok) throw new Error(`${host} responded ${res.status}`);
-    return (await res.json()) as T;
-  } catch (err) {
-    // Host went bad mid-session; force a re-probe on the next call.
-    hostProbe = null;
-    throw err;
+  let lastError: unknown;
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const host = await resolveHost();
+    try {
+      const res = await getWithTimeout(`${host}${path}`);
+      if (res.status === 429 || res.status >= 500) {
+        lastError = new Error(`${host} responded ${res.status}`);
+        // Soft fail: try another mirror instead of poisoning every in-flight call.
+        hostProbe = null;
+        const idx = MEMPOOL_HOSTS.findIndex((h) => h === host);
+        activeHost = MEMPOOL_HOSTS[(idx + 1) % MEMPOOL_HOSTS.length]!;
+        await new Promise((r) => setTimeout(r, 200 * (attempt + 1)));
+        continue;
+      }
+      if (!res.ok) throw new Error(`${host} responded ${res.status}`);
+      return (await res.json()) as T;
+    } catch (err) {
+      lastError = err;
+      hostProbe = null;
+      await new Promise((r) => setTimeout(r, 150 * (attempt + 1)));
+    }
   }
+
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`Request failed for ${path}`);
 }
 
 export function addressBalanceSats(addr: AddressResponse): number {
