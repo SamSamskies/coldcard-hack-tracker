@@ -319,6 +319,11 @@ function EveningCashoutFlow() {
             >
               3KMmeqPe… hub
             </a>
+            <span className="cashout-note">
+              {' '}
+              · likely custodial/swap deposit — hops already mixed out;
+              stolen BTC effectively gone from watchable stack
+            </span>
           </dd>
         </div>
         <div className="cashout-rail">

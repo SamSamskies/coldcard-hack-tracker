@@ -66,7 +66,7 @@ COLDCARD RNG chain map: public cross-check for Wave 3; no URL constant in repo �
 ## Known exit labels
 
 - `bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794` — THORChain BTC vault
-- `3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8` — P2SH cash-out hub
+- `3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8` — P2SH service hub (likely custodial/swap; hops mixed out)
 
 ## Wave 3 pipeline
 
@@ -82,7 +82,7 @@ Target vs Galaxy: ~293 vaults / ~207.73 BTC. Watched set is intentionally partia
 
 - `CONSOLIDATED_BTC` < `ORIGINAL_STOLEN_BTC` (fees + unwatched/omitted Wave 3).
 - Cluster `date` is day-granularity only.
-- Ocean ~0.060 BTC (block 960511) linked via P2SH hub but **not** counted as stolen.
+- Ocean ~0.060 BTC (block 960511) hit the same P2SH service hub as stolen hops (same exit venue) but **not** counted as stolen.
 - Surplus pass-through while report balance still held is ignored.
 - Early Aug 2 matches weak-seed profile but is **not** a Galaxy-published wave.
 - Snapshot keeps prior balance on explorer failure rather than writing zeros.

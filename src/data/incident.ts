@@ -169,7 +169,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 1.20115791,
     date: '2026-07-31',
-    note: 'Distinct from Galaxy Wave 2. Ocean miner peel later met stolen hops at the same P2SH hub — same-operator link; Ocean sats not counted as stolen.',
+    note: 'Distinct from Galaxy Wave 2. Ocean miner peel later met stolen hops at the same P2SH service hub (same exit venue, not proof of same operator); Ocean sats not counted as stolen.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -233,7 +233,7 @@ export const SOURCES = [
   },
   {
     label: 'Ocean block 960511',
-    note: 'Coinbase of block 960511 (tag OCEAN.XYZ) paid ~0.060 BTC that later touched the Aug 1 hop vault and was peeled off (not counted as stolen). That peel later hit the same P2SH cash-out ([3KMmeqPe…](address:3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8)) as the stolen evening-wave hops — strong same-operator link.',
+    note: 'Coinbase of block 960511 (tag OCEAN.XYZ) paid ~0.060 BTC that later touched the Aug 1 hop vault and was peeled off (not counted as stolen). That peel later hit the same P2SH service hub ([3KMmeqPe…](address:3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8)) as the stolen evening-wave hops — same exit venue, not proof of same operator.',
     url: 'https://mempool.space/block/960511',
   },
   {
@@ -339,7 +339,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 1 hop vault',
     reportBtc: 0.69135523,
     clusterId: 'evening-july31',
-    note: '0.4998 + 0.1915 BTC stack. Emptied Aug 2 into P2SH hub — see BTC rail above. Ocean peel also met there (not in report balance)',
+    note: '0.4998 + 0.1915 BTC stack. Emptied Aug 2 into likely custodial/swap P2SH hub — hops mixed out; see BTC rail above. Ocean peel also met there (not in report balance)',
   },
   {
     address: 'bc1qzm5pauxyv7t7vqstzpumqcn066wfjsmev34mf3',
@@ -408,7 +408,7 @@ export const WATCH_AFTER_BLOCK = 960_400;
  */
 export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794: 'THORChain BTC vault',
-  '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH cash-out hub',
+  '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH service hub',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
