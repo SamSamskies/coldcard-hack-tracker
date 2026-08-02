@@ -318,14 +318,14 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 2 vault',
     reportBtc: 45.90251994,
     clusterId: 'galaxy-july31',
-    note: 'Consolidated from 1,216 sweeps (via bc1qsjrf5ze…); still unspent',
+    note: 'Consolidated from 1,216 sweeps (via bc1qsjrf5ze…)',
   },
   {
     address: 'bc1qmd5m5ktv7m5ffujxv4248fxv36myvdx79n8jp6',
     label: 'Wave 2 collector',
     reportBtc: 30.18476329,
     clusterId: 'galaxy-july31',
-    note: 'Unmoved collector from 93 sweeps at ~10 sat/vB; still unspent',
+    note: 'Unmoved collector from 93 sweeps at ~10 sat/vB',
   },
   {
     address: 'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
@@ -346,14 +346,12 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 1 vault',
     reportBtc: 0.33203236,
     clusterId: 'morning-aug1',
-    note: '0.33203236 BTC from 16 victim sweeps; still unspent',
   },
   {
     address: 'bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m',
     label: 'Aug 2 vault',
     reportBtc: 64.90373764,
     clusterId: 'early-aug2',
-    note: '64.90373764 BTC consolidated from 902 inputs (795 addresses) at 04:03 UTC Aug 2; still unspent',
   },
 ];
 

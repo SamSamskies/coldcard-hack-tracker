@@ -222,7 +222,7 @@ function MorningWaveMeta() {
         <dt>Scope</dt>
         <dd>
           <span className="meta-primary">
-            {formatBtc(wave.stolenBtc)} BTC · {m.victimSweeps} sweeps
+            {formatBtc(wave.stolenBtc)} BTC
           </span>
         </dd>
       </div>
@@ -246,7 +246,6 @@ function MorningWaveMeta() {
         <dt>Pattern</dt>
         <dd>
           <span className="meta-primary">direct victim → vault</span>
-          <span className="meta-sub">still unspent</span>
         </dd>
       </div>
     </dl>
@@ -266,8 +265,7 @@ function EarlyAug2Meta() {
             {a.inputCount.toLocaleString()} inputs
           </span>
           <span className="meta-sub">
-            {a.addressCount.toLocaleString()} addresses ·{' '}
-            {formatBtc(a.landedBtc)} BTC landed
+            {a.addressCount.toLocaleString()} addresses
           </span>
         </dd>
       </div>
@@ -293,7 +291,6 @@ function EarlyAug2Meta() {
         <dt>Pattern</dt>
         <dd>
           <span className="meta-primary">multi-path → one P2WPKH</span>
-          <span className="meta-sub">still unspent</span>
         </dd>
       </div>
     </dl>
