@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-02T04:18:57.169Z",
+  "updatedAt": "2026-08-02T04:49:57.439Z",
   "source": "mempool.space",
-  "usdPrice": 63475,
+  "usdPrice": 63459,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -435,7 +435,9 @@
         "bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw"
       ],
       "hop": 2,
-      "confirmed": false
+      "confirmed": true,
+      "blockHeight": 960669,
+      "blockTime": 1785644337
     },
     {
       "txid": "61c0ddac816958a5a6b5814ad1202a24a683168d3298ae603e7c841e6598c095",
