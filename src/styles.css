@@ -944,6 +944,11 @@ button:focus-visible {
   margin: 0.35rem 0 0;
 }
 
+.movement-list-wrap {
+  max-height: min(28rem, 60vh);
+  overflow: auto;
+}
+
 .movement-list {
   list-style: none;
   margin: 0;
