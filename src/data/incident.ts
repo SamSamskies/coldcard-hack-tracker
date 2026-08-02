@@ -29,7 +29,8 @@ export const GALAXY = {
 
 /**
  * How we built the Wave 3 watch list. Galaxy did not publish the 293 vault
- * addresses; these were reconstructed from their public fingerprint.
+ * addresses; these were reconstructed from their public fingerprint and
+ * cross-checked against the public COLDCARD RNG chain map.
  */
 export const WAVE3_FINGERPRINT = {
   blockStart: 960_396,
@@ -42,7 +43,7 @@ export const WAVE3_FINGERPRINT = {
   matchedHeldBtc: WAVE3_VAULT_REPORT_BTC,
   minWatchBtc: WAVE3_MIN_WATCH_BTC,
   summary:
-    'Not Galaxy’s published address list. Matched their Wave 3 fingerprint (blocks 960396–960471, ~180–220 sat/vB, fresh park → P2WSH vault), then kept only higher-value vaults (≥ 0.5 BTC) so the cron snapshot stays reliable on public explorers. Smaller matched vaults are omitted on purpose. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC.',
+    'Not Galaxy’s published address list. Matched their Wave 3 fingerprint (blocks 960396–960471, ~180–220 sat/vB, park → P2WSH vault), cross-checked against the public COLDCARD RNG chain map, then kept only higher-value vaults (≥ 0.5 BTC) so the cron snapshot stays reliable on public explorers. Smaller vaults are omitted on purpose. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC.',
 } as const;
 
 /** Primary July 30 window (Galaxy Wave 1) mapped from Block’s fingerprint. */
