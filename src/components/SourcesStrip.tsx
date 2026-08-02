@@ -1,4 +1,5 @@
 import { SOURCES } from '../data/incident';
+import { LinkedNote } from './LinkedNote';
 
 export function SourcesStrip() {
   return (
@@ -12,7 +13,7 @@ export function SourcesStrip() {
             <a href={source.url} target="_blank" rel="noreferrer">
               {source.label}
             </a>
-            <p className="sources-note">{source.note}</p>
+            <LinkedNote className="sources-note" text={source.note} />
           </li>
         ))}
       </ul>

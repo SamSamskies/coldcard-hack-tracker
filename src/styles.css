@@ -821,6 +821,11 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+.note-link {
+  font-size: inherit;
+  font-weight: 500;
+}
+
 .cluster-unwatched {
   margin: 0;
   padding: 0.85rem 0.9rem;

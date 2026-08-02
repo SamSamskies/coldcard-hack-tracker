@@ -1,3 +1,4 @@
+import { LinkedNote } from './LinkedNote';
 import {
   CLUSTER_BY_ID,
   CLUSTERS,
@@ -150,7 +151,9 @@ function AddressRow({
     <tr className={`status-${a.status}${a.flash ? ' flash' : ''}`}>
       <td>
         <span className="addr-label">{a.label}</span>
-        {a.note ? <span className="addr-note">{a.note}</span> : null}
+        {a.note ? (
+          <LinkedNote as="span" className="addr-note" text={a.note} />
+        ) : null}
       </td>
       <td className="mono">
         <a
@@ -261,7 +264,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                     </a>
                   ) : null}
                 </div>
-                <p className="cluster-note">{cluster.note}</p>
+                <LinkedNote className="cluster-note" text={cluster.note} />
                 {clusterId === 'galaxy-july30' ? <GalaxyWave1Meta /> : null}
                 {isWave3 ? <GalaxyWave3Meta /> : null}
               </header>
