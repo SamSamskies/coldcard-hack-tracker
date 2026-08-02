@@ -869,6 +869,77 @@ button:focus-visible {
   margin-top: 0.7rem;
 }
 
+.cashout-flow {
+  margin-top: 0.7rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--line-soft);
+}
+
+.cashout-flow-label {
+  margin: 0;
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.cashout-rails {
+  display: grid;
+  gap: 0.45rem 1.25rem;
+  margin: 0.45rem 0 0;
+}
+
+@media (min-width: 720px) {
+  .cashout-rails {
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  .cashout-rail {
+    display: contents;
+  }
+}
+
+.cashout-rail dt {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.cashout-rail dd {
+  margin: 0.1rem 0 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+@media (min-width: 720px) {
+  .cashout-rail dd {
+    margin: 0;
+  }
+}
+
+.cashout-arrow {
+  margin: 0 0.28rem;
+  opacity: 0.55;
+}
+
+.cashout-parked {
+  white-space: nowrap;
+}
+
+@media (max-width: 719px) {
+  .cashout-parked {
+    display: block;
+    margin-top: 0.2rem;
+    white-space: normal;
+  }
+}
+
 .address-table-wrap.is-scrollable {
   max-height: min(28rem, 60vh);
   overflow: auto;

@@ -138,6 +138,89 @@ function GalaxyWave3Meta() {
   );
 }
 
+function EveningCashoutFlow() {
+  return (
+    <div className="cashout-flow">
+      <p className="cashout-flow-label">Aug 2 cash-out · two rails</p>
+      <dl className="cashout-rails">
+        <div className="cashout-rail">
+          <dt>BTC · ~0.69</dt>
+          <dd>
+            Aug 1 hop vault
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(
+                '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8',
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              3KMmeqPe… hub
+            </a>
+          </dd>
+        </div>
+        <div className="cashout-rail">
+          <dt>ETH · ~0.24</dt>
+          <dd>
+            Evening vault
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(
+                'bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794',
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              THOR
+            </a>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="mono note-link"
+              href="https://etherscan.io/address/0x6A08B5B20F23FcFE09f5da506Be59CAD1eC0df06"
+              target="_blank"
+              rel="noreferrer"
+            >
+              0x6A08…
+            </a>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="mono note-link"
+              href="https://etherscan.io/address/0xC61F8Df65aCED169C8E2bFb8119FDeAf149B20f1"
+              target="_blank"
+              rel="noreferrer"
+            >
+              0xC61F…
+            </a>
+            <span className="cashout-parked">
+              · ~0.27 still at{' '}
+              <a
+                className="mono note-link"
+                href={explorerAddressUrl(
+                  'bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw',
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                bc1qdt6c…
+              </a>
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 function AddressRow({
   address: a,
   usdPrice,
@@ -266,6 +349,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                 </div>
                 <LinkedNote className="cluster-note" text={cluster.note} />
                 {clusterId === 'galaxy-july30' ? <GalaxyWave1Meta /> : null}
+                {clusterId === 'evening-july31' ? <EveningCashoutFlow /> : null}
                 {isWave3 ? <GalaxyWave3Meta /> : null}
               </header>
 

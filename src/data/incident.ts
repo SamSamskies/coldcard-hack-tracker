@@ -129,7 +129,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 1.20115791,
     date: '2026-07-31',
-    note: 'Low-fee (~1–2 sat/vB) sweeps. Both watched holdings (~1.20 BTC) emptied Aug 1–2 and are peeling toward cash-out. Stolen hops and the Ocean (OCEAN.XYZ) miner peel that touched the Aug 1 hop vault later consolidated into the same busy P2SH ([3KMmeqPe…](address:3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8)) — same-operator link; Ocean sats not counted as stolen. Aug 2 evening-vault peel: ~0.24 BTC sibling hopped into THORChain Asgard ([bc1qp6yzm…](address:bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794)) via [936c5f7d…](https://mempool.space/tx/936c5f7d85397a52c56e75a3e2c4b526ab1812893ba5a95fe56b7dc791cd766c), swapped to ETH at [0x6A08B5B2…](https://etherscan.io/address/0x6A08B5B20F23FcFE09f5da506Be59CAD1eC0df06), then swept to consolidator [0xC61F8Df6…](https://etherscan.io/address/0xC61F8Df65aCED169C8E2bFb8119FDeAf149B20f1); ~0.27 BTC sibling still unspent at [bc1qdt6c…](address:bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw). Distinct from Galaxy Wave 2.',
+    note: 'Low-fee (~1–2 sat/vB) sweeps. Both watched holdings (~1.20 BTC) emptied Aug 1–2 on two cash-out rails (flow below). Ocean (OCEAN.XYZ) miner peel that touched the hop vault later hit the same P2SH hub — same-operator link; Ocean sats not counted as stolen. Distinct from Galaxy Wave 2.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -292,14 +292,14 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
-    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2. One peel (~0.24 BTC) exited via THORChain ([bc1qp6yzm…](address:bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794)) → ETH [0x6A08B5B2…](https://etherscan.io/address/0x6A08B5B20F23FcFE09f5da506Be59CAD1eC0df06) → consolidator [0xC61F8Df6…](https://etherscan.io/address/0xC61F8Df65aCED169C8E2bFb8119FDeAf149B20f1); sibling ~0.27 BTC still at [bc1qdt6c…](address:bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw)',
+    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2 — see ETH rail in flow above',
   },
   {
     address: 'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s',
     label: 'Aug 1 hop vault',
     reportBtc: 0.69135523,
     clusterId: 'evening-july31',
-    note: '0.4998 BTC Aug 1 pass-through + 0.1915 BTC delayed Jul 31 victim consolidation. Emptied Aug 2. Ocean miner peel from here later met stolen hops at the same P2SH cash-out ([3KMmeqPe…](address:3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8)) — not part of this report balance',
+    note: '0.4998 + 0.1915 BTC stack. Emptied Aug 2 into P2SH hub — see BTC rail above. Ocean peel also met there (not in report balance)',
   },
   {
     address: 'bc1qzm5pauxyv7t7vqstzpumqcn066wfjsmev34mf3',
