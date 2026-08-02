@@ -79,3 +79,7 @@ export function formatBlockTime(unixSec: number): string {
     timeZoneName: 'short',
   });
 }
+
+export function formatBlockHeight(height: number): string {
+  return `Block ${height.toLocaleString('en-US')}`;
+}

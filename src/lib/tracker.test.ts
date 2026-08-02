@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { WATCH_AFTER_BLOCK } from '../data/incident';
 import type { Tx } from './mempool';
 import {
+  dedupeMovements,
   discoverNextHops,
   heldStats,
   isPostWatch,
@@ -287,8 +288,8 @@ describe('discoverNextHops', () => {
 });
 
 describe('sortMovements', () => {
-  it('orders by newest block time, then hop, then txid', () => {
-    const base: Omit<Movement, 'txid' | 'hop' | 'blockTime'> = {
+  it('orders by newest block height, then hop, then txid', () => {
+    const base: Omit<Movement, 'txid' | 'hop' | 'blockHeight'> = {
       fromAddress: 'a',
       fromLabel: 'A',
       amountBtc: 1,
@@ -296,11 +297,70 @@ describe('sortMovements', () => {
       confirmed: true,
     };
     const sorted = sortMovements([
-      { ...base, txid: 'b', hop: 0, blockTime: 100 },
-      { ...base, txid: 'a', hop: 1, blockTime: 200 },
-      { ...base, txid: 'c', hop: 0, blockTime: 200 },
+      { ...base, txid: 'b', hop: 0, blockHeight: 100 },
+      { ...base, txid: 'a', hop: 1, blockHeight: 200 },
+      { ...base, txid: 'c', hop: 0, blockHeight: 200 },
     ]);
     expect(sorted.map((m) => m.txid)).toEqual(['c', 'a', 'b']);
+  });
+
+  it('puts unconfirmed ahead of confirmed, and falls back to block time', () => {
+    const base: Omit<Movement, 'txid' | 'confirmed' | 'blockHeight' | 'blockTime'> =
+      {
+        fromAddress: 'a',
+        fromLabel: 'A',
+        amountBtc: 1,
+        destinations: [],
+        hop: 0,
+      };
+    const sorted = sortMovements([
+      { ...base, txid: 'old', confirmed: true, blockTime: 50 },
+      { ...base, txid: 'mem', confirmed: false },
+      { ...base, txid: 'hi', confirmed: true, blockHeight: 300 },
+    ]);
+    expect(sorted.map((m) => m.txid)).toEqual(['mem', 'hi', 'old']);
+  });
+});
+
+describe('dedupeMovements', () => {
+  const base: Omit<Movement, 'txid' | 'confirmed' | 'blockTime' | 'blockHeight'> =
+    {
+      fromAddress: 'bc1qfrom',
+      fromLabel: 'Aug 1 hop vault',
+      amountBtc: 0.69,
+      destinations: ['bc1qto'],
+      hop: 0,
+    };
+
+  it('prefers a confirmed live copy over a stale unconfirmed snapshot row', () => {
+    const txid = '5ecc3052deadbeef';
+    const snapshot: Movement = {
+      ...base,
+      txid,
+      confirmed: false,
+    };
+    const live: Movement = {
+      ...base,
+      txid,
+      confirmed: true,
+      blockHeight: 960_900,
+      blockTime: 1_754_100_000,
+    };
+    const out = dedupeMovements([snapshot, live]);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toMatchObject({
+      confirmed: true,
+      blockTime: 1_754_100_000,
+      blockHeight: 960_900,
+    });
+  });
+
+  it('keeps distinct txids and sorts newest height first', () => {
+    const out = dedupeMovements([
+      { ...base, txid: 'old', confirmed: true, blockHeight: 100 },
+      { ...base, txid: 'new', confirmed: true, blockHeight: 200 },
+    ]);
+    expect(out.map((m) => m.txid)).toEqual(['new', 'old']);
   });
 });
 

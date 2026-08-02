@@ -523,11 +523,17 @@ function discoverNextHops(watches, txLists, known, slotsLeft) {
   return out;
 }
 
+function movementSortKey(m) {
+  if (!m.confirmed) return Number.MAX_SAFE_INTEGER;
+  return m.blockHeight ?? m.blockTime ?? 0;
+}
+
 function sortMovements(items) {
   return [...items].sort((a, b) => {
-    const ta = a.blockTime ?? (a.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
-    const tb = b.blockTime ?? (b.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
-    if (ta !== tb) return tb - ta;
+    const ka = movementSortKey(a);
+    const kb = movementSortKey(b);
+    if (ka !== kb) return kb - ka;
+    if (a.hop !== b.hop) return a.hop - b.hop;
     return a.txid.localeCompare(b.txid);
   });
 }

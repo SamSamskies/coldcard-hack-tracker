@@ -1,5 +1,5 @@
 import {
-  formatBlockTime,
+  formatBlockHeight,
   formatBtc,
   truncateAddress,
   truncateTxid,
@@ -66,9 +66,9 @@ export function MovementFeed({ movements, loading }: Props) {
                 </span>
                 <span>
                   {m.confirmed
-                    ? m.blockTime
-                      ? formatBlockTime(m.blockTime)
-                      : `Block ${m.blockHeight}`
+                    ? m.blockHeight != null
+                      ? formatBlockHeight(m.blockHeight)
+                      : 'Confirmed'
                     : 'Unconfirmed'}
                 </span>
               </div>

@@ -24,11 +24,11 @@ import {
 import { mapPool } from '../lib/pool';
 import { fetchSnapshot, type Snapshot } from '../lib/snapshot';
 import {
+  dedupeMovements,
   discoverNextHops,
   heldStats,
   movementsFromWatch,
   shouldTrackSeedOutbounds,
-  sortMovements,
   statusFor,
   type AddressStatus,
   type Movement,
@@ -97,18 +97,6 @@ function liveFromSats(
     status: statusFor(balanceBtc, h.reportBtc),
     flash: changed,
   };
-}
-
-function dedupeMovements(items: Movement[]): Movement[] {
-  const seen = new Set<string>();
-  const out: Movement[] = [];
-  for (const m of sortMovements(items)) {
-    const key = `${m.txid}:${m.fromAddress}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(m);
-  }
-  return out;
 }
 
 export function useTrackerData(): TrackerData {

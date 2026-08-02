@@ -1,7 +1,7 @@
 import { CONSOLIDATED_BTC } from '../data/incident';
 import {
+  formatBlockHeight,
   formatBtc,
-  formatBlockTime,
   formatHeldPercent,
   formatUsd,
 } from '../lib/format';
@@ -92,8 +92,10 @@ export function KpiRow({
           {!hasData
             ? PENDING
             : lastMovement
-              ? lastMovement.blockTime
-                ? formatBlockTime(lastMovement.blockTime)
+              ? lastMovement.confirmed
+                ? lastMovement.blockHeight != null
+                  ? formatBlockHeight(lastMovement.blockHeight)
+                  : 'Confirmed'
                 : 'Unconfirmed'
               : 'Unmoved'}
         </p>

@@ -255,14 +255,43 @@ export function discoverNextHops(
     }));
 }
 
+function movementSortKey(m: Movement): number {
+  if (!m.confirmed) return Number.MAX_SAFE_INTEGER;
+  return m.blockHeight ?? m.blockTime ?? 0;
+}
+
 export function sortMovements(items: Movement[]): Movement[] {
   return [...items].sort((a, b) => {
-    const ta = a.blockTime ?? (a.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
-    const tb = b.blockTime ?? (b.confirmed ? 0 : Number.MAX_SAFE_INTEGER);
-    if (ta !== tb) return tb - ta;
+    const ka = movementSortKey(a);
+    const kb = movementSortKey(b);
+    if (ka !== kb) return kb - ka;
     if (a.hop !== b.hop) return a.hop - b.hop;
     return a.txid.localeCompare(b.txid);
   });
+}
+
+/** Prefer confirmed / block-annotated copies; later items win ties (live over snapshot). */
+function movementFreshness(m: Movement): number {
+  let score = 0;
+  if (m.confirmed) score += 2;
+  if (m.blockTime != null || m.blockHeight != null) score += 1;
+  return score;
+}
+
+/**
+ * Collapse duplicate txid+fromAddress rows (snapshot + live merge).
+ * Stale unconfirmed snapshot rows must not beat a later confirmed live copy.
+ */
+export function dedupeMovements(items: Movement[]): Movement[] {
+  const byKey = new Map<string, Movement>();
+  for (const m of items) {
+    const key = `${m.txid}:${m.fromAddress}`;
+    const prev = byKey.get(key);
+    if (!prev || movementFreshness(m) >= movementFreshness(prev)) {
+      byKey.set(key, m);
+    }
+  }
+  return sortMovements([...byKey.values()]);
 }
 
 export function heldStats(
