@@ -18,24 +18,19 @@ export function IncidentHeader({
   onToggleAlerts,
   usdPrice,
 }: Props) {
-  const alertsDisabled =
-    !alertsSupported || alertsPermission === 'denied';
+  const alertsDisabled = alertsPermission === 'denied';
   const awaitingPermission =
-    alertsSupported &&
-    !alertsEnabled &&
-    alertsPermission === 'default';
-  const alertsTitle = !alertsSupported
-    ? 'Browser notifications are not available here'
-    : alertsPermission === 'denied'
+    !alertsEnabled && alertsPermission === 'default';
+  const alertsTitle =
+    alertsPermission === 'denied'
       ? 'Notifications are blocked in browser settings'
       : alertsEnabled
         ? 'Browser notification when holdings or followed hops spend'
         : awaitingPermission
           ? 'Click to grant browser permission for movement alerts'
           : 'Click to allow notifications when holdings or hops spend';
-  const alertsStatus = !alertsSupported
-    ? 'Unavailable'
-    : alertsPermission === 'denied'
+  const alertsStatus =
+    alertsPermission === 'denied'
       ? 'Blocked'
       : alertsEnabled
         ? 'On'
@@ -52,26 +47,28 @@ export function IncidentHeader({
           <p className="subtitle">Seed-entropy sweeps since July 2026</p>
         </div>
 
-        <label
-          className={`alerts-toggle${alertsDisabled ? ' is-disabled' : ''}`}
-          title={alertsTitle}
-        >
-          <span className="alerts-toggle-text">
-            Alerts
-            <span className="alerts-toggle-state">{alertsStatus}</span>
-          </span>
-          <button
-            type="button"
-            className="alerts-switch"
-            role="switch"
-            aria-checked={alertsEnabled}
-            aria-label="Movement alerts"
-            disabled={alertsDisabled}
-            onClick={onToggleAlerts}
+        {alertsSupported ? (
+          <label
+            className={`alerts-toggle${alertsDisabled ? ' is-disabled' : ''}`}
+            title={alertsTitle}
           >
-            <span className="alerts-switch-thumb" aria-hidden="true" />
-          </button>
-        </label>
+            <span className="alerts-toggle-text">
+              Alerts
+              <span className="alerts-toggle-state">{alertsStatus}</span>
+            </span>
+            <button
+              type="button"
+              className="alerts-switch"
+              role="switch"
+              aria-checked={alertsEnabled}
+              aria-label="Movement alerts"
+              disabled={alertsDisabled}
+              onClick={onToggleAlerts}
+            >
+              <span className="alerts-switch-thumb" aria-hidden="true" />
+            </button>
+          </label>
+        ) : null}
       </div>
 
       <StolenTimeline usdPrice={usdPrice} />
