@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-02T00:41:32.857Z",
+  "updatedAt": "2026-08-02T00:52:06.678Z",
   "source": "mempool.space",
-  "usdPrice": 62831,
+  "usdPrice": null,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -332,7 +332,7 @@
     {
       "address": "bc1qnjpfhc4pdmxmp2tzjz45u22anttwtk4u0lty5x2k7qwcsjm0hn2sa8tqc5",
       "balanceSats": 77812263,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1q64nmnz88qe0ee0e3a3ne4mnelvajz8dq5zcf8mqvslqcx72hdtzqsu2td0",
@@ -662,12 +662,12 @@
     {
       "address": "bc1q4e4j2sev76vp805ft5qyfm9j38s83c5n6wpe7u3gztc4rt4nmvrshm7z6l",
       "balanceSats": 19939541,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qtxanjh93h26pv5ut2g8clu5ucav0d3n8tpu2n55w9e5es6x5a4asye9h75",
       "balanceSats": 19547911,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1q2my4dal726w3x4fgpt3ce6hc5dp5e7w9rjs96zkx6ngptdmajs0q9dwjhf",
@@ -697,7 +697,7 @@
     {
       "address": "bc1qkzphtyj2vyk0ytxf2f8jgjrhqepwxhy952vkg7vn0nunpxpg0yesd23t87",
       "balanceSats": 16825952,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1q47gull3gwaygn69v3sserwvdfmxam25ly5gs4cylpr6206ppy3tskp3vsx",
@@ -722,7 +722,7 @@
     {
       "address": "bc1qspqd0rsk2y74g3tmtxz4vht26sn9pe23hpzf7fqy7t22m5dkd7lsrdggr9",
       "balanceSats": 11580619,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1q88uyeykx6gx8t4yc5j5j0srymxfts605stw0r6n93hugmc4jn39szfl4xq",
@@ -732,7 +732,7 @@
     {
       "address": "bc1qpy9clc84fqec58q6pccchq4zn7l5p3j0yywwqt0hph56cf5dcqtsqux242",
       "balanceSats": 10483982,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qsc0yxkwex9pfecjmqwfymrx66chdlkyhf9mv77ky3zj4at6yl5ms9k7pe7",
@@ -767,7 +767,7 @@
     {
       "address": "bc1qz7a6hxfgkrk59kszsz3zwytnezuyy2dzqhr5cfevggdra6uw25mq70jhhs",
       "balanceSats": 9150778,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qqeayaggvqwa5743nfu8spv23n30lzfz5sufrqk9dg87j7syj7fkscufvpc",
@@ -812,7 +812,7 @@
     {
       "address": "bc1q48f368l38g6wqy0x22cl36jv6vg2nft948lnl0ferv05wl5upf7qgtly5z",
       "balanceSats": 6505319,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qqx5r8du9xfm9y95cssjf9axyv9clhl4zageewereedm3l6gvzgjqh9gc30",
@@ -842,7 +842,7 @@
     {
       "address": "bc1q68dyrwly7ntnvc7p6ryupwjx5en60s4lf99z706h7xd4vsnhl7qqcedfl4",
       "balanceSats": 5014211,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qu7cw2daryq5s7hcr3hr4d2due7x6ca0vlf22cuudw02edhv8nn6qe9tnfw",
@@ -912,12 +912,12 @@
     {
       "address": "bc1qlqp0gqp8kjednmpapg78jqka0ym4jrrvx07das9cqwsr80sgnvvsze92se",
       "balanceSats": 3357803,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qlqzvqa62zathntxc54l65ehhd04fgurfa097f0sx0y2l9495m82s2ag66a",
       "balanceSats": 3327956,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1q6svg3s5jtgwj2k298wzhz74w7jjlcvuv0lvmlgpq6qce67rxc5lq6dquzl",
@@ -982,7 +982,7 @@
     {
       "address": "bc1q257vjpgwygngzqu20wx9rlx2dhwxv6skm3zs6nrern7pdlwcmmwq6rs966",
       "balanceSats": 1921280,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qa42e4r0zs29pc39l5e73wl4k056r2439h2tv6w4s5f99xxg9qj6qe3ywga",
@@ -1002,12 +1002,12 @@
     {
       "address": "bc1qgne92sswr0vmrmdgfxh2jjq07lnndmka8xp6jx3v59guqf268uqqssdzce",
       "balanceSats": 1475934,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1qhpvx4l84c93rlp4hxztuxwacag0fgn4cksrc8zadh327z2s2dg3sccg0dw",
       "balanceSats": 1438078,
-      "utxoCount": 1
+      "utxoCount": 0
     },
     {
       "address": "bc1q0xqtyc9rg7f00q2jg5plvls8jfprkpw4uqeu5vuzffec5f5lytuqp4knz2",
