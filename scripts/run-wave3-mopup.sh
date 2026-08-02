@@ -58,6 +58,8 @@ echo "Following parks -> vaults (emzy + bitaroo, slower interval)…"
 python3 "$SCRIPT" \
   --out "$OUT/merged" \
   --follow-only \
+  --fresh-parks \
+  --p2wpkh-parks-only \
   --host "https://mempool.emzy.de" \
   --host "https://mempool.bitaroo.net" \
   --min-interval 0.6

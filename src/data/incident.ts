@@ -42,7 +42,7 @@ export const WAVE3_FINGERPRINT = {
   matchedHeldBtc: WAVE3_VAULT_REPORT_BTC,
   minWatchBtc: WAVE3_MIN_WATCH_BTC,
   summary:
-    'Not Galaxy’s published address list. Matched their Wave 3 fingerprint: blocks 960396–960471, ~180–220 sat/vB no-change sweeps into fresh parks, then hops to still-funded native P2WSH vaults. Balances come from a server snapshot (cron), not live browser polls. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC.',
+    'Not Galaxy’s published address list. Matched their Wave 3 fingerprint (blocks 960396–960471, ~180–220 sat/vB, fresh park → P2WSH vault), then kept only higher-value vaults (≥ 0.5 BTC) so the cron snapshot stays reliable on public explorers. Smaller matched vaults are omitted on purpose. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC.',
 } as const;
 
 /** Primary July 30 window (Galaxy Wave 1) mapped from Block’s fingerprint. */
@@ -112,7 +112,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 3 · Jul 31–Aug 1',
     stolenBtc: 208.24,
     date: '2026-07-31',
-    note: `Blocks 960396–960471 · Galaxy: ~1,912 victims, ~200 sat/vB, 293 park→P2WSH vaults (~207.73 BTC). Watching ${WAVE3_VAULT_COUNT} fingerprint-matched P2WSH vaults (~${WAVE3_VAULT_REPORT_BTC.toFixed(2)} BTC) — see attribution below.`,
+    note: `Blocks 960396–960471 · Galaxy: ~1,912 victims, ~200 sat/vB, 293 park→P2WSH vaults (~207.73 BTC). Watching ${WAVE3_VAULT_COUNT} higher-value fingerprint matches (≥ ${WAVE3_MIN_WATCH_BTC} BTC each, ~${WAVE3_VAULT_REPORT_BTC.toFixed(2)} BTC) — see attribution below.`,
     sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
   },
   {

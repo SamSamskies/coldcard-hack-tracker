@@ -71,10 +71,14 @@ describe('incident data invariants', () => {
     }
   });
 
-  it('watches the fingerprint-matched Wave 3 vault set', () => {
+  it('watches higher-value fingerprint-matched Wave 3 vaults only', () => {
     const wave3 = HOLDING_ADDRESSES.filter((h) => h.clusterId === 'galaxy-wave3');
     expect(wave3).toHaveLength(WAVE3_VAULT_COUNT);
     expect(WAVE3_FINGERPRINT.matchedVaults).toBe(WAVE3_VAULT_COUNT);
+    expect(WAVE3_FINGERPRINT.minWatchBtc).toBe(0.5);
+    expect(wave3.every((h) => h.reportBtc >= WAVE3_FINGERPRINT.minWatchBtc)).toBe(
+      true,
+    );
     expect(WAVE3_FINGERPRINT.matchedVaults).toBeLessThan(WAVE3_FINGERPRINT.galaxyVaults);
     expect(WAVE3_FINGERPRINT.matchedHeldBtc).toBeLessThan(WAVE3_FINGERPRINT.galaxyHeldBtc);
   });

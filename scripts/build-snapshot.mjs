@@ -4,8 +4,13 @@
  * public/snapshot.json for the static dashboard to load without browser polling.
  *
  * Usage: node scripts/build-snapshot.mjs
+ *
+ * Fetch strategy:
+ *  - One paced worker per Esplora host (no shared stampede)
+ *  - First pass all addresses, then mop-up only failures
+ *  - On hard failure, keep prior snapshot balance when available
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -13,18 +18,22 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const OUT = join(ROOT, 'public', 'snapshot.json');
 const SATS_PER_BTC = 100_000_000;
-const CONCURRENCY = 3;
 const TIMEOUT_MS = 12_000;
+const PROBE_TIMEOUT_MS = 4_000;
+const MIN_INTERVAL_MS = 400;
+const MAX_ATTEMPTS = 4;
+const MOP_UP_ROUNDS = 2;
 const WATCH_AFTER_BLOCK = 960_400;
 const MAX_DESTINATIONS_PER_SPEND = 3;
 const MIN_HOP_FOLLOW_SATS = 1_000_000;
 const MAX_HOP_DEPTH = 2;
 const MAX_HOP_WATCH_ADDRESSES = 16;
 
+/** Prefer mirrors that currently answer from this network; probe filters dead ones. */
 const HOSTS = [
+  'https://mempool.bitaroo.net',
   'https://mempool.space',
   'https://mempool.emzy.de',
-  'https://mempool.bitaroo.net',
 ];
 
 function extractAddresses(filePath) {
@@ -78,57 +87,224 @@ function extractHoldings() {
   return holdings;
 }
 
-let activeHost = HOSTS[0];
-
-async function getJson(path) {
-  let lastError;
-  for (let attempt = 0; attempt < 4; attempt++) {
-    const host = activeHost;
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
-    try {
-      const res = await fetch(`${host}${path}`, { signal: controller.signal });
-      if (res.status === 429 || res.status >= 500) {
-        lastError = new Error(`${host} ${res.status}`);
-        const idx = HOSTS.indexOf(host);
-        activeHost = HOSTS[(idx + 1) % HOSTS.length];
-        await sleep(300 * (attempt + 1));
-        continue;
+function loadPriorBalances() {
+  if (!existsSync(OUT)) return new Map();
+  try {
+    const prev = JSON.parse(readFileSync(OUT, 'utf8'));
+    const map = new Map();
+    for (const a of prev.addresses ?? []) {
+      if (a?.address != null && a.balanceSats != null) {
+        map.set(a.address, {
+          balanceSats: a.balanceSats,
+          utxoCount: a.utxoCount ?? 0,
+        });
       }
-      if (!res.ok) throw new Error(`${host} ${res.status}`);
-      return await res.json();
-    } catch (err) {
-      lastError = err;
-      const idx = HOSTS.indexOf(host);
-      activeHost = HOSTS[(idx + 1) % HOSTS.length];
-      await sleep(200 * (attempt + 1));
-    } finally {
-      clearTimeout(timer);
     }
+    return map;
+  } catch {
+    return new Map();
   }
-  throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
-async function mapPool(items, concurrency, fn) {
-  const results = new Array(items.length);
-  let next = 0;
-  async function worker() {
-    for (;;) {
-      const i = next++;
-      if (i >= items.length) return;
-      results[i] = await fn(items[i], i);
-    }
+async function probeHost(host) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+  try {
+    const res = await fetch(`${host}/api/blocks/tip/height`, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'coldcard-hack-snapshot/2.1' },
+    });
+    if (!res.ok) return false;
+    const text = (await res.text()).trim();
+    return /^\d+$/.test(text);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
   }
-  await Promise.all(
-    Array.from({ length: Math.min(concurrency, items.length || 1) }, () =>
-      worker(),
-    ),
+}
+
+/** Drop hosts that don't answer a tip-height probe (avoids striping into dead mirrors). */
+async function selectLiveHosts(hosts) {
+  const results = await Promise.all(
+    hosts.map(async (host) => ({ host, ok: await probeHost(host) })),
   );
-  return results;
+  for (const r of results) {
+    console.log(`  probe ${r.host.replace(/^https?:\/\//, '')}: ${r.ok ? 'ok' : 'DOWN'}`);
+  }
+  const live = results.filter((r) => r.ok).map((r) => r.host);
+  if (live.length === 0) {
+    throw new Error('No Esplora hosts responded to tip-height probe');
+  }
+  return live;
+}
+
+/** One paced client per host — workers never share a single stampeding host. */
+class HostClient {
+  constructor(host) {
+    this.host = host;
+    this.cooldownUntil = 0;
+    this.chain = Promise.resolve();
+    this.ok = 0;
+    this.fail = 0;
+    this.consecutiveFails = 0;
+  }
+
+  get available() {
+    return Date.now() >= this.cooldownUntil;
+  }
+
+  /** Serialize requests on this host and pace them. */
+  getJson(path) {
+    const run = async () => {
+      const waitCd = this.cooldownUntil - Date.now();
+      if (waitCd > 0) await sleep(waitCd);
+      await sleep(MIN_INTERVAL_MS);
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+      try {
+        const res = await fetch(`${this.host}${path}`, {
+          signal: controller.signal,
+          headers: { 'User-Agent': 'coldcard-hack-snapshot/2.1' },
+        });
+        if (res.status === 429 || res.status >= 500) {
+          const backoff = res.status === 429 ? 8_000 : 2_000;
+          this.cooldownUntil = Date.now() + backoff;
+          this.fail++;
+          this.consecutiveFails++;
+          throw new Error(`${this.host} ${res.status}`);
+        }
+        if (!res.ok) {
+          this.fail++;
+          this.consecutiveFails++;
+          throw new Error(`${this.host} ${res.status}`);
+        }
+        this.ok++;
+        this.consecutiveFails = 0;
+        return await res.json();
+      } catch (err) {
+        // HTTP status errors already counted above; count transport failures here
+        const httpErr =
+          err instanceof Error && /\s\d{3}$/.test(err.message);
+        if (!httpErr) {
+          this.fail++;
+          this.consecutiveFails++;
+          if (this.consecutiveFails >= 3) {
+            this.cooldownUntil = Date.now() + 5_000;
+          }
+        }
+        throw err;
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    const next = this.chain.then(run, run);
+    // Keep chain alive even if this request fails
+    this.chain = next.catch(() => {});
+    return next;
+  }
+}
+
+class HostPool {
+  constructor(hosts) {
+    this.clients = hosts.map((h) => new HostClient(h));
+    this.rr = 0;
+    this.lastHost = hosts[0];
+  }
+
+  pickClient() {
+    const n = this.clients.length;
+    for (let i = 0; i < n; i++) {
+      const c = this.clients[(this.rr + i) % n];
+      if (c.available) {
+        this.rr = (this.rr + i + 1) % n;
+        this.lastHost = c.host;
+        return c;
+      }
+    }
+    // All cooling down — use soonest-ready
+    let best = this.clients[0];
+    for (const c of this.clients) {
+      if (c.cooldownUntil < best.cooldownUntil) best = c;
+    }
+    this.lastHost = best.host;
+    return best;
+  }
+
+  async getJson(path, attempts = MAX_ATTEMPTS) {
+    let lastError;
+    for (let attempt = 0; attempt < attempts; attempt++) {
+      const client = this.pickClient();
+      try {
+        return await client.getJson(path);
+      } catch (err) {
+        lastError = err;
+        await sleep(400 * (attempt + 1));
+      }
+    }
+    throw lastError instanceof Error ? lastError : new Error(String(lastError));
+  }
+
+  /**
+   * Fetch many paths using a shared queue + one worker per live host.
+   * Failed items are not assigned to known-dead stripes up front.
+   */
+  async mapPaths(items, pathFor) {
+    const results = new Array(items.length);
+    let next = 0;
+
+    const worker = async (client) => {
+      for (;;) {
+        if (client.consecutiveFails >= 8 && this.clients.length > 1) {
+          // This host is cooked for this run — stop spending queue slots on it
+          return;
+        }
+        const i = next++;
+        if (i >= items.length) return;
+        const item = items[i];
+        try {
+          results[i] = {
+            item,
+            data: await client.getJson(pathFor(item)),
+            error: null,
+          };
+        } catch (err) {
+          results[i] = { item, data: null, error: err };
+        }
+      }
+    };
+
+    await Promise.all(this.clients.map((c) => worker(c)));
+
+    // Any indices skipped because a worker bailed early
+    for (let i = 0; i < items.length; i++) {
+      if (results[i] === undefined) {
+        const item = items[i];
+        try {
+          results[i] = {
+            item,
+            data: await this.getJson(pathFor(item)),
+            error: null,
+          };
+        } catch (err) {
+          results[i] = { item, data: null, error: err };
+        }
+      }
+    }
+    return results;
+  }
+
+  stats() {
+    return this.clients
+      .map((c) => `${c.host.replace(/^https?:\/\//, '')}:${c.ok}ok/${c.fail}fail`)
+      .join(' ');
+  }
 }
 
 function balanceSats(addr) {
@@ -260,23 +436,63 @@ function sortMovements(items) {
   });
 }
 
+/**
+ * Fetch address summaries; mop up failures without redoing successes.
+ * Returns Map(address -> esplora address json | null)
+ */
+async function fetchAddressSummaries(pool, holdings) {
+  const byAddr = new Map();
+  let pending = holdings.map((h) => h.address);
+
+  console.log(
+    `Fetching ${pending.length} holdings (${pool.clients.length} live host(s), paced)…`,
+  );
+  let round = 0;
+  while (pending.length > 0 && round <= MOP_UP_ROUNDS) {
+    if (round > 0) {
+      console.log(`Mop-up round ${round}: retrying ${pending.length} failures…`);
+      await sleep(2_000);
+    }
+    const batch = await pool.mapPaths(pending, (addr) => `/api/address/${addr}`);
+    const still = [];
+    let failLogged = 0;
+    for (const { item: addr, data, error } of batch) {
+      if (data) {
+        byAddr.set(addr, data);
+      } else {
+        still.push(addr);
+        if (round === 0 && failLogged < 5) {
+          console.warn(`fail ${addr}: ${error?.message ?? error}`);
+          failLogged++;
+        }
+      }
+    }
+    if (round === 0 && still.length > failLogged) {
+      console.warn(`… ${still.length - failLogged} more failures this pass`);
+    }
+    pending = still;
+    round++;
+  }
+
+  for (const addr of pending) {
+    byAddr.set(addr, null);
+  }
+  return byAddr;
+}
+
 async function main() {
   const holdings = extractHoldings();
-  console.log(`Fetching ${holdings.length} holdings…`);
+  const prior = loadPriorBalances();
+  console.log('Probing Esplora hosts…');
+  const liveHosts = await selectLiveHosts(HOSTS);
+  console.log(`Using: ${liveHosts.join(', ')}`);
+  const pool = new HostPool(liveHosts);
 
-  const summaries = await mapPool(holdings, CONCURRENCY, async (h) => {
-    try {
-      const addr = await getJson(`/api/address/${h.address}`);
-      return { h, addr };
-    } catch (err) {
-      console.warn(`fail ${h.address}: ${err.message ?? err}`);
-      return { h, addr: null };
-    }
-  });
+  const summaries = await fetchAddressSummaries(pool, holdings);
 
   let usdPrice = null;
   try {
-    const prices = await getJson('/api/v1/prices');
+    const prices = await pool.getJson('/api/v1/prices');
     usdPrice = prices.USD ?? null;
   } catch {
     console.warn('price fetch failed');
@@ -284,27 +500,52 @@ async function main() {
 
   const addresses = [];
   const activeSeeds = [];
-  for (const { h, addr } of summaries) {
-    if (!addr) {
+  let liveOk = 0;
+  let priorOk = 0;
+  let reportFallback = 0;
+
+  for (const h of holdings) {
+    const addr = summaries.get(h.address);
+    if (addr) {
+      liveOk++;
+      const sats = balanceSats(addr);
+      const balanceBtc = sats / SATS_PER_BTC;
       addresses.push({
         address: h.address,
-        balanceSats: Math.round(h.reportBtc * SATS_PER_BTC),
-        utxoCount: 0,
-        ok: false,
+        balanceSats: sats,
+        utxoCount: Math.max(0, utxoEstimate(addr)),
+        ok: true,
       });
+      if (statusFor(balanceBtc, h.reportBtc) !== 'held') {
+        activeSeeds.push({ address: h.address, label: h.label, hop: 0 });
+      }
       continue;
     }
-    const sats = balanceSats(addr);
-    const balanceBtc = sats / SATS_PER_BTC;
+
+    const prev = prior.get(h.address);
+    if (prev) {
+      priorOk++;
+      addresses.push({
+        address: h.address,
+        balanceSats: prev.balanceSats,
+        utxoCount: prev.utxoCount,
+        ok: false,
+        fromPrior: true,
+      });
+      const balanceBtc = prev.balanceSats / SATS_PER_BTC;
+      if (statusFor(balanceBtc, h.reportBtc) !== 'held') {
+        activeSeeds.push({ address: h.address, label: h.label, hop: 0 });
+      }
+      continue;
+    }
+
+    reportFallback++;
     addresses.push({
       address: h.address,
-      balanceSats: sats,
-      utxoCount: Math.max(0, utxoEstimate(addr)),
-      ok: true,
+      balanceSats: Math.round(h.reportBtc * SATS_PER_BTC),
+      utxoCount: 0,
+      ok: false,
     });
-    if (statusFor(balanceBtc, h.reportBtc) !== 'held') {
-      activeSeeds.push({ address: h.address, label: h.label, hop: 0 });
-    }
   }
 
   const allMovements = [];
@@ -313,13 +554,11 @@ async function main() {
 
   if (activeSeeds.length > 0) {
     console.log(`Fetching txs for ${activeSeeds.length} moved seeds…`);
-    const seedTxLists = await mapPool(activeSeeds, CONCURRENCY, async (w) => {
-      try {
-        return await getJson(`/api/address/${w.address}/txs`);
-      } catch {
-        return [];
-      }
-    });
+    const seedBatch = await pool.mapPaths(
+      activeSeeds,
+      (w) => `/api/address/${w.address}/txs`,
+    );
+    const seedTxLists = seedBatch.map((r) => r.data ?? []);
     allMovements.push(...movementsFromWatch(activeSeeds, seedTxLists));
 
     const fresh = discoverNextHops(
@@ -339,13 +578,11 @@ async function main() {
       .slice(0, MAX_HOP_WATCH_ADDRESSES);
 
     for (let round = 0; round < MAX_HOP_DEPTH && hopWatches.length > 0; round++) {
-      const hopTxLists = await mapPool(hopWatches, CONCURRENCY, async (w) => {
-        try {
-          return await getJson(`/api/address/${w.address}/txs`);
-        } catch {
-          return [];
-        }
-      });
+      const hopBatch = await pool.mapPaths(
+        hopWatches,
+        (w) => `/api/address/${w.address}/txs`,
+      );
+      const hopTxLists = hopBatch.map((r) => r.data ?? []);
       allMovements.push(...movementsFromWatch(hopWatches, hopTxLists));
       const slotsLeft = MAX_HOP_WATCH_ADDRESSES - hopWatch.size;
       const next = discoverNextHops(hopWatches, hopTxLists, known, slotsLeft);
@@ -358,15 +595,14 @@ async function main() {
     }
   }
 
-  const okCount = addresses.filter((a) => a.ok).length;
-  if (okCount === 0) {
+  if (liveOk === 0 && priorOk === 0) {
     throw new Error('No address balances fetched');
   }
 
   const snapshot = {
     version: 1,
     updatedAt: new Date().toISOString(),
-    source: activeHost.replace(/^https?:\/\//, ''),
+    source: pool.lastHost.replace(/^https?:\/\//, ''),
     usdPrice,
     addresses: addresses.map(({ address, balanceSats, utxoCount }) => ({
       address,
@@ -379,8 +615,9 @@ async function main() {
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, `${JSON.stringify(snapshot, null, 2)}\n`);
   console.log(
-    `Wrote ${OUT} (${okCount}/${holdings.length} ok, ${snapshot.movements.length} movements, source=${snapshot.source})`,
+    `Wrote ${OUT} (live=${liveOk} prior=${priorOk} reportFallback=${reportFallback}/${holdings.length}, ${snapshot.movements.length} movements)`,
   );
+  console.log(`Hosts: ${pool.stats()}`);
 }
 
 main().catch((err) => {

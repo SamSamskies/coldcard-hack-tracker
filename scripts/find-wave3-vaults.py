@@ -22,12 +22,16 @@ Usage:
   # After shards finish, merge then follow parks → vaults
   python3 scripts/find-wave3-vaults.py --merge scripts/wave3-out/shard-*
   python3 scripts/find-wave3-vaults.py --out scripts/wave3-out/merged --follow-only \\
-      --host https://mempool.space
+      --host https://mempool.emzy.de --fresh-parks
+
+  # Cheap probe before any fee-widen rescan: 1-vout fee histogram on sample blocks
+  python3 scripts/find-wave3-vaults.py --diagnose --host https://mempool.bitaroo.net
 
 Outputs (under --out, default scripts/wave3-out/):
   checkpoint.json   — resume state
   parks.jsonl       — ~200 sat/vB single-output receive addresses (parks)
   vaults.csv        — candidate final P2WSH vaults still holding funds
+  diagnose.json     — fee/block probe summary (--diagnose)
 """
 
 from __future__ import annotations
@@ -61,11 +65,19 @@ FEE_MIN = 180.0
 FEE_MAX = 220.0
 TARGET_VAULTS = 293
 TARGET_BTC = 207.73
+# Galaxy parks are fresh one-hop wallets (~receive + spend). Busy exchange
+# addresses that coincidentally saw a ~200 sat/vB 1-vout are not parks.
+DEFAULT_MAX_PARK_TXS = 8
+MIN_VAULT_SATS = 50_000  # 0.0005 BTC — catch small missing vaults
 
 
 def is_p2wsh(addr: str | None) -> bool:
     # Native P2WSH bech32 is typically 62 chars; P2WPKH is 42.
     return bool(addr) and addr.startswith("bc1q") and len(addr) >= 60
+
+
+def is_p2wpkh(addr: str | None) -> bool:
+    return bool(addr) and addr.startswith("bc1q") and len(addr) == 42
 
 
 def host_slug(host: str) -> str:
@@ -265,6 +277,8 @@ def scan_blocks(
     out_dir: Path,
     state: dict,
     block_end: int,
+    fee_min: float,
+    fee_max: float,
 ) -> dict:
     parks: dict = state["parks"]
     parks_path = out_dir / "parks.jsonl"
@@ -284,7 +298,7 @@ def scan_blocks(
                 if not fee or not weight:
                     continue
                 rate = fee / (weight / 4)
-                if not (FEE_MIN <= rate <= FEE_MAX):
+                if not (fee_min <= rate <= fee_max):
                     continue
                 vouts = tx.get("vout") or []
                 if len(vouts) != 1:
@@ -313,6 +327,7 @@ def scan_blocks(
                                 "sats": val,
                                 "fee_sat_vb": round(rate, 2),
                                 "p2wsh": is_p2wsh(addr),
+                                "p2wpkh": is_p2wpkh(addr),
                             }
                         )
                         + "\n"
@@ -325,6 +340,8 @@ def scan_blocks(
         state["next_height"] = height + 1
         state["parks"] = parks
         state["block_end"] = block_end
+        state["fee_min"] = fee_min
+        state["fee_max"] = fee_max
         save_checkpoint(out_dir / "checkpoint.json", state)
         print(
             f"  checkpoint @ {height + 1}; unique park/dest addresses so far: {len(parks)}",
@@ -334,27 +351,69 @@ def scan_blocks(
     return state
 
 
-def follow_to_vaults(api: Esplora, parks: dict, out_dir: Path) -> list[dict]:
+def iter_address_txs(api: Esplora, addr: str, max_pages: int = 4):
+    """Yield txs for an address; Esplora returns newest-first pages of ~25."""
+    # /address/:addr/txs then /txs/chain/:last_txid for older pages
+    page = api.get_json(f"/address/{addr}/txs") or []
+    if not page:
+        return
+    yield from page
+    last = page[-1].get("txid")
+    for _ in range(max_pages - 1):
+        if not last or len(page) < 25:
+            break
+        page = api.get_json(f"/address/{addr}/txs/chain/{last}") or []
+        if not page:
+            break
+        yield from page
+        last = page[-1].get("txid")
+
+
+def follow_to_vaults(
+    api: Esplora,
+    parks: dict,
+    out_dir: Path,
+    *,
+    fresh_parks: bool = False,
+    max_park_txs: int = DEFAULT_MAX_PARK_TXS,
+    p2wpkh_parks_only: bool = False,
+) -> list[dict]:
     """
-    For each park address that later spent, take large P2WSH destinations.
+    For each park address that later spent, take funded P2WSH destinations.
     Also keep parks that are themselves still-funded P2WSH (edge case).
+
+    With --fresh-parks: skip busy addresses (high tx_count) that are almost
+    certainly coincidental ~200 sat/vB receives, not Galaxy one-hop parks.
     """
     vaults: dict[str, dict] = {}
+    skipped_busy = 0
+    skipped_script = 0
 
     items = sorted(parks.items(), key=lambda kv: -kv[1]["sats"])
-    print(f"following {len(items)} park/dest addresses → P2WSH vaults…", flush=True)
+    print(
+        f"following {len(items)} park/dest addresses → P2WSH vaults"
+        f"{' (fresh-parks on)' if fresh_parks else ''}…",
+        flush=True,
+    )
 
     for i, (addr, meta) in enumerate(items, 1):
         if i % 25 == 0 or i == 1:
             print(f"  [{i}/{len(items)}] {addr} ({meta['sats'] / 1e8:.4f} BTC)", flush=True)
+
+        if p2wpkh_parks_only and not is_p2wpkh(addr) and not is_p2wsh(addr):
+            skipped_script += 1
+            continue
 
         # Direct P2WSH receive that never moved
         if is_p2wsh(addr):
             info = api.get_json(f"/address/{addr}")
             if info:
                 c = info["chain_stats"]
+                if fresh_parks and c["tx_count"] > max_park_txs:
+                    skipped_busy += 1
+                    continue
                 bal = c["funded_txo_sum"] - c["spent_txo_sum"]
-                if bal > 0:
+                if bal >= MIN_VAULT_SATS:
                     vaults[addr] = {
                         "address": addr,
                         "balance_btc": bal / 1e8,
@@ -363,12 +422,26 @@ def follow_to_vaults(api: Esplora, parks: dict, out_dir: Path) -> list[dict]:
                         "via": "direct_p2wsh_park",
                         "park": addr,
                         "park_sats": meta["sats"],
+                        "park_tx_count": c["tx_count"],
                     }
             continue
 
+        if fresh_parks or p2wpkh_parks_only:
+            try:
+                info = api.get_json(f"/address/{addr}")
+            except Exception as e:
+                print(f"  skip {addr}: {e}", flush=True)
+                continue
+            if not info:
+                continue
+            c = info["chain_stats"]
+            if fresh_parks and c["tx_count"] > max_park_txs:
+                skipped_busy += 1
+                continue
+
         # Follow spends from park
         try:
-            txs = api.get_json(f"/address/{addr}/txs") or []
+            txs = list(iter_address_txs(api, addr))
         except Exception as e:
             print(f"  skip {addr}: {e}", flush=True)
             continue
@@ -382,19 +455,37 @@ def follow_to_vaults(api: Esplora, parks: dict, out_dir: Path) -> list[dict]:
                     break
             if not spent_from:
                 continue
-            for vout in tx.get("vout") or []:
+
+            # Prefer one-to-one hops: single vout, or dominant P2WSH share
+            vouts = tx.get("vout") or []
+            p2wsh_outs = [
+                v
+                for v in vouts
+                if is_p2wsh(v.get("scriptpubkey_address"))
+                and int(v.get("value") or 0) >= MIN_VAULT_SATS
+            ]
+            if not p2wsh_outs:
+                continue
+            if len(vouts) > 1:
+                total_out = sum(int(v.get("value") or 0) for v in vouts) or 1
+                # Keep only if one P2WSH takes ≥90% of output value (change dust ok)
+                p2wsh_outs = [
+                    v
+                    for v in p2wsh_outs
+                    if int(v["value"]) / total_out >= 0.90
+                ]
+                if not p2wsh_outs:
+                    continue
+
+            for vout in p2wsh_outs:
                 dest = vout.get("scriptpubkey_address")
-                if not is_p2wsh(dest):
-                    continue
                 val = int(vout["value"])
-                if val < 100_000:  # ignore dust < 0.001 BTC
-                    continue
                 info = api.get_json(f"/address/{dest}")
                 if not info:
                     continue
                 c = info["chain_stats"]
                 bal = c["funded_txo_sum"] - c["spent_txo_sum"]
-                if bal <= 0:
+                if bal < MIN_VAULT_SATS:
                     continue
                 prev = vaults.get(dest)
                 if prev is None or (bal / 1e8) > prev["balance_btc"]:
@@ -406,6 +497,7 @@ def follow_to_vaults(api: Esplora, parks: dict, out_dir: Path) -> list[dict]:
                         "via": "park_to_p2wsh",
                         "park": addr,
                         "park_sats": meta["sats"],
+                        "park_tx_count": meta.get("n", 0),
                     }
 
     rows = sorted(vaults.values(), key=lambda r: -r["balance_btc"])
@@ -421,6 +513,7 @@ def follow_to_vaults(api: Esplora, parks: dict, out_dir: Path) -> list[dict]:
                 "via",
                 "park",
                 "park_sats",
+                "park_tx_count",
             ],
         )
         w.writeheader()
@@ -433,7 +526,170 @@ def follow_to_vaults(api: Esplora, parks: dict, out_dir: Path) -> list[dict]:
         f"Sum balance: {total:.4f} BTC (Galaxy target ~{TARGET_BTC} BTC / {TARGET_VAULTS} vaults)",
         flush=True,
     )
+    if fresh_parks or p2wpkh_parks_only:
+        print(
+            f"Filters: skipped_busy={skipped_busy} skipped_script={skipped_script}",
+            flush=True,
+        )
     return rows
+
+
+def diagnose_fee_bands(
+    api: Esplora,
+    out_dir: Path,
+    *,
+    start: int,
+    end: int,
+    fee_min: float,
+    fee_max: float,
+    probe_min: float,
+    probe_max: float,
+    sample_every: int,
+) -> dict:
+    """
+    Sample blocks in [start, end] and histogram 1-vout fee rates.
+    Use this before widening --fee-min/--fee-max for a full rescan.
+    """
+    from collections import Counter
+
+    heights = list(range(start, end + 1, max(1, sample_every)))
+    if heights[-1] != end:
+        heights.append(end)
+
+    in_band = 0
+    near_band = 0  # in probe window but outside scan band
+    outside_probe = 0
+    hist: Counter = Counter()
+    near_examples: list[dict] = []
+    per_block: list[dict] = []
+
+    print(
+        f"diagnose: sampling {len(heights)} blocks in {start}–{end} "
+        f"(every {sample_every}); probe {probe_min}–{probe_max} sat/vB; "
+        f"scan band {fee_min}–{fee_max}",
+        flush=True,
+    )
+
+    for height in heights:
+        block_hash = api.get_text(f"/block-height/{height}")
+        print(f"  block {height} via {api.host}", flush=True)
+        start_idx = 0
+        pages = 0
+        block_in = block_near = block_1vout = 0
+        while pages < 500:
+            page = api.get_json(f"/block/{block_hash}/txs/{start_idx}")
+            if not page:
+                break
+            for tx in page:
+                fee = tx.get("fee")
+                weight = tx.get("weight")
+                if not fee or not weight:
+                    continue
+                rate = fee / (weight / 4)
+                vouts = tx.get("vout") or []
+                if len(vouts) != 1:
+                    continue
+                block_1vout += 1
+                bucket = int(rate)
+                if probe_min <= rate <= probe_max:
+                    hist[bucket] += 1
+                addr = (vouts[0] or {}).get("scriptpubkey_address")
+                if fee_min <= rate <= fee_max:
+                    in_band += 1
+                    block_in += 1
+                elif probe_min <= rate <= probe_max:
+                    near_band += 1
+                    block_near += 1
+                    if len(near_examples) < 40:
+                        near_examples.append(
+                            {
+                                "height": height,
+                                "txid": tx.get("txid"),
+                                "address": addr,
+                                "sats": int(vouts[0].get("value") or 0),
+                                "fee_sat_vb": round(rate, 2),
+                                "p2wpkh": is_p2wpkh(addr),
+                                "p2wsh": is_p2wsh(addr),
+                            }
+                        )
+                else:
+                    outside_probe += 1
+            if len(page) < 25:
+                break
+            start_idx += len(page)
+            pages += 1
+
+        per_block.append(
+            {
+                "height": height,
+                "one_vout": block_1vout,
+                "in_scan_band": block_in,
+                "in_probe_outside_scan": block_near,
+            }
+        )
+        print(
+            f"    1-vout={block_1vout} in-band={block_in} probe-outside-band={block_near}",
+            flush=True,
+        )
+
+    # Secondary peak = another tight fee mode outside the scan band (e.g. many
+    # txs at ~150). Scattered 100–300 noise should not trigger a full rescan.
+    scan_lo, scan_hi = int(fee_min), int(fee_max)
+    outside_hist = {
+        int(k): v for k, v in hist.items() if int(k) < scan_lo or int(k) > scan_hi
+    }
+    peak_outside = max(outside_hist.items(), key=lambda kv: kv[1], default=(None, 0))
+    peak_inside = max(
+        ((int(k), v) for k, v in hist.items() if scan_lo <= int(k) <= scan_hi),
+        key=lambda kv: kv[1],
+        default=(None, 0),
+    )
+    secondary_peak = (
+        peak_outside[0] is not None
+        and peak_outside[1] >= 8
+        and peak_outside[1] >= max(8, (peak_inside[1] or 1) * 0.25)
+    )
+    if secondary_peak:
+        reco = (
+            f"possible secondary fee mode near {peak_outside[0]} sat/vB "
+            f"({peak_outside[1]} txs in sample) — consider targeted widen + rescan"
+        )
+    else:
+        reco = (
+            "fee widen unlikely to help; keep ~200 band and improve park→vault follow "
+            "(probe-outside counts look like scattered noise, not a second mode)"
+        )
+
+    summary = {
+        "blocks_sampled": heights,
+        "scan_fee_min": fee_min,
+        "scan_fee_max": fee_max,
+        "probe_fee_min": probe_min,
+        "probe_fee_max": probe_max,
+        "one_vout_in_scan_band": in_band,
+        "one_vout_probe_outside_scan": near_band,
+        "one_vout_outside_probe": outside_probe,
+        "fee_histogram_int_sat_vb": dict(sorted(hist.items())),
+        "peak_inside_sat_vb": peak_inside[0],
+        "peak_inside_count": peak_inside[1],
+        "peak_outside_sat_vb": peak_outside[0],
+        "peak_outside_count": peak_outside[1],
+        "near_band_examples": near_examples,
+        "per_block": per_block,
+        "recommendation": reco,
+    }
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / "diagnose.json"
+    path.write_text(json.dumps(summary, indent=2, sort_keys=True))
+    print(
+        f"\nDiagnose done → {path}\n"
+        f"  in-band (scan): {in_band}\n"
+        f"  probe-outside-scan: {near_band}\n"
+        f"  recommendation: {summary['recommendation']}",
+        flush=True,
+    )
+    return summary
 
 
 def print_shards(base_out: Path, hosts: list[str], start: int, end: int) -> None:
@@ -473,6 +729,18 @@ def main() -> int:
     parser.add_argument("--start", type=int, default=BLOCK_START, help="First block (inclusive)")
     parser.add_argument("--end", type=int, default=BLOCK_END, help="Last block (inclusive)")
     parser.add_argument(
+        "--fee-min",
+        type=float,
+        default=FEE_MIN,
+        help=f"Min fee rate sat/vB for park scan (default {FEE_MIN})",
+    )
+    parser.add_argument(
+        "--fee-max",
+        type=float,
+        default=FEE_MAX,
+        help=f"Max fee rate sat/vB for park scan (default {FEE_MAX})",
+    )
+    parser.add_argument(
         "--min-interval",
         type=float,
         default=0.35,
@@ -493,6 +761,45 @@ def main() -> int:
         "--scan-only",
         action="store_true",
         help="Only scan blocks into checkpoint; do not follow parks yet",
+    )
+    parser.add_argument(
+        "--fresh-parks",
+        action="store_true",
+        help="During follow, skip busy parks (tx_count > --max-park-txs)",
+    )
+    parser.add_argument(
+        "--p2wpkh-parks-only",
+        action="store_true",
+        help="During follow, only chase bc1q P2WPKH (42-char) parks (+ direct P2WSH)",
+    )
+    parser.add_argument(
+        "--max-park-txs",
+        type=int,
+        default=DEFAULT_MAX_PARK_TXS,
+        help=f"With --fresh-parks, max chain tx_count for a park (default {DEFAULT_MAX_PARK_TXS})",
+    )
+    parser.add_argument(
+        "--diagnose",
+        action="store_true",
+        help="Sample blocks for 1-vout fee histogram; write diagnose.json and exit",
+    )
+    parser.add_argument(
+        "--diagnose-every",
+        type=int,
+        default=5,
+        help="With --diagnose, sample every Nth block (default 5)",
+    )
+    parser.add_argument(
+        "--probe-fee-min",
+        type=float,
+        default=100.0,
+        help="With --diagnose, wide probe floor sat/vB (default 100)",
+    )
+    parser.add_argument(
+        "--probe-fee-max",
+        type=float,
+        default=300.0,
+        help="With --diagnose, wide probe ceiling sat/vB (default 300)",
     )
     parser.add_argument(
         "--print-shards",
@@ -534,8 +841,24 @@ def main() -> int:
     api = Esplora(hosts, timeout=args.timeout, min_interval=args.min_interval)
     print(f"hosts: {hosts}", flush=True)
     print(f"out:   {out_dir}", flush=True)
+
+    if args.diagnose:
+        diagnose_fee_bands(
+            api,
+            out_dir,
+            start=args.start,
+            end=args.end,
+            fee_min=args.fee_min,
+            fee_max=args.fee_max,
+            probe_min=args.probe_fee_min,
+            probe_max=args.probe_fee_max,
+            sample_every=args.diagnose_every,
+        )
+        return 0
+
     print(
-        f"scan:  blocks {args.start}–{args.end}, fee {FEE_MIN}–{FEE_MAX} sat/vB, 1-vout",
+        f"scan:  blocks {args.start}–{args.end}, "
+        f"fee {args.fee_min}–{args.fee_max} sat/vB, 1-vout",
         flush=True,
     )
 
@@ -548,7 +871,14 @@ def main() -> int:
             print("block scan already complete (checkpoint).", flush=True)
         else:
             print(f"resuming block scan at {state['next_height']}", flush=True)
-            state = scan_blocks(api, out_dir, state, block_end=args.end)
+            state = scan_blocks(
+                api,
+                out_dir,
+                state,
+                block_end=args.end,
+                fee_min=args.fee_min,
+                fee_max=args.fee_max,
+            )
 
     if args.scan_only:
         print("scan-only done.", flush=True)
@@ -559,7 +889,14 @@ def main() -> int:
         print("no parks in checkpoint — run a block scan first", file=sys.stderr)
         return 1
 
-    follow_to_vaults(api, parks, out_dir)
+    follow_to_vaults(
+        api,
+        parks,
+        out_dir,
+        fresh_parks=args.fresh_parks,
+        max_park_txs=args.max_park_txs,
+        p2wpkh_parks_only=args.p2wpkh_parks_only,
+    )
     return 0
 
 
