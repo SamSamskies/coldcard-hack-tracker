@@ -1,8 +1,9 @@
 /**
  * Galaxy Wave 3 P2WSH vault candidates reconstructed from on-chain fingerprint.
  * Not Galaxy’s published address list — see WAVE3_FINGERPRINT in incident.ts.
- * Watch list: vaults ≥ 0.5 BTC only (75 · 181.28598197 BTC) for reliable snapshots.
+ * Watch list: vaults ≥ 0.5 BTC only (74 · 180.23598197 BTC) for reliable snapshots.
  * Balances served from public/snapshot.json (cron), not live browser polls.
+ * Requires park→P2WSH hop (Wave 3 shape); direct P2WSH parks are excluded.
  */
 
 export const WAVE3_VAULTS = [
@@ -202,188 +203,183 @@ export const WAVE3_VAULTS = [
     reportBtc: 1.05327357,
   },
   {
-    address: 'bc1qm5z7e296yg8pk903xkgsmfvf6292mfmtp58q3s08tmrghzuc85fqse2vd9',
-    label: 'Wave 3 vault 40',
-    reportBtc: 1.05,
-  },
-  {
     address: 'bc1qtu8suvhp2zp994fnawvrmuvh5k263waap3kmwluzacfsdv4x9grs4eg09u',
-    label: 'Wave 3 vault 41',
+    label: 'Wave 3 vault 40',
     reportBtc: 1.0430298,
   },
   {
     address: 'bc1qcu3w05j0n7s3q7nlwn0apsfnyapxd7r3xj2rrny0ffnkfxmpuafqetphx4',
-    label: 'Wave 3 vault 42',
+    label: 'Wave 3 vault 41',
     reportBtc: 1.01976357,
   },
   {
     address: 'bc1q3ehq9tz6zz9xur969exg2rnpsqge6uf9vqanz3v856knnz5w2e9sa5yh8j',
-    label: 'Wave 3 vault 43',
+    label: 'Wave 3 vault 42',
     reportBtc: 1.01857988,
   },
   {
     address: 'bc1qqu0sp6d4wxnp33ghgrtexrczzzl85f3vnlueep2hlsw69t38xazqltw5ac',
-    label: 'Wave 3 vault 44',
+    label: 'Wave 3 vault 43',
     reportBtc: 1.01266757,
   },
   {
     address: 'bc1qsjltn7mjlkl3fuxdexdnjjyzp9fxcvzxn92upxa0764nfxl7a6eqzc0szd',
-    label: 'Wave 3 vault 45',
+    label: 'Wave 3 vault 44',
     reportBtc: 1.0069355,
   },
   {
     address: 'bc1qtl628t8mfce0sgfxpkt5csu2uw4jema7ekz5gj2atsvktyzwur2qwh9r2j',
-    label: 'Wave 3 vault 46',
+    label: 'Wave 3 vault 45',
     reportBtc: 1.00093255,
   },
   {
     address: 'bc1qa3mfkwwdsa2xa6xsazp5yd2cr5e3tyf7j0mgax7xzumpj4gtz77sdzd64z',
-    label: 'Wave 3 vault 47',
+    label: 'Wave 3 vault 46',
     reportBtc: 1.00040325,
   },
   {
     address: 'bc1q5c6m8qrqum6xhlyaw9yplggak4vlz6p9kj8szcphh2x0jvfa3heq5mgfa2',
-    label: 'Wave 3 vault 48',
+    label: 'Wave 3 vault 47',
     reportBtc: 1.0001318,
   },
   {
     address: 'bc1qt2k74x6s8wdtvqwmdnhdzm4k7dvueprh3e0hvs9q68w0eq6xm49s3kf758',
-    label: 'Wave 3 vault 49',
+    label: 'Wave 3 vault 48',
     reportBtc: 0.9949898,
   },
   {
     address: 'bc1q7fgsarhqap7kzhpy2efj5d5fha735jne2e225g9dzn244f3je84smsv9fj',
-    label: 'Wave 3 vault 50',
+    label: 'Wave 3 vault 49',
     reportBtc: 0.9934878,
   },
   {
     address: 'bc1qrx4r4dgfhtfn3ekumz6f53m7s9y5wch985fa0zxznz6hnm6vt9sqkutf0n',
-    label: 'Wave 3 vault 51',
+    label: 'Wave 3 vault 50',
     reportBtc: 0.85192202,
   },
   {
     address: 'bc1q464uswwg3sq3c00wc8wqhlhqpl0samckyggnzhlk3rjl38nhr6ssslhtk0',
-    label: 'Wave 3 vault 52',
+    label: 'Wave 3 vault 51',
     reportBtc: 0.85074447,
   },
   {
     address: 'bc1qkl4vkxz7ax3zkwz6awq4pv2xuznjzqrs4ve4h957zrvpy8jfyvsshglgc2',
-    label: 'Wave 3 vault 53',
+    label: 'Wave 3 vault 52',
     reportBtc: 0.83717676,
   },
   {
     address: 'bc1q893u2894gx3ctxdl4hfn78ya60zzqndfpsucm02q7d0wf7l6rdvq2p64rx',
-    label: 'Wave 3 vault 54',
+    label: 'Wave 3 vault 53',
     reportBtc: 0.8353508,
   },
   {
     address: 'bc1q75t6kucn702r8fmg5wt7xq3pgvw0lkua2p5a6wv2f2nlrmhlu44que6rl2',
-    label: 'Wave 3 vault 55',
+    label: 'Wave 3 vault 54',
     reportBtc: 0.81458411,
   },
   {
     address: 'bc1qc5j2jgp0mgrxsmq79gq5yv0gavyuxfd3z3plss4mcrvnq0239zeq822mln',
-    label: 'Wave 3 vault 56',
+    label: 'Wave 3 vault 55',
     reportBtc: 0.80094372,
   },
   {
     address: 'bc1qnjpfhc4pdmxmp2tzjz45u22anttwtk4u0lty5x2k7qwcsjm0hn2sa8tqc5',
-    label: 'Wave 3 vault 57',
+    label: 'Wave 3 vault 56',
     reportBtc: 0.77812263,
   },
   {
     address: 'bc1q64nmnz88qe0ee0e3a3ne4mnelvajz8dq5zcf8mqvslqcx72hdtzqsu2td0',
-    label: 'Wave 3 vault 58',
+    label: 'Wave 3 vault 57',
     reportBtc: 0.77291101,
   },
   {
     address: 'bc1qassuukkcmngzuvg3crswanmsnr08pjnunvc24f7r2p0zjnj35sushh93zs',
-    label: 'Wave 3 vault 59',
+    label: 'Wave 3 vault 58',
     reportBtc: 0.7596758,
   },
   {
     address: 'bc1qxhju5xspcy8vu9ey4fve548wycm6nhq3vrvp902e0xsm0cz7l8zqh2snjc',
-    label: 'Wave 3 vault 60',
+    label: 'Wave 3 vault 59',
     reportBtc: 0.75536701,
   },
   {
     address: 'bc1qq2y3q0c4ulhe9c00pmxmhxkdcsuc0pf93krhcmqk3cy7nkjkc6vqgjpzkl',
-    label: 'Wave 3 vault 61',
+    label: 'Wave 3 vault 60',
     reportBtc: 0.70431447,
   },
   {
     address: 'bc1q6vc45ulxcyra499strhwrrppcnqk6s40wrn4frl4dpx5wansl0cs9yklv7',
-    label: 'Wave 3 vault 62',
+    label: 'Wave 3 vault 61',
     reportBtc: 0.69906337,
   },
   {
     address: 'bc1qrmp5a6xdve2k9kun5g22y09gdwnmd3e6npxt0s2t7nzxrnv9uufs7z8w8m',
-    label: 'Wave 3 vault 63',
+    label: 'Wave 3 vault 62',
     reportBtc: 0.67899409,
   },
   {
     address: 'bc1qu673mdghv3e8sctx7vmjv5uzrgz9khzw4q7nefuu3uhmsehst5sqhz5ztq',
-    label: 'Wave 3 vault 64',
+    label: 'Wave 3 vault 63',
     reportBtc: 0.66510239,
   },
   {
     address: 'bc1qhvrd93pj6zh5qt23g79v3c06j7weuyljsjkc8klr7sqgkncgpkksptvlfn',
-    label: 'Wave 3 vault 65',
+    label: 'Wave 3 vault 64',
     reportBtc: 0.64598208,
   },
   {
     address: 'bc1q0pyh8m970h2gsv8l8l58alk02qt6q9hnzf6mh4r3rurqkhvdllns3m6nkf',
-    label: 'Wave 3 vault 66',
+    label: 'Wave 3 vault 65',
     reportBtc: 0.61847292,
   },
   {
     address: 'bc1q5k77u9n2c5tp7mg3pwauyhcju0c2sytfem84rpqwj5par392qwvslddty4',
-    label: 'Wave 3 vault 67',
+    label: 'Wave 3 vault 66',
     reportBtc: 0.5941699,
   },
   {
     address: 'bc1qmkqkq6c7nj9ahrldajdktwgnkw98yxcn6rvq0p4ude8a3lrc4p2ql4mgyu',
-    label: 'Wave 3 vault 68',
+    label: 'Wave 3 vault 67',
     reportBtc: 0.58741437,
   },
   {
     address: 'bc1qwymjp76jw6m2qyctynwfpy37cdwcdryhamclg2vdvucgheql09as3u33zw',
-    label: 'Wave 3 vault 69',
+    label: 'Wave 3 vault 68',
     reportBtc: 0.58633145,
   },
   {
     address: 'bc1qm2de6c09vajzztvxzv8tzn2a7rj68sx4zjcaczunh6s34yh0fyvqmnq34p',
-    label: 'Wave 3 vault 70',
+    label: 'Wave 3 vault 69',
     reportBtc: 0.5808048,
   },
   {
     address: 'bc1q6vpkjwgv88w53v03axsd6k0jjr8zjv9mrt5swgda9k45qh75764s37udc6',
-    label: 'Wave 3 vault 71',
+    label: 'Wave 3 vault 70',
     reportBtc: 0.54963327,
   },
   {
     address: 'bc1qtujm6ufvvnmemtjyulmhgq9cky7ww92yc2t0ye8t2kyd6eu563vqwpqs6r',
-    label: 'Wave 3 vault 72',
+    label: 'Wave 3 vault 71',
     reportBtc: 0.54569989,
   },
   {
     address: 'bc1qfeg6uqsv7rt59yp3fs44x8wunre5vpgum7shkejwxz86hvn3c9uqa58my8',
-    label: 'Wave 3 vault 73',
+    label: 'Wave 3 vault 72',
     reportBtc: 0.54132885,
   },
   {
     address: 'bc1qkwhtguuqpdlr2zjq7nf87etgs9f3y98qy6epvgk6kl7xe02msntst8n5zl',
-    label: 'Wave 3 vault 74',
+    label: 'Wave 3 vault 73',
     reportBtc: 0.5069498,
   },
   {
     address: 'bc1qkyncy6suewl4gs7ptvwggvvdwtt70u68rey7yw2ymyuxcpwxagmssw293h',
-    label: 'Wave 3 vault 75',
+    label: 'Wave 3 vault 74',
     reportBtc: 0.50163823,
   },
 ] as const;
 
-export const WAVE3_VAULT_COUNT = 75 as const;
-export const WAVE3_VAULT_REPORT_BTC = 181.28598197;
+export const WAVE3_VAULT_COUNT = 74 as const;
+export const WAVE3_VAULT_REPORT_BTC = 180.23598197;
 /** Only watch Wave 3 vaults at or above this report balance (BTC). */
 export const WAVE3_MIN_WATCH_BTC = 0.5;

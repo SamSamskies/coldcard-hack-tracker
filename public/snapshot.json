@@ -245,11 +245,6 @@
       "utxoCount": 1
     },
     {
-      "address": "bc1qm5z7e296yg8pk903xkgsmfvf6292mfmtp58q3s08tmrghzuc85fqse2vd9",
-      "balanceSats": 105000000,
-      "utxoCount": 1
-    },
-    {
       "address": "bc1qtu8suvhp2zp994fnawvrmuvh5k263waap3kmwluzacfsdv4x9grs4eg09u",
       "balanceSats": 104302980,
       "utxoCount": 1
