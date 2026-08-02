@@ -3,9 +3,12 @@ import {
   CLUSTER_BY_ID,
   CLUSTERS,
   CONSOLIDATED_BTC,
+  EARLY_AUG2_WAVE,
+  EVENING_WAVE,
   GALAXY,
   HOLDING_ADDRESSES,
   INCIDENT,
+  MORNING_WAVE,
   ORIGINAL_STOLEN_BTC,
   WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
@@ -189,6 +192,128 @@ function GalaxyWave3Meta() {
         <dd>
           <span className="meta-primary">park → P2WSH</span>
           <span className="meta-sub">RNG map cross-check</span>
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
+function EveningWaveMeta() {
+  const wave = CLUSTER_BY_ID['evening-july31'];
+  const ev = EVENING_WAVE;
+  return (
+    <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(wave.stolenBtc)} BTC watched
+          </span>
+          <span className="meta-sub">emptied Aug 1–2</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fee</dt>
+        <dd>
+          <span className="meta-primary">
+            ~{ev.feeSatPerVbMin}–{ev.feeSatPerVbMax} sat/vB
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Holdings</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(ev.eveningVaultBtc)} BTC evening ·{' '}
+            {formatBtc(ev.hopVaultBtc)} BTC hop
+          </span>
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
+function MorningWaveMeta() {
+  const wave = CLUSTER_BY_ID['morning-aug1'];
+  const m = MORNING_WAVE;
+  return (
+    <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(wave.stolenBtc)} BTC · {m.victimSweeps} sweeps
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Blocks</dt>
+        <dd>
+          <span className="meta-primary">
+            {m.blockStart.toLocaleString()}–{m.blockEnd.toLocaleString()}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fee</dt>
+        <dd>
+          <span className="meta-primary">
+            ~{m.feeSatPerVbMin}–{m.feeSatPerVbMax} sat/vB
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Pattern</dt>
+        <dd>
+          <span className="meta-primary">direct victim → vault</span>
+          <span className="meta-sub">still unspent</span>
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
+function EarlyAug2Meta() {
+  const wave = CLUSTER_BY_ID['early-aug2'];
+  const a = EARLY_AUG2_WAVE;
+  return (
+    <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(wave.stolenBtc)} BTC ·{' '}
+            {a.inputCount.toLocaleString()} inputs
+          </span>
+          <span className="meta-sub">
+            {a.addressCount.toLocaleString()} addresses ·{' '}
+            {formatBtc(a.landedBtc)} BTC landed
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Blocks</dt>
+        <dd>
+          <span className="meta-primary">{a.block.toLocaleString()}</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fee</dt>
+        <dd>
+          <span className="meta-primary">~{a.feeSatPerVb} sat/vB</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Window</dt>
+        <dd>
+          <span className="meta-primary">{a.windowUtc}</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Pattern</dt>
+        <dd>
+          <span className="meta-primary">multi-path → one P2WPKH</span>
+          <span className="meta-sub">still unspent</span>
         </dd>
       </div>
     </dl>
@@ -420,8 +545,15 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                 <LinkedNote className="cluster-note" text={cluster.note} />
                 {clusterId === 'galaxy-july30' ? <GalaxyWave1Meta /> : null}
                 {clusterId === 'galaxy-july31' ? <GalaxyWave2Meta /> : null}
-                {clusterId === 'evening-july31' ? <EveningCashoutFlow /> : null}
                 {isWave3 ? <GalaxyWave3Meta /> : null}
+                {clusterId === 'evening-july31' ? (
+                  <>
+                    <EveningWaveMeta />
+                    <EveningCashoutFlow />
+                  </>
+                ) : null}
+                {clusterId === 'morning-aug1' ? <MorningWaveMeta /> : null}
+                {clusterId === 'early-aug2' ? <EarlyAug2Meta /> : null}
               </header>
 
               {rows.length === 0 ? (

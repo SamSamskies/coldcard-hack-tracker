@@ -59,6 +59,33 @@ export const WAVE2_FINGERPRINT = {
   collectorBtc: 30.18476329,
 } as const;
 
+/** Community evening wave (Evan Schoenberg) — distinct from Galaxy Wave 2. */
+export const EVENING_WAVE = {
+  feeSatPerVbMin: 1,
+  feeSatPerVbMax: 2,
+  eveningVaultBtc: 0.50980268,
+  hopVaultBtc: 0.69135523,
+} as const;
+
+/** Community morning wave (Tomer Strolight honey-pot / duress report). */
+export const MORNING_WAVE = {
+  blockStart: 960_518,
+  blockEnd: 960_523,
+  feeSatPerVbMin: 15,
+  feeSatPerVbMax: 50,
+  victimSweeps: 16,
+} as const;
+
+/** Community early Aug 2 consolidation (Marius Offchain / Mk2 report). */
+export const EARLY_AUG2_WAVE = {
+  block: 960_668,
+  windowUtc: '04:03 UTC Aug 2',
+  feeSatPerVb: 9,
+  inputCount: 902,
+  addressCount: 795,
+  landedBtc: 64.90373764,
+} as const;
+
 /** Primary July 30 window (Galaxy Wave 1) mapped from Block’s fingerprint. */
 export const INCIDENT = {
   dateLabel: 'July 30, 2026',
@@ -142,7 +169,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 1.20115791,
     date: '2026-07-31',
-    note: 'Low-fee (~1–2 sat/vB) sweeps. Both watched holdings (~1.20 BTC) emptied Aug 1–2 on two cash-out rails (flow below). Ocean (OCEAN.XYZ) miner peel that touched the hop vault later hit the same P2SH hub — same-operator link; Ocean sats not counted as stolen. Distinct from Galaxy Wave 2.',
+    note: 'Distinct from Galaxy Wave 2. Ocean miner peel later met stolen hops at the same P2SH hub — same-operator link; Ocean sats not counted as stolen.',
     sourceUrl: 'https://x.com/evands/status/2083505832587587945',
   },
   {
@@ -150,7 +177,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Morning wave · Aug 1',
     stolenBtc: 0.33295323,
     date: '2026-08-01',
-    note: 'Blocks 960518–960523. Direct victim sweeps (~15–50 sat/vB) into one vault; honey-pot / duress-wallet report (Mk4 claim later withdrawn — seed was Mk3-origin).',
+    note: 'Honey-pot / duress-wallet report. Mk4 claim later withdrawn — seed was Mk3-origin.',
     sourceUrl: 'https://x.com/TomerStrolight/status/2083578868191957292',
   },
   {
@@ -162,7 +189,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 64.90947964,
     date: '2026-08-02',
-    note: 'Confirmed 04:03 UTC Aug 2 · block 960668 · ~9 sat/vB · 902 inputs from 795 addresses into one P2WPKH. Multi-path mix (P2WPKH/P2PKH/P2SH); sampled inputs long-dormant and funded after the March 2021 vuln window. Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 victim report.',
+    note: 'Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 victim report; sampled inputs long-dormant and funded after the March 2021 vuln window.',
     sourceUrl: 'https://x.com/mariusoffchain/status/2083814011859030252',
   },
 ] as const;

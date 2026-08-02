@@ -3,9 +3,12 @@ import {
   CLUSTERS,
   CLUSTER_BY_ID,
   CONSOLIDATED_BTC,
+  EARLY_AUG2_WAVE,
+  EVENING_WAVE,
   GALAXY,
   HOLDING_ADDRESSES,
   INCIDENT,
+  MORNING_WAVE,
   ORIGINAL_STOLEN_BTC,
   WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
@@ -81,6 +84,17 @@ describe('incident data invariants', () => {
       wave2.reduce((s, h) => s + h.reportBtc, 0),
       8,
     );
+  });
+
+  it('keeps community wave markers aligned with watched holdings', () => {
+    expect(
+      EVENING_WAVE.eveningVaultBtc + EVENING_WAVE.hopVaultBtc,
+    ).toBeCloseTo(CLUSTER_BY_ID['evening-july31'].stolenBtc, 8);
+    expect(EARLY_AUG2_WAVE.landedBtc).toBeCloseTo(
+      HOLDING_ADDRESSES.find((h) => h.clusterId === 'early-aug2')!.reportBtc,
+      8,
+    );
+    expect(MORNING_WAVE.victimSweeps).toBeGreaterThan(0);
   });
 
   it('watches higher-value fingerprint-matched Wave 3 vaults only', () => {
