@@ -22,14 +22,15 @@ export function LinkedNote({ text, className, as = 'p' }: Props) {
       nodes.push(text.slice(last, match.index));
     }
     const label = match[1];
-    const href = match[3] ? explorerAddressUrl(match[3]) : match[2];
+    const isAddress = Boolean(match[3]);
+    const href = isAddress ? explorerAddressUrl(match[3]) : match[2];
     nodes.push(
       <a
         key={key++}
         href={href}
         target="_blank"
         rel="noreferrer"
-        className="mono note-link"
+        className={isAddress ? 'mono note-link' : 'note-link'}
       >
         {label}
       </a>,

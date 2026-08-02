@@ -1,3 +1,5 @@
+import { LinkedNote } from './LinkedNote';
+
 const FIRMWARE_ROWS = [
   {
     device: 'Mk3',
@@ -30,6 +32,10 @@ const POINTS = [
   {
     label: 'Firmware update is not enough',
     text: 'Patching does not repair an existing seed. Generate a new seed on fixed firmware and migrate funds carefully.',
+  },
+  {
+    label: 'Migrate before you upgrade',
+    text: 'If this Coldcard is your only signer for a weak seed, move funds first. Community reports (including [Jameson Lopp](https://x.com/lopp/status/2083958797354127631)) flag a non-zero chance the hotfix upgrade bricks the unit. Prefer sweeping to a new seed on a second fixed device when possible.',
   },
   {
     label: 'Origin of the seed',
@@ -95,7 +101,7 @@ export function RiskChecklist() {
         {POINTS.map((point) => (
           <li key={point.label}>
             <span className="risk-point-label">{point.label}</span>
-            <span className="risk-point-text">{point.text}</span>
+            <LinkedNote as="span" className="risk-point-text" text={point.text} />
           </li>
         ))}
       </ul>
