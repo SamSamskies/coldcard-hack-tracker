@@ -125,17 +125,6 @@ function GalaxyWave2Meta() {
           </span>
         </dd>
       </div>
-      <div>
-        <dt>Holdings</dt>
-        <dd>
-          <span className="meta-primary">
-            {formatBtc(fp.vaultBtc)} BTC vault
-          </span>
-          <span className="meta-sub">
-            {formatBtc(fp.collectorBtc)} BTC collector unmoved
-          </span>
-        </dd>
-      </div>
     </dl>
   );
 }
@@ -217,15 +206,6 @@ function EveningWaveMeta() {
         <dd>
           <span className="meta-primary">
             ~{ev.feeSatPerVbMin}–{ev.feeSatPerVbMax} sat/vB
-          </span>
-        </dd>
-      </div>
-      <div>
-        <dt>Holdings</dt>
-        <dd>
-          <span className="meta-primary">
-            {formatBtc(ev.eveningVaultBtc)} BTC evening ·{' '}
-            {formatBtc(ev.hopVaultBtc)} BTC hop
           </span>
         </dd>
       </div>
