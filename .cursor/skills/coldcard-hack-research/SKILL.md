@@ -26,9 +26,20 @@ Canonical facts live in code; explorers only supply live balances.
 1. **Read repo first** — `src/data/incident.ts`, `src/data/wave3Vaults.ts`, tests, README. Do not invent addresses that contradict existing clusters.
 2. **Firecrawl** — search/scrape articles, advisories, and any public pages. Prefer writing to `.firecrawl/` (already gitignored).
 3. **X/Twitter** — scrape via **[xcancel.com](https://xcancel.com/)** first: rewrite `https://x.com/...` → `https://xcancel.com/...` (same path). It usually returns readable thread text plus original media URLs (`pbs.twimg.com/...name=orig`) needed for Galaxy chart OCR. Keep the canonical `x.com` URL in `sourceUrl` citations. If xcancel fails, try `x.com` directly, then ask the user for text/screenshot. Never guess totals from a broken scrape.
-4. **Reddit** — search `r/Bitcoin`, `r/BitcoinBeginners`, `r/coldcard`, and general web results for Coldcard / sweep / consolidation posts. Community reports often land here before press. Treat posts as leads only: pull primary X/blog links and verify on-chain before editing data. Prefer old.reddit.com or Firecrawl scrape of the thread URL when the redesign is noisy.
+4. **Reddit** — use Firecrawl **search** (`site:reddit.com`, `r/Bitcoin`, `r/coldcard`, etc.) for leads. Firecrawl often **cannot scrape** Reddit thread pages (blocked / unsupported); Reddit’s public JSON API is also frequently 403 from agents. Treat search titles/snippets as leads only — ask the user to paste a thread if comments matter. Prefer primary X/blog links from posts, then verify on-chain before editing data.
 5. **On-chain** — public Esplora only. Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
 6. **OCR** — for chart images (Galaxy maps), use local Vision/OCR; do not trust eyeballed BTC figures.
+
+### When blocked
+
+After **one** clear failure (bot wall, unsupported site, 403/429 that retries won’t fix, empty scrape, explorer outage), **ask the user for help** instead of looping. Say what you needed and what failed, then offer a concrete ask, e.g.:
+
+- Paste the X/Reddit/blog text or a screenshot
+- Open a URL and confirm what it shows
+- Supply an API key / re-auth (`firecrawl login`) if credits or auth died
+- Approve a slower/manual path (browser, different host)
+
+Do not invent facts to paper over a blocked fetch. Partial results are fine — report what you have and what’s missing.
 
 Details: [reference.md](reference.md).
 
@@ -102,6 +113,7 @@ For each candidate address:
 - Cite primary sources in `sourceUrl` / notes.
 - Keep day-granularity dates unless the report supports finer timing.
 - Prefer explorer mirrors for bulk work; write research dumps under `.firecrawl/` or `scripts/wave3-out/`.
+- Ask the user after a hard block — don’t burn credits on endless retries.
 - Run `npm test` after data edits.
 
 **Don’t**
@@ -109,6 +121,7 @@ For each candidate address:
 - Treat Ocean miner peels or surplus pass-through as stolen movement.
 - Add P2SH cash-out hubs as holdings (labels only — snapshot regex only picks `bc1…` from the core block + Wave 3 list).
 - Stampede public explorers or invent Wave 3 addresses from incomplete scrapes.
+- Quietly skip a blocked primary source and guess totals from secondary press.
 - Commit `.firecrawl/` or raw `scripts/wave3-out/` checkpoints unless the user asks.
 
 ## After edits
