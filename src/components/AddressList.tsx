@@ -542,6 +542,19 @@ function EveningCashoutFlow() {
           <dt>BTC · ~0.27</dt>
           <dd>
             <a
+              className="note-link"
+              href={explorerAddressUrl(
+                'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Evening vault
+            </a>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
               className="mono note-link"
               href={explorerAddressUrl(
                 'bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw',
@@ -549,7 +562,7 @@ function EveningCashoutFlow() {
               target="_blank"
               rel="noreferrer"
             >
-              Evening vault hop
+              bc1qdt6c…
             </a>
             <span className="cashout-arrow" aria-hidden="true">
               →
