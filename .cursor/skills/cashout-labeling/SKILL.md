@@ -1,0 +1,99 @@
+---
+name: cashout-labeling
+description: >-
+  Trace emptied Coldcard-hack vaults to hop destinations, identify exchange or
+  bridge exits (Arkham/labels), and update KNOWN_ADDRESS_LABELS vs holdings.
+  Use when funds moved, cash-outs, peels, THORChain/KuCoin/Coinbase/Bullish-style
+  exits, “where did the coins go?”, or labeling movement-feed destinations.
+---
+
+# Cash-out Labeling
+
+When watched holdings spend, classify destinations and label known exits so the
+movement feed and UI stay honest. On-chain hops:
+[btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
+[coldcard-hack-research](../coldcard-hack-research/SKILL.md).
+
+## Workflow
+
+```
+- [ ] Confirm source vault emptied / partial move (live balance vs reportBtc)
+- [ ] Follow hops (depth ≤2, ≥0.01 BTC, ≤3 dests/spend, block > 960400)
+- [ ] Skip surplus pass-through / Ocean peels
+- [ ] Identify destination role (see table)
+- [ ] Label with evidence (Arkham / primary report) — or leave unlabeled
+- [ ] Edit data + optional UI rail; npm test; snapshot if holdings changed
+```
+
+## Holding vs label-only
+
+| Destination type | Put in | Do not |
+|------------------|--------|--------|
+| Still-holding attacker vault / Wave 4 **park** stack | `CORE_HOLDING_ADDRESSES` (or Wave 3 if fingerprint) | Treat as mere label |
+| Exchange / custodial **deposit** | `KNOWN_ADDRESS_LABELS` only | Add as holding |
+| High-volume **service hub** (P2SH/P2WPKH mixer/swap sink) | `KNOWN_ADDRESS_LABELS` only | Add as holding |
+| Bridge vault (e.g. THORChain) | `KNOWN_ADDRESS_LABELS` only | Count as still-held stolen |
+| Intermediate hop, unknown | Follow further / note txids | Invent a venue name |
+
+**Gotcha:** Wave 4 destination parks that are base58 `1…`/`3…` **are** holdings
+(attacker still parking). P2SH *service hubs* that mix many unrelated flows are
+**labels only** — even if stolen hops land there.
+
+## Label discovery
+
+1. Check existing `KNOWN_ADDRESS_LABELS` + [reference.md](../coldcard-hack-research/reference.md) exits.
+2. **Arkham** (primary label source used in this repo):
+   `https://arkm.com/explorer/address/{ADDR}`
+   Firecrawl/scrape the page; if blocked, ask user for the entity name / screenshot.
+3. Cross-check community X (via xcancel) only as leads — prefer Arkham or explorer
+   entity tags with a cited block height.
+4. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
+   `Bullish.com deposit`, `THORChain BTC vault`, `P2SH service hub`). Prefer
+   “deposit” / “hub” / “vault” so empty balances read correctly.
+
+If no credible label: leave unlabeled; cite txid + block in notes. Do **not**
+guess exchange names from address format.
+
+## Empty balance meaning
+
+| Address role | Balance 0 means |
+|--------------|-----------------|
+| Attacker vault / park / collector | Funds **moved** — keep chasing hops |
+| Labeled exchange deposit | Custodian **swept** — expected; keep label |
+| Service hub | Normal churn — not a single stack |
+
+Never “fix” emptied vaults by zeroing `reportBtc`.
+
+## Editing the repo
+
+### Always (known exit)
+
+Add to `KNOWN_ADDRESS_LABELS` in `src/data/incident.ts` with a short comment:
+cluster/wave, block height, evidence (Arkham / reporter).
+
+Also mirror the address in `coldcard-hack-research/reference.md` → Known exit labels.
+
+### Sometimes (narrative UI)
+
+Update `AddressList` cash-out rails / peels only when the path is user-facing and
+stable (evening three rails, Wave 4 peels). Link Arkham with
+`https://arkm.com/explorer/address/{addr}` or explorer via `explorerAddressUrl`.
+
+### Never without primary evidence
+
+Do not add new **stolen** cluster totals from cash-out rumors (see deferred
+Duel.com ~30 BTC in research reference). Need public BTC/ETH txids or addresses.
+
+## Same-venue ≠ same operator
+
+Shared exit hubs (e.g. Ocean peel and stolen hops both hitting `3KMmeq…`) mean
+**same venue**, not proof of same actor. Wording in notes must stay careful.
+
+## After edits
+
+```bash
+npm test
+npm run snapshot   # only if CORE / Wave 3 holdings changed
+```
+
+Movement-feed labels pick up `KNOWN_ADDRESS_LABELS` with no snapshot required.

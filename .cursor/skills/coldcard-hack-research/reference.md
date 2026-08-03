@@ -68,6 +68,9 @@ COLDCARD RNG chain map: public cross-check for Wave 3; no URL constant in repo �
 
 ## Known exit labels
 
+Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md). Arkham:
+`https://arkm.com/explorer/address/{addr}`.
+
 - `bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794` — THORChain BTC vault
 - `3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8` — P2SH service hub (likely custodial/swap; hops mixed out)
 - `3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH` — Bullish.com deposit (Wave 4 dual-sweep park peel, block 960793)
