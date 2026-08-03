@@ -29,6 +29,7 @@ Read this when you need concrete constants, source URLs, or script paths. Keep `
 | Evening | — | 1–2 | Distinct from Galaxy W2; Ocean peel ≠ stolen |
 | Morning | 960518–960523 | 15–50 | ~16 victim sweeps; direct → vault; Mk4 claim withdrawn |
 | Early Aug 2 | **960668** | 9 | 04:03 UTC; 902 inputs / 795 addrs; ~64.90 BTC landed |
+| Likely Wave 4 | **960778–960792** | 1–3 | Thorn; ~388.93 BTC; 462 victims → 216 1:1 dests; RBF; no collector |
 
 Movement watch: block **> 960400**. Hop follow: depth ≤2, ≥0.01 BTC, ≤3 dests/spend.
 
@@ -54,6 +55,7 @@ Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blo
 - Tomer Strolight (morning): `https://x.com/TomerStrolight/status/2083578868191957292`
 - Marius Offchain (early Aug 2): `https://x.com/mariusoffchain/status/2083814011859030252`
 - Erik (early Aug 2 Mk3 victim): `https://x.com/eriklocalhost/status/2083875886458171626`
+- Alex Thorn (likely Wave 4): `https://x.com/intangiblecoins/status/2084079706320646300`
 
 **Advisories / root cause**
 

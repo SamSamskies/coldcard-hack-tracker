@@ -12,6 +12,7 @@ import {
   ORIGINAL_STOLEN_BTC,
   WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
+  WAVE4_WAVE,
   type ClusterId,
 } from '../data/incident';
 import { WAVE3_VAULT_COUNT } from './wave3Vaults';
@@ -95,6 +96,16 @@ describe('incident data invariants', () => {
       8,
     );
     expect(MORNING_WAVE.victimSweeps).toBeGreaterThan(0);
+    expect(WAVE4_WAVE.confirmedBtc).toBeCloseTo(
+      CLUSTER_BY_ID['wave4-aug3'].stolenBtc,
+      8,
+    );
+    const wave4 = HOLDING_ADDRESSES.filter((h) => h.clusterId === 'wave4-aug3');
+    expect(wave4.length).toBeGreaterThan(0);
+    expect(wave4.every((h) => h.reportBtc >= 0.5)).toBe(true);
+    expect(wave4.reduce((s, h) => s + h.reportBtc, 0)).toBeLessThan(
+      WAVE4_WAVE.confirmedBtc,
+    );
   });
 
   it('watches higher-value fingerprint-matched Wave 3 vaults only', () => {

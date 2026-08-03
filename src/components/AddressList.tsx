@@ -12,6 +12,7 @@ import {
   ORIGINAL_STOLEN_BTC,
   WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
+  WAVE4_WAVE,
   type ClusterId,
 } from '../data/incident';
 import { formatBtc, formatUsd, truncateAddress } from '../lib/format';
@@ -297,6 +298,78 @@ function EarlyAug2Meta() {
   );
 }
 
+function Wave4Meta() {
+  const wave = CLUSTER_BY_ID['wave4-aug3'];
+  const w = WAVE4_WAVE;
+  return (
+    <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(wave.stolenBtc)} BTC ·{' '}
+            {w.transactions.toLocaleString()} txs
+          </span>
+          <span className="meta-sub">
+            {w.victimAddresses.toLocaleString()} victims →{' '}
+            {w.destinations.toLocaleString()} dests
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Blocks</dt>
+        <dd>
+          <span className="meta-primary">
+            {w.blockStart.toLocaleString()}–{w.blockEnd.toLocaleString()}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fee</dt>
+        <dd>
+          <span className="meta-primary">
+            ~{w.feeSatPerVbMin}–{w.feeSatPerVbMax} sat/vB
+          </span>
+          <span className="meta-sub">RBF opt-in</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Pattern</dt>
+        <dd>
+          <span className="meta-primary">1:1 victim → fresh dest</span>
+          <span className="meta-sub">no collector funnel</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Full lists</dt>
+        <dd>
+          <span className="meta-primary">
+            <a
+              href={w.pastebinConfirmedUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="note-link"
+            >
+              Confirmed addresses
+            </a>
+          </span>
+          <span className="meta-sub">
+            <a
+              href={w.pastebinMempoolUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="note-link"
+            >
+              Mempool / RBF list
+            </a>{' '}
+            at report
+          </span>
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
 function EveningCashoutFlow() {
   return (
     <div className="cashout-flow">
@@ -570,6 +643,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                 ) : null}
                 {clusterId === 'morning-aug1' ? <MorningWaveMeta /> : null}
                 {clusterId === 'early-aug2' ? <EarlyAug2Meta /> : null}
+                {clusterId === 'wave4-aug3' ? <Wave4Meta /> : null}
               </header>
 
               {rows.length === 0 ? (

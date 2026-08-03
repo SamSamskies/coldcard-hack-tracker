@@ -86,6 +86,28 @@ export const EARLY_AUG2_WAVE = {
   landedBtc: 64.90373764,
 } as const;
 
+/**
+ * Likely Wave 4 (Alex Thorn / Galaxy research head). Confirmed window only —
+ * mempool RBF sweeps were listed separately and are not folded into stolenBtc.
+ * Topology is 1:1 parks (no collector funnel); watched holdings are a sparse
+ * sample of still-held destinations ≥ 0.5 BTC, not the full 216-address set.
+ */
+export const WAVE4_WAVE = {
+  blockStart: 960_778,
+  blockEnd: 960_792,
+  feeSatPerVbMin: 1,
+  feeSatPerVbMax: 3,
+  transactions: 218,
+  victimAddresses: 462,
+  destinations: 216,
+  confirmedBtc: 388.92748828,
+  /** Additional RBF-signaling sweeps Thorn listed at ~01:01 UTC; not in stolenBtc. */
+  mempoolBtcAtReport: 70.16757699,
+  windowUtc: 'blocks 960778–960792 (~2.5h window; still expanding at report)',
+  pastebinConfirmedUrl: 'https://pastebin.com/6AG9s0pP',
+  pastebinMempoolUrl: 'https://pastebin.com/zR5Wk2cz',
+} as const;
+
 /** Primary July 30 window (Galaxy Wave 1) mapped from Block’s fingerprint. */
 export const INCIDENT = {
   dateLabel: 'July 30, 2026',
@@ -111,7 +133,8 @@ export type ClusterId =
   | 'galaxy-wave3'
   | 'evening-july31'
   | 'morning-aug1'
-  | 'early-aug2';
+  | 'early-aug2'
+  | 'wave4-aug3';
 
 export type Cluster = {
   id: ClusterId;
@@ -130,9 +153,8 @@ export type Cluster = {
 
 /**
  * Named consolidation clusters. Galaxy Waves 1–3 are attributed to the same
- * operator; evening/morning waves may differ (fingerprint / community report).
- * Early Aug 2 consolidation matches the weak-seed sweep profile but is not a
- * Galaxy-published wave.
+ * operator; evening/morning/early-Aug-2/Wave-4 waves may differ (fingerprint /
+ * community report) and are not folded into GALAXY.totalStolenBtc.
  */
 export const CLUSTERS: readonly Cluster[] = [
   {
@@ -192,6 +214,18 @@ export const CLUSTERS: readonly Cluster[] = [
     note: 'Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 drain report plus a Mk3 testing-device victim in the same consolidation; sampled inputs long-dormant and funded after the March 2021 vuln window.',
     sourceUrl: 'https://x.com/mariusoffchain/status/2083814011859030252',
   },
+  {
+    id: 'wave4-aug3',
+    label: 'Likely Wave 4 · Aug 3',
+    /**
+     * Thorn’s confirmed-in-block total for the 960778–960792 window. Mempool
+     * RBF sweeps (~70 BTC at report) excluded until confirmed.
+     */
+    stolenBtc: 388.92748828,
+    date: '2026-08-03',
+    note: 'Alex Thorn (Galaxy research head): likely Coldcard wave — elevated sweep rate, zero pre-firmware-boundary inputs, 1:1 fresh destinations (no collector). Low fee (~1–3 sat/vB) + RBF opt-in. Watched parks are a sparse still-held sample; full [confirmed](https://pastebin.com/6AG9s0pP) and [mempool/RBF](https://pastebin.com/zR5Wk2cz) address lists from Thorn.',
+    sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
+  },
 ] as const;
 
 export const CLUSTER_BY_ID: Record<ClusterId, Cluster> = Object.fromEntries(
@@ -240,6 +274,11 @@ export const SOURCES = [
     label: 'Tomer Strolight',
     note: 'Aug 1 morning wave: duress-wallet honey pot swept into a ~0.33 BTC vault; Mk4 attribution later corrected to Mk3-origin seed.',
     url: 'https://x.com/TomerStrolight/status/2083578868191957292',
+  },
+  {
+    label: 'Alex Thorn · Likely Wave 4',
+    note: 'Aug 3: likely 4th organized wave — ~388.93 BTC confirmed (blocks 960778–960792), 462 victims → 216 fresh 1:1 destinations; full address lists on Pastebin (confirmed + mempool/RBF).',
+    url: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
   {
     label: 'Marius Offchain',
@@ -357,6 +396,69 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 2 vault',
     reportBtc: 64.90373764,
     clusterId: 'early-aug2',
+  },
+  {
+    address: 'bc1q05g20l8k0tqjks9sq73mqgqx48pmw2cknju0ml',
+    label: 'Wave 4 park',
+    reportBtc: 8.55600708,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
+  },
+  {
+    address: 'bc1qjenjhm6wgyz9m50svnvlyv6339z6jtmlmv4z23',
+    label: 'Wave 4 park',
+    reportBtc: 5.07348539,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
+  },
+  {
+    address: '1N8knQCfjqUeJQwjkZZavbboXXL6WVqfDo',
+    label: 'Wave 4 park',
+    reportBtc: 5.61303754,
+    clusterId: 'wave4-aug3',
+    note: 'Received two sweeps; partial 2nd-hop already underway at add',
+  },
+  {
+    address: '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz',
+    label: 'Wave 4 park',
+    reportBtc: 2.02374869,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
+  },
+  {
+    address: 'bc1q65e6cd2k5ee2326fwwxsng370vf9pz85yce9u8',
+    label: 'Wave 4 park',
+    reportBtc: 1.14852067,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
+  },
+  {
+    address: '36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G',
+    label: 'Wave 4 park',
+    reportBtc: 1.09429601,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
+  },
+  {
+    address: 'bc1qcmnjt058q8hs4fvjr9wlu2kt974fyqnprfjvtl',
+    label: 'Wave 4 park',
+    reportBtc: 1.04998888,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
+  },
+  {
+    address: 'bc1pj7f35576cz0cznm75h6scp9eknqeqx4r666kdpcnk9slgh4sp5vs4sulc2',
+    label: 'Wave 4 park',
+    reportBtc: 1.03514173,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
+  },
+  {
+    address: '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ',
+    label: 'Wave 4 park',
+    reportBtc: 0.96227191,
+    clusterId: 'wave4-aug3',
+    note: '1:1 destination sample (still held at add)',
   },
 ];
 
