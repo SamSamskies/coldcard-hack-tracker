@@ -73,6 +73,8 @@ COLDCARD RNG chain map: public cross-check for Wave 3; no URL constant in repo �
 - `3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH` — Bullish.com deposit (Wave 4 dual-sweep park peel, block 960793)
 - `bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh` — P2WPKH service hub (Wave 4 hop, block 960797)
 - `bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms` — Coinbase Prime Custody (Wave 4 hop, block 960818; Arkham)
+- `328GxewqTzMxLPvLemaKS7Q5Wi1io8EEYD` — KuCoin deposit (evening sibling peel, block 960802; Arkham cluster 27fe)
+- `3JEQJdb1Cwbzvevzj1ECAoiMbvb2yckvCe` — KuCoin deposit (evening sibling peel, block 960804; same Arkham cluster)
 
 ## Wave 3 pipeline
 

@@ -424,7 +424,7 @@ function Wave4DualSweepPeels() {
 function EveningCashoutFlow() {
   return (
     <div className="cashout-flow">
-      <p className="cashout-flow-label">Aug 2 cash-out · two rails</p>
+      <p className="cashout-flow-label">Aug 2–3 cash-out · three rails</p>
       <dl className="cashout-rails">
         <div className="cashout-rail">
           <dt>BTC · ~0.69</dt>
@@ -536,18 +536,59 @@ function EveningCashoutFlow() {
               </a>{' '}
               peels
             </span>
-            <span className="cashout-parked">
-              Sibling ~0.27 BTC still at{' '}
-              <a
-                className="mono note-link"
-                href={explorerAddressUrl(
-                  'bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw',
-                )}
-                target="_blank"
-                rel="noreferrer"
-              >
-                bc1qdt6c…
-              </a>
+          </dd>
+        </div>
+        <div className="cashout-rail">
+          <dt>BTC · ~0.27</dt>
+          <dd>
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(
+                'bc1qdt6cswq9pld5e96el8ljhk4zfqmv423atgsrqw',
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Sibling park
+            </a>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(
+                'bc1qs86u5g39288nxpe59xxul92kvvps6j747k320w',
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              bc1qs86u… consol.
+            </a>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="mono note-link"
+              href="https://arkm.com/explorer/address/328GxewqTzMxLPvLemaKS7Q5Wi1io8EEYD"
+              target="_blank"
+              rel="noreferrer"
+            >
+              KuCoin 328Gx…
+            </a>
+            {' · '}
+            <a
+              className="mono note-link"
+              href="https://arkm.com/explorer/address/3JEQJdb1Cwbzvevzj1ECAoiMbvb2yckvCe"
+              target="_blank"
+              rel="noreferrer"
+            >
+              KuCoin 3JEQ…
+            </a>
+            <span className="cashout-note">
+              {' '}
+              · emptied Aug 3 01:22 UTC; ~0.27 mixed into a 1.54 BTC multi-input
+              stack (block 960800), then peeled to two Arkham KuCoin deposits
+              (~0.70 + ~0.84)
             </span>
           </dd>
         </div>

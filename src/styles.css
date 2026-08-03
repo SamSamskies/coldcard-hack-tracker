@@ -955,13 +955,6 @@ button:focus-visible {
   white-space: normal;
 }
 
-.cashout-parked {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.76rem;
-  color: var(--text-muted);
-}
-
 .address-table-wrap.is-scrollable {
   max-height: min(28rem, 60vh);
   overflow: auto;

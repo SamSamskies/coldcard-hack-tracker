@@ -408,14 +408,14 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
-    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2 via THOR→ETH; ETH park 0xC61F emptied Aug 2 20:29 UTC into vanity hops → KuCoin 17',
+    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2 (ETH rail above).',
   },
   {
     address: 'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s',
     label: 'Aug 1 hop vault',
     reportBtc: 0.69135523,
     clusterId: 'evening-july31',
-    note: '0.4998 + 0.1915 BTC stack. Emptied Aug 2 into likely custodial/swap P2SH hub — hops mixed out; see BTC rail above. Ocean peel also met there (not in report balance)',
+    note: '0.4998 + 0.1915 BTC stack. Emptied Aug 2 (BTC rail above). Ocean peel also met at the hub (not in report balance).',
   },
   {
     address: 'bc1qzm5pauxyv7t7vqstzpumqcn066wfjsmev34mf3',
@@ -549,6 +549,16 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * Arkham: Coinbase Prime Custody.
    */
   bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms: 'Coinbase Prime Custody',
+  /**
+   * Evening-wave sibling park cash-out (block 960802 peel from 1.54 BTC consol.).
+   * Arkham: KuCoin (cluster 27fe).
+   */
+  '328GxewqTzMxLPvLemaKS7Q5Wi1io8EEYD': 'KuCoin deposit',
+  /**
+   * Evening-wave sibling park cash-out (block 960804 via bc1qwwl8… hop).
+   * Arkham: KuCoin (same cluster 27fe as 328Gx…).
+   */
+  '3JEQJdb1Cwbzvevzj1ECAoiMbvb2yckvCe': 'KuCoin deposit',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
