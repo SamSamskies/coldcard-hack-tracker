@@ -446,7 +446,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 5.61303754,
     clusterId: 'wave4-aug3',
-    note: 'Thorn’s unique dual-sweep destination (2 victims → this park). One UTXO (~2.79 BTC) peeled block 960793 into [Bullish.com · 3CTpBmp…](https://arkm.com/explorer/address/3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH); ~2.82 BTC still held.',
+    note: 'Thorn’s unique dual-sweep destination (2 victims → this park).',
   },
   {
     address: '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz',
@@ -544,6 +544,11 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   '3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH': 'Bullish.com deposit',
   /** Wave 4 hop (block 960797): multi-park consolidate → this high-volume P2WPKH hub. */
   bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh: 'P2WPKH service hub',
+  /**
+   * Wave 4 hop (block 960818): multi-park + 352zz/35uR cluster consolidate.
+   * Arkham: Coinbase Prime Custody.
+   */
+  bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms: 'Coinbase Prime Custody',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */

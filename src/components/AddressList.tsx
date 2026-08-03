@@ -373,6 +373,59 @@ function Wave4Meta() {
   );
 }
 
+const WAVE4_DUAL_SWEEP_PARK =
+  '1N8knQCfjqUeJQwjkZZavbboXXL6WVqfDo';
+
+function Wave4DualSweepPeels() {
+  return (
+    <ul className="addr-peels">
+      <li>
+        <span className="addr-peel-amt">~2.79</span>
+        <span className="cashout-arrow" aria-hidden="true">
+          →
+        </span>
+        <a
+          className="note-link"
+          href="https://arkm.com/explorer/address/3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Bullish.com
+        </a>
+        <span> · 960793</span>
+      </li>
+      <li>
+        <span className="addr-peel-amt">~2.82</span>
+        <span className="cashout-arrow" aria-hidden="true">
+          →
+        </span>
+        <a
+          className="note-link"
+          href="https://arkm.com/explorer/address/bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Coinbase Prime
+        </a>
+        <span>
+          {' '}
+          · 960818 · same cluster as{' '}
+          <a
+            className="mono note-link"
+            href={explorerAddressUrl(
+              'bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh',
+            )}
+            target="_blank"
+            rel="noreferrer"
+          >
+            bc1qactq…
+          </a>
+        </span>
+      </li>
+    </ul>
+  );
+}
+
 function EveningCashoutFlow() {
   return (
     <div className="cashout-flow">
@@ -516,6 +569,7 @@ function AddressRow({
   usdPrice: number | null;
 }) {
   const usd = usdPrice != null ? a.balanceBtc * usdPrice : null;
+  const isDualSweep = a.address === WAVE4_DUAL_SWEEP_PARK;
 
   return (
     <tr className={`status-${a.status}${a.flash ? ' flash' : ''}`}>
@@ -524,6 +578,7 @@ function AddressRow({
         {a.note ? (
           <LinkedNote as="span" className="addr-note" text={a.note} />
         ) : null}
+        {isDualSweep ? <Wave4DualSweepPeels /> : null}
       </td>
       <td className="mono">
         <a

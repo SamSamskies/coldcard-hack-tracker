@@ -875,6 +875,29 @@ button:focus-visible {
   border-top: 1px solid var(--line-soft);
 }
 
+.addr-peels {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-width: 34rem;
+}
+
+.addr-peels li {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.addr-peel-amt {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text);
+}
+
 .cashout-flow-label {
   margin: 0;
   font-size: 0.66rem;

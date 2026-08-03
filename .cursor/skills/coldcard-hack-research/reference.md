@@ -70,7 +70,9 @@ COLDCARD RNG chain map: public cross-check for Wave 3; no URL constant in repo �
 
 - `bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794` — THORChain BTC vault
 - `3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8` — P2SH service hub (likely custodial/swap; hops mixed out)
-- `3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH` — P2SH service hub (Wave 4 dual-sweep park peel, block 960793)
+- `3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH` — Bullish.com deposit (Wave 4 dual-sweep park peel, block 960793)
+- `bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh` — P2WPKH service hub (Wave 4 hop, block 960797)
+- `bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms` — Coinbase Prime Custody (Wave 4 hop, block 960818; Arkham)
 
 ## Wave 3 pipeline
 
