@@ -35,19 +35,7 @@ export function KpiRow({
 
   return (
     <section className="kpi-row" aria-label="Fund status">
-      <article
-        className={`kpi kpi-hero ${alert ? 'kpi-alert' : hasData ? 'kpi-held' : ''}`}
-      >
-        <p className="kpi-label">Still held</p>
-        <p className={`kpi-value ${loading ? 'is-loading' : 'settle'}`}>
-          {hasData ? formatHeldPercent(heldPct, fullyHeld) : PENDING}
-        </p>
-        <p className="kpi-detail">
-          of {formatBtc(CONSOLIDATED_BTC)} BTC consolidated
-        </p>
-      </article>
-
-      <article className="kpi">
+      <article className="kpi kpi-hero">
         <p className="kpi-label">Balance on watch</p>
         <p className={`kpi-value mono ${loading ? 'is-loading' : 'settle'}`}>
           {hasData ? (
@@ -63,6 +51,16 @@ export function KpiRow({
           {usdPrice != null ? (
             <span className="meta-sub">{formatUsd(usdPrice)}/BTC</span>
           ) : null}
+        </p>
+      </article>
+
+      <article className={`kpi ${hasData && fullyHeld ? 'kpi-held' : ''}`}>
+        <p className="kpi-label">Still held</p>
+        <p className={`kpi-value ${loading ? 'is-loading' : 'settle'}`}>
+          {hasData ? formatHeldPercent(heldPct, fullyHeld) : PENDING}
+        </p>
+        <p className="kpi-detail">
+          of {formatBtc(CONSOLIDATED_BTC)} BTC consolidated
         </p>
       </article>
 
