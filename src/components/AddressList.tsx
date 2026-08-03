@@ -682,12 +682,11 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
           clusters. Galaxy’s same-operator total is{' '}
           {formatBtc(GALAXY.totalStolenBtc)} BTC across{' '}
           {GALAXY.victimAddresses.toLocaleString()} addresses.{' '}
-          {formatBtc(CONSOLIDATED_BTC)} BTC is in watched holdings (core vaults
-          live-polled; {WAVE3_FINGERPRINT.matchedVaults} higher-value Wave 3
-          vaults ≥ {formatBtc(WAVE3_FINGERPRINT.minWatchBtc)} BTC from the cron
-          snapshot). The remaining ~{formatBtc(watchedGap)} BTC is mostly
-          smaller/unmatched Wave 3 vaults plus fees. Evening/morning waves may
-          be different operators.
+          {formatBtc(CONSOLIDATED_BTC)} BTC is in watched holdings. The
+          remaining ~{formatBtc(watchedGap)} BTC is mostly unwatched Wave 4
+          destinations (sparse still-held sample), plus smaller/unmatched
+          Wave 3 vaults and fees. Community waves (evening, morning, early
+          Aug 2, Wave 4) may be different operators.
         </p>
       </div>
 
