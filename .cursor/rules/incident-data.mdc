@@ -1,0 +1,19 @@
+---
+description: Hard invariants when editing Coldcard hack incident / Wave 3 data
+globs: src/data/incident.ts,src/data/wave3Vaults.ts,src/data/incident.test.ts
+alwaysApply: false
+---
+
+# Incident data invariants
+
+When editing these files:
+
+- **Do not invent addresses** or contradict existing clusters / fingerprints.
+- **Do not zero `reportBtc`** on emptied vaults — it is the original reported stack; live balance comes from explorers / snapshot.
+- **Galaxy Waves 1–3** `stolenBtc` must continue to sum to `GALAXY.totalStolenBtc`.
+- **Service hubs** (exchange deposits, mix/swap sinks) → `KNOWN_ADDRESS_LABELS` only. **Wave 4 parks** (including base58 `1…`/`3…`) stay in `CORE_HOLDING_ADDRESSES`.
+- **Ocean peels / surplus pass-through** are not stolen movement — notes only.
+- Wave 3 watch list: vaults **≥ 0.5 BTC** only; list is fingerprint-reconstructed, not Galaxy’s published set.
+- After edits: `npm test`. Also `npm run snapshot` if holdings or Wave 3 list changed.
+
+For research workflows, use project skills `coldcard-hack-research`, `btc-esplora-verify`, `cashout-labeling`.

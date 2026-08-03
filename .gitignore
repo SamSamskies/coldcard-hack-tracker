@@ -24,6 +24,8 @@ scripts/wave3-out/
 .cursor/*
 !.cursor/skills/
 !.cursor/skills/**
+!.cursor/rules/
+!.cursor/rules/**
 .idea
 .DS_Store
 *.suo
