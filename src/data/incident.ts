@@ -223,7 +223,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 388.92748828,
     date: '2026-08-03',
-    note: 'Alex Thorn (Galaxy research head): likely Coldcard wave — elevated sweep rate, zero pre-firmware-boundary inputs, 1:1 fresh destinations (no collector). Low fee (~1–3 sat/vB) + RBF opt-in. Watched parks are a sparse still-held sample; full [confirmed](https://pastebin.com/6AG9s0pP) and [mempool/RBF](https://pastebin.com/zR5Wk2cz) address lists from Thorn.',
+    note: 'Alex Thorn (Galaxy research head): likely Coldcard wave — elevated sweep rate, zero pre-firmware-boundary inputs, 1:1 fresh destinations (no collector). Low fee (~1–3 sat/vB) + RBF opt-in. Watched parks are a sparse still-held sample; full victim/destination lists linked below.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
