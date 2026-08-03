@@ -1186,12 +1186,21 @@ button:focus-visible {
   list-style: none;
   display: grid;
   gap: 0.75rem;
-  align-items: start;
 }
 
 @media (min-width: 720px) {
   .risk-points {
-    grid-template-columns: 1fr 1fr;
+    display: block;
+    column-count: 2;
+    column-gap: 1.25rem;
+  }
+
+  .risk-points li {
+    margin-bottom: 0.75rem;
+  }
+
+  .risk-points li:last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -1199,6 +1208,7 @@ button:focus-visible {
   display: grid;
   gap: 0.2rem;
   align-content: start;
+  break-inside: avoid;
 }
 
 .risk-point-label {
