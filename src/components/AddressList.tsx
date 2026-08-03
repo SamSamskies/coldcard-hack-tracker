@@ -549,7 +549,7 @@ function EveningCashoutFlow() {
               target="_blank"
               rel="noreferrer"
             >
-              Sibling park
+              Evening vault hop
             </a>
             <span className="cashout-arrow" aria-hidden="true">
               →
