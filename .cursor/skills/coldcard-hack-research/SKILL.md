@@ -119,7 +119,7 @@ For each candidate address:
 **Don’t**
 
 - Treat Ocean miner peels or surplus pass-through as stolen movement.
-- Add P2SH service hubs as holdings (labels only — snapshot regex only picks `bc1…` from the core block + Wave 3 list).
+- Add P2SH service hubs as holdings (labels only in `KNOWN_ADDRESS_LABELS`; Wave 4 destination parks that happen to be base58 `1…`/`3…` *are* holdings and must stay in `CORE_HOLDING_ADDRESSES`).
 - Stampede public explorers or invent Wave 3 addresses from incomplete scrapes.
 - Quietly skip a blocked primary source and guess totals from secondary press.
 - Commit `.firecrawl/` or raw `scripts/wave3-out/` checkpoints unless the user asks.

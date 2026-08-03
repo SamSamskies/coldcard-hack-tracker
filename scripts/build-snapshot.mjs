@@ -36,9 +36,14 @@ const HOSTS = [
   'https://mempool.emzy.de',
 ];
 
+/** Bech32 (bc1…) or base58 legacy/P2SH (1…/3…) holding addresses. */
+const BTC_ADDR_RE = String.raw`(?:bc1[a-z0-9]+|[13][a-km-zA-HJ-NP-Z1-9]{25,34})`;
+
 function extractAddresses(filePath) {
   const text = readFileSync(filePath, 'utf8');
-  return [...text.matchAll(/address:\s*'(bc1[a-z0-9]+)'/g)].map((m) => m[1]);
+  return [
+    ...text.matchAll(new RegExp(String.raw`address:\s*'(${BTC_ADDR_RE})'`, 'g')),
+  ].map((m) => m[1]);
 }
 
 function extractHoldings() {
@@ -52,8 +57,10 @@ function extractHoldings() {
   if (!coreBlock) throw new Error('Could not find CORE_HOLDING_ADDRESSES');
 
   const core = [];
-  const entryRe =
-    /\{\s*address:\s*'(bc1[a-z0-9]+)',\s*label:\s*'([^']+)',\s*reportBtc:\s*([0-9.]+)/g;
+  const entryRe = new RegExp(
+    String.raw`\{\s*address:\s*'(${BTC_ADDR_RE})',\s*label:\s*'([^']+)',\s*reportBtc:\s*([0-9.]+)`,
+    'g',
+  );
   let m;
   while ((m = entryRe.exec(coreBlock[1]))) {
     core.push({
@@ -65,8 +72,10 @@ function extractHoldings() {
 
   const wave3Text = readFileSync(wave3File, 'utf8');
   const wave3 = [];
-  const wRe =
-    /\{\s*address:\s*'(bc1[a-z0-9]+)',\s*label:\s*'([^']+)',\s*reportBtc:\s*([0-9.]+)/g;
+  const wRe = new RegExp(
+    String.raw`\{\s*address:\s*'(${BTC_ADDR_RE})',\s*label:\s*'([^']+)',\s*reportBtc:\s*([0-9.]+)`,
+    'g',
+  );
   while ((m = wRe.exec(wave3Text))) {
     wave3.push({
       address: m[1],

@@ -89,4 +89,4 @@ Target vs Galaxy: ~293 vaults / ~207.73 BTC. Watched set is intentionally partia
 - Surplus pass-through while report balance still held is ignored.
 - Early Aug 2 matches weak-seed profile but is **not** a Galaxy-published wave.
 - Snapshot keeps prior balance on explorer failure rather than writing zeros.
-- `build-snapshot.mjs` parses `bc1…` from core holdings + Wave 3; P2SH hubs are labels only.
+- `build-snapshot.mjs` parses bech32 + base58 holdings from core + Wave 3; P2SH *service hubs* in `KNOWN_ADDRESS_LABELS` are labels only.
