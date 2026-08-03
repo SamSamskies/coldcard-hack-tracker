@@ -416,7 +416,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 5.61303754,
     clusterId: 'wave4-aug3',
-    note: 'Thorn’s unique dual-sweep destination (2 victims → this park). One UTXO (~2.79 BTC) peeled block 960793 into P2SH service hub ([3CTpBmp…](address:3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH)); ~2.82 BTC still held.',
+    note: 'Thorn’s unique dual-sweep destination (2 victims → this park). One UTXO (~2.79 BTC) peeled block 960793 into [Bullish.com · 3CTpBmp…](https://arkm.com/explorer/address/3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH); ~2.82 BTC still held.',
   },
   {
     address: '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz',
@@ -516,8 +516,8 @@ export const WATCH_AFTER_BLOCK = 960_400;
 export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794: 'THORChain BTC vault',
   '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH service hub',
-  /** Wave 4 dual-sweep park peel (block 960793); busy custodial/swap-style hub. */
-  '3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH': 'P2SH service hub',
+  /** Wave 4 dual-sweep park peel (block 960793). Arkham: Bullish.com deposit. */
+  '3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH': 'Bullish.com deposit',
   /** Wave 4 hop (block 960797): multi-park consolidate → this high-volume P2WPKH hub. */
   bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh: 'P2WPKH service hub',
 };
