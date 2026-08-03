@@ -547,6 +547,13 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH service hub',
   /** Wave 4 dual-sweep park peel (block 960793). Arkham: Bullish.com deposit. */
   '3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH': 'Bullish.com deposit',
+  /**
+   * Bullish.com hot wallet — custodian sweep destination after 3CTp deposit empty
+   * (blocks 960844+). Hop follower must stop here; peels are CEX/OTC treasury.
+   */
+  '324H9uyTV9bPgAVgmdJNxPKKKZmowk5CYq': 'Bullish.com hot wallet',
+  /** Bullish.com cluster sibling feeding 324H9 (Arkham entity bullish-com). */
+  '3CdVzfAe6Aw9K4oSPYXC7BR1xLxCPkxAUs': 'Bullish.com',
   /** Wave 4 hop (block 960797): multi-park consolidate → this high-volume P2WPKH hub. */
   bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh: 'P2WPKH service hub',
   /**
@@ -554,6 +561,11 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * Arkham: Coinbase Prime Custody.
    */
   bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms: 'Coinbase Prime Custody',
+  /**
+   * Repeated peel target from Bullish hot wallet 324H9 (blocks 960837+).
+   * Arkham: Wintermute (Binance deposit address tag).
+   */
+  '1KbDEg1tDz2ErYgaDbaDhhawnLrSQFaFx5': 'Wintermute',
   /**
    * Evening-wave sibling park cash-out (block 960802 peel from 1.54 BTC consol.).
    * Arkham: KuCoin (cluster 27fe).

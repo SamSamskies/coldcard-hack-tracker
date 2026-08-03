@@ -39,6 +39,30 @@ const HOSTS = [
 /** Bech32 (bc1…) or base58 legacy/P2SH (1…/3…) holding addresses. */
 const BTC_ADDR_RE = String.raw`(?:bc1[a-z0-9]+|[13][a-km-zA-HJ-NP-Z1-9]{25,34})`;
 
+function extractKnownExitAddresses() {
+  const text = readFileSync(join(ROOT, 'src/data/incident.ts'), 'utf8');
+  const block = text.match(
+    /KNOWN_ADDRESS_LABELS[\s\S]*?= \{([\s\S]*?)\n\};/,
+  );
+  if (!block) throw new Error('Could not find KNOWN_ADDRESS_LABELS');
+  const addrs = new Set();
+  const re = new RegExp(
+    String.raw`(?:'(${BTC_ADDR_RE})'|(${BTC_ADDR_RE}))\s*:`,
+    'g',
+  );
+  let m;
+  while ((m = re.exec(block[1]))) {
+    addrs.add(m[1] || m[2]);
+  }
+  return addrs;
+}
+
+const KNOWN_EXIT_ADDRESSES = extractKnownExitAddresses();
+
+function isKnownExitAddress(address) {
+  return KNOWN_EXIT_ADDRESSES.has(address);
+}
+
 function extractAddresses(filePath) {
   const text = readFileSync(filePath, 'utf8');
   return [
@@ -472,6 +496,7 @@ function shouldEmitOutbound(watch, txs, tx) {
 function movementsFromWatch(watches, txLists) {
   const items = [];
   watches.forEach((w, i) => {
+    if (isKnownExitAddress(w.address)) return;
     const txs = txLists[i] ?? [];
     for (const tx of txs) {
       if (!shouldEmitOutbound(w, txs, tx)) continue;
@@ -497,6 +522,7 @@ function discoverNextHops(watches, txLists, known, slotsLeft) {
   const scored = [];
   watches.forEach((w, i) => {
     if (w.hop >= MAX_HOP_DEPTH) return;
+    if (isKnownExitAddress(w.address)) return;
     const txs = txLists[i] ?? [];
     for (const tx of txs) {
       if (!shouldEmitOutbound(w, txs, tx)) continue;
@@ -511,7 +537,12 @@ function discoverNextHops(watches, txLists, known, slotsLeft) {
       // is always among the followed hops, not a smaller sibling output.
       const recipients = destinations
         .map((addr) => ({ address: addr, valueSats: byAddr.get(addr) ?? 0 }))
-        .filter((r) => r.valueSats >= MIN_HOP_FOLLOW_SATS && !known.has(r.address))
+        .filter(
+          (r) =>
+            r.valueSats >= MIN_HOP_FOLLOW_SATS &&
+            !known.has(r.address) &&
+            !isKnownExitAddress(r.address),
+        )
         .sort((a, b) => b.valueSats - a.valueSats);
       for (const r of recipients.slice(0, MAX_DESTINATIONS_PER_SPEND)) {
         scored.push({
@@ -733,7 +764,9 @@ async function main() {
       balanceSats,
       utxoCount,
     })),
-    movements: sortMovements(allMovements),
+    movements: sortMovements(
+      allMovements.filter((m) => !isKnownExitAddress(m.fromAddress)),
+    ),
   };
 
   mkdirSync(dirname(OUT), { recursive: true });

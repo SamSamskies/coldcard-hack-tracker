@@ -1,4 +1,5 @@
 import {
+  KNOWN_ADDRESS_LABELS,
   MAX_DESTINATIONS_PER_SPEND,
   MAX_HOP_DEPTH,
   MIN_HOP_FOLLOW_SATS,
@@ -6,6 +7,11 @@ import {
   WATCH_AFTER_BLOCK,
 } from '../data/incident';
 import { outboundFromAddress, satsToBtc, type Tx } from './mempool';
+
+/** Exchange / bridge / service hub — show the cash-in, do not chase custodian churn. */
+export function isKnownExitAddress(address: string): boolean {
+  return Object.hasOwn(KNOWN_ADDRESS_LABELS, address);
+}
 
 export type AddressStatus = 'held' | 'partial' | 'emptied';
 
@@ -184,6 +190,10 @@ export function movementsFromWatch(
   const items: Movement[] = [];
 
   watches.forEach((w, i) => {
+    // Labeled venues are terminal: cash-in is shown from the prior hop; their
+    // later peels are custodian/OTC churn, not stolen-stack movement.
+    if (isKnownExitAddress(w.address)) return;
+
     const txs = txLists[i] ?? [];
     for (const tx of txs) {
       if (!shouldEmitOutbound(w, txs, tx)) continue;
@@ -206,6 +216,11 @@ export function movementsFromWatch(
   return items;
 }
 
+/** Drop stale snapshot rows that are peels from labeled exit venues. */
+export function omitKnownExitChurn(items: readonly Movement[]): Movement[] {
+  return items.filter((m) => !isKnownExitAddress(m.fromAddress));
+}
+
 function hopLabel(address: string, hop: number): string {
   return `Hop ${hop} · ${address.slice(0, 6)}…${address.slice(-4)}`;
 }
@@ -213,6 +228,7 @@ function hopLabel(address: string, hop: number): string {
 /**
  * From hop-N spends, pick the largest fresh destinations to watch next.
  * Caps depth, per-spend fan-out, dust, and total extra watches.
+ * Does not follow into {@link KNOWN_ADDRESS_LABELS} exits (terminal cash-outs).
  */
 export function discoverNextHops(
   watches: readonly WatchTarget[],
@@ -226,6 +242,7 @@ export function discoverNextHops(
 
   watches.forEach((w, i) => {
     if (w.hop >= MAX_HOP_DEPTH) return;
+    if (isKnownExitAddress(w.address)) return;
 
     const txs = txLists[i] ?? [];
     for (const tx of txs) {
@@ -235,7 +252,9 @@ export function discoverNextHops(
       const follow = recipients
         .filter(
           (r) =>
-            r.valueSats >= MIN_HOP_FOLLOW_SATS && !known.has(r.address),
+            r.valueSats >= MIN_HOP_FOLLOW_SATS &&
+            !known.has(r.address) &&
+            !isKnownExitAddress(r.address),
         )
         .sort((a, b) => b.valueSats - a.valueSats)
         .slice(0, MAX_DESTINATIONS_PER_SPEND);

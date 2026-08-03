@@ -27,6 +27,7 @@ import {
   discoverNextHops,
   heldStats,
   movementsFromWatch,
+  omitKnownExitChurn,
   shouldTrackSeedOutbounds,
   statusFor,
   type AddressStatus,
@@ -123,10 +124,12 @@ export function useTrackerData(): TrackerData {
 
   const publishMovements = useCallback(() => {
     setMovements(
-      dedupeMovements([
-        ...snapshotMovementsRef.current,
-        ...liveMovementsRef.current,
-      ]),
+      dedupeMovements(
+        omitKnownExitChurn([
+          ...snapshotMovementsRef.current,
+          ...liveMovementsRef.current,
+        ]),
+      ),
     );
   }, []);
 

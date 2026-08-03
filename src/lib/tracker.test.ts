@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
-import { WATCH_AFTER_BLOCK } from '../data/incident';
+import { KNOWN_ADDRESS_LABELS, WATCH_AFTER_BLOCK } from '../data/incident';
 import type { Tx } from './mempool';
 import {
   dedupeMovements,
   discoverNextHops,
   heldStats,
+  isKnownExitAddress,
   isPostWatch,
   isSurplusPassThrough,
   movementsFromWatch,
+  omitKnownExitChurn,
   orderTxsForBalance,
   shouldTrackSeedOutbounds,
   sortMovements,
@@ -284,6 +286,63 @@ describe('discoverNextHops', () => {
       8,
     );
     expect(next.map((w) => w.address)).toEqual([big]);
+  });
+
+  it('does not follow into known exit labels', () => {
+    const exitAddr = Object.keys(KNOWN_ADDRESS_LABELS)[0]!;
+    expect(isKnownExitAddress(exitAddr)).toBe(true);
+    const tx = makeTx({
+      vin: [{ prevout: { scriptpubkey_address: vault, value: 41_000_000 } }],
+      vout: [
+        { scriptpubkey_address: exitAddr, value: 30_000_000 },
+        { scriptpubkey_address: big, value: 10_900_000 },
+      ],
+      blockHeight: WATCH_AFTER_BLOCK + 5,
+    });
+
+    const next = discoverNextHops([watch], [[tx]], new Set([vault]), 8);
+    expect(next.map((w) => w.address)).toEqual([big]);
+  });
+});
+
+describe('known exit churn filter', () => {
+  const exitAddr = Object.keys(KNOWN_ADDRESS_LABELS)[0]!;
+  const further = 'bc1qfurtherxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+
+  it('does not emit movements from labeled exit venues', () => {
+    const exitWatch: WatchTarget = {
+      address: exitAddr,
+      label: 'Labeled exit',
+      hop: 1,
+    };
+    const tx = makeTx({
+      vin: [{ prevout: { scriptpubkey_address: exitAddr, value: 50_000_000 } }],
+      vout: [{ scriptpubkey_address: further, value: 49_900_000 }],
+      blockHeight: WATCH_AFTER_BLOCK + 10,
+    });
+    expect(movementsFromWatch([exitWatch], [[tx]])).toEqual([]);
+  });
+
+  it('omitKnownExitChurn drops stale snapshot peels from labeled venues', () => {
+    const base: Omit<Movement, 'txid' | 'fromAddress'> = {
+      fromLabel: 'Hop',
+      amountBtc: 40,
+      destinations: [further],
+      hop: 2,
+      confirmed: true,
+      blockHeight: WATCH_AFTER_BLOCK + 20,
+    };
+    const kept: Movement = {
+      ...base,
+      txid: 'keep',
+      fromAddress: 'bc1qvaultxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    };
+    const dropped: Movement = {
+      ...base,
+      txid: 'drop',
+      fromAddress: exitAddr,
+    };
+    expect(omitKnownExitChurn([kept, dropped])).toEqual([kept]);
   });
 });
 

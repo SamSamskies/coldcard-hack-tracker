@@ -10,8 +10,9 @@ description: >-
 # Cash-out Labeling
 
 When watched holdings spend, classify destinations and label known exits so the
-movement feed and UI stay honest. On-chain hops:
-[btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
+movement feed and UI stay honest. Hop discovery **stops** at addresses in
+`KNOWN_ADDRESS_LABELS` (no further watches / no peels emitted from those venues).
+On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
 [coldcard-hack-research](../coldcard-hack-research/SKILL.md).
 
 ## Workflow

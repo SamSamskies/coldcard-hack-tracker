@@ -24,9 +24,10 @@ export function MovementFeed({ movements, loading }: Props) {
         <h2 id="movement-heading">Movement feed</h2>
         <p>
           Outbound spends of the reported consolidation from watched holdings,
-          then followed destinations (up to hop {MAX_HOP_DEPTH}). Later surplus
-          that passes through a vault while its reported balance remains is
-          ignored.
+          then followed destinations (up to hop {MAX_HOP_DEPTH}). Stops at known
+          exchange, bridge, and service-hub exits — later custodian churn is not
+          listed. Later surplus that passes through a vault while its reported
+          balance remains is ignored.
         </p>
       </div>
 
