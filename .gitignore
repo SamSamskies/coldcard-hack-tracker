@@ -15,6 +15,7 @@ dist-ssr
 # Local scrape / research dumps
 .firecrawl/
 scripts/wave3-out/
+scripts/wave-scan-out/
 **/__pycache__/
 *.pyc
 

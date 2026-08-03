@@ -12,9 +12,11 @@ Read this when you need concrete constants, source URLs, or script paths. Keep `
 | `public/snapshot.json` | Cron balances + movements |
 | `scripts/build-snapshot.mjs` | Builds snapshot from TS holdings via Esplora |
 | `scripts/find-wave3-vaults.py` | Offline Wave 3 scan / follow |
+| `scripts/scan-new-waves.py` | Tip scout for unreported 1-vout fee clusters |
 | `scripts/run-wave3-parallel.sh` | Sharded scan (emzy + bitaroo) |
 | `scripts/run-wave3-mopup.sh` | Fill block gaps then merge/follow |
 | `scripts/wave3-out/merged/vaults.csv` | Candidate vaults with park lineage |
+| `scripts/wave-scan-out/latest.json` | Last new-wave scout dump (gitignored) |
 | `.github/workflows/snapshot.yml` | ~30m cron + push triggers |
 
 `HOLDING_ADDRESSES` = core ∪ Wave 3. Core = live browser poll; Wave 3 = snapshot only.
