@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-03T16:15:31.093Z",
+  "updatedAt": "2026-08-03T16:45:36.920Z",
   "source": "mempool.space",
-  "usdPrice": 63687,
+  "usdPrice": 63727,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
-      "balanceSats": 56202036123,
-      "utxoCount": 20
+      "balanceSats": 56202040782,
+      "utxoCount": 21
     },
     {
       "address": "bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3",
@@ -500,7 +500,9 @@
         "1KbDEg1tDz2ErYgaDbaDhhawnLrSQFaFx5"
       ],
       "hop": 2,
-      "confirmed": false
+      "confirmed": true,
+      "blockHeight": 960885,
+      "blockTime": 1785773925
     },
     {
       "txid": "e00eaf8c739cc7e9bce61e67f86f94b857ef31b2ec8401d0abe2a97033bfb5a6",
@@ -872,19 +874,6 @@
       "blockTime": 1785729307
     },
     {
-      "txid": "59635c291bdda76f24d4307d6ee37f6075679c664b201d069f2889b8dcf69257",
-      "fromAddress": "324H9uyTV9bPgAVgmdJNxPKKKZmowk5CYq",
-      "fromLabel": "Hop 2 from Hop 1 from Wave 4 park",
-      "amountBtc": 2.9990485,
-      "destinations": [
-        "182DE3twyvtVPZrFu5jbBV1vgpqwrTZs5E"
-      ],
-      "hop": 2,
-      "confirmed": true,
-      "blockHeight": 960810,
-      "blockTime": 1785725745
-    },
-    {
       "txid": "8a0f5d0f7b239b0452c159987b25f2dd0f49af56d37630d2afe98aedd0477c6e",
       "fromAddress": "324H9uyTV9bPgAVgmdJNxPKKKZmowk5CYq",
       "fromLabel": "Hop 2 from Hop 1 from Wave 4 park",
@@ -1039,19 +1028,6 @@
       "blockTime": 1785643436
     },
     {
-      "txid": "49dd29355e946c8265f86f83564411e96f02f2fbf6bd147e9bb11d198fd49564",
-      "fromAddress": "bc1qzkap7ttupnq36hk9mv4mjn62tqhcwn0m706e4z",
-      "fromLabel": "Hop 2 from Hop 1 from Evening vault",
-      "amountBtc": 0.24,
-      "destinations": [
-        "bc1qprkj25k06xxg9wvn2gtu4t4f5204gj385njr98"
-      ],
-      "hop": 2,
-      "confirmed": true,
-      "blockHeight": 960668,
-      "blockTime": 1785643436
-    },
-    {
       "txid": "ff327937e653fc40b34e357b663e044a86dba63289d8adf153406863bfabc133",
       "fromAddress": "bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf",
       "fromLabel": "Evening vault",
@@ -1063,32 +1039,6 @@
       "confirmed": true,
       "blockHeight": 960666,
       "blockTime": 1785642846
-    },
-    {
-      "txid": "3cf126caaa9b119537df7cce86da5eca85aebdcbb340b413c6ec8c955a10ae88",
-      "fromAddress": "3P3K2MQwkgk85UkTyLSJC6cJZx3ec1Lfgy",
-      "fromLabel": "Hop 2 from Hop 1 from Aug 1 hop vault",
-      "amountBtc": 0.44999667,
-      "destinations": [
-        "3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8"
-      ],
-      "hop": 2,
-      "confirmed": true,
-      "blockHeight": 960666,
-      "blockTime": 1785642846
-    },
-    {
-      "txid": "a7bf30f03b5ffd33f671b44400aefbd9a2c46b390d208f5ed6dd53adff92fdec",
-      "fromAddress": "bc1qsd9tklcz7yw72aztnlyfmn9hlc02tjq7ekjah8",
-      "fromLabel": "Hop 1 from Aug 1 hop vault",
-      "amountBtc": 0.45,
-      "destinations": [
-        "3P3K2MQwkgk85UkTyLSJC6cJZx3ec1Lfgy"
-      ],
-      "hop": 1,
-      "confirmed": true,
-      "blockHeight": 960663,
-      "blockTime": 1785640972
     },
     {
       "txid": "d0bcdc4a7306256b5cab1ec086657d5efcca53a5554be2fa1d67a1855d33c0a0",
