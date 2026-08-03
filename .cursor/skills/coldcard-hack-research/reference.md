@@ -53,6 +53,7 @@ Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blo
 - Evan Schoenberg (evening): `https://x.com/evands/status/2083505832587587945`
 - Tomer Strolight (morning): `https://x.com/TomerStrolight/status/2083578868191957292`
 - Marius Offchain (early Aug 2): `https://x.com/mariusoffchain/status/2083814011859030252`
+- Erik (early Aug 2 Mk3 victim): `https://x.com/eriklocalhost/status/2083875886458171626`
 
 **Advisories / root cause**
 

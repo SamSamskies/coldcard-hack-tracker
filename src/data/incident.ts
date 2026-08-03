@@ -76,7 +76,7 @@ export const MORNING_WAVE = {
   victimSweeps: 16,
 } as const;
 
-/** Community early Aug 2 consolidation (Marius Offchain / Mk2 report). */
+/** Community early Aug 2 consolidation (Marius Offchain + Erik Mk3 corroboration). */
 export const EARLY_AUG2_WAVE = {
   block: 960_668,
   windowUtc: '04:03 UTC Aug 2',
@@ -189,7 +189,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 64.90947964,
     date: '2026-08-02',
-    note: 'Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 victim report; sampled inputs long-dormant and funded after the March 2021 vuln window.',
+    note: 'Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 drain report plus a Mk3 testing-device victim in the same consolidation; sampled inputs long-dormant and funded after the March 2021 vuln window.',
     sourceUrl: 'https://x.com/mariusoffchain/status/2083814011859030252',
   },
 ] as const;
@@ -245,6 +245,11 @@ export const SOURCES = [
     label: 'Marius Offchain',
     note: 'Early Aug 2 consolidation (04:03 UTC): ~65 BTC from ~795 addresses into one vault (community Mk2 drain report); not a Galaxy-published wave.',
     url: 'https://x.com/mariusoffchain/status/2083814011859030252',
+  },
+  {
+    label: 'Erik',
+    note: 'Mk3 testing-device victim (~9k sats, native segwit) swept in the Early Aug 2 consolidation — same tx / vault as the Marius report.',
+    url: 'https://x.com/eriklocalhost/status/2083875886458171626',
   },
   {
     label: 'Coinkite advisory',
