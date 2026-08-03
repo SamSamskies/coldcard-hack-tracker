@@ -338,6 +338,11 @@ export const SOURCES = [
     url: 'https://wizardsardine.com/blog/coldcard-rng-vulnerability/',
   },
   {
+    label: 'Nunchuk · Slipstream migration',
+    note: 'Aug 3: multisig urgency tiers (Coldcard keys alone vs below threshold) and MARA Slipstream to avoid RBF-sniping during migration; Slipstream now public with no code.',
+    url: 'https://x.com/nunchuk_io/status/2084163891043688858',
+  },
+  {
     label: 'Kevin Loaec',
     note: 'Announcement thread for the WizardSardine writeup.',
     url: 'https://x.com/KLoaec/status/2083579776887922865',

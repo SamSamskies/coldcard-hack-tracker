@@ -38,6 +38,10 @@ const POINTS = [
     text: 'If this Coldcard is your only signer for a weak seed, move funds first. Community reports (including [Jameson Lopp](https://x.com/lopp/status/2083958797354127631)) flag a non-zero chance the hotfix upgrade bricks the unit; an open [firmware PR](https://github.com/Coldcard/firmware/pull/692) argues a sticky TRNG fault after the hotfix can lock the keypad before login. Prefer sweeping to a new seed on a second fixed device when possible.',
   },
   {
+    label: 'Multisig urgency & Slipstream',
+    text: 'If Coldcard-generated keys alone could meet your signing threshold (e.g. 2-of-3 with two Coldcard keys), migrate now — those wallets can be swept. One Coldcard key below threshold is lower urgency but still migrate. Broadcasting a migration to the public mempool opens a brief RBF-sniping window while weak keys remain spendable; [Nunchuk](https://x.com/nunchuk_io/status/2084163891043688858) recommends submitting the signed hex via [MARA Slipstream](https://slipstream.mara.com) instead (now public, no code). That keeps the tx out of the public mempool but trusts MARA and can confirm slower (~5–6% hashrate). No multisig sweeps reported yet.',
+  },
+  {
     label: 'Origin of the seed',
     text: 'Exposure follows where the seed was generated, not the device holding it today. Seeds imported elsewhere, or whose origin you cannot establish, should be treated as affected.',
   },
@@ -64,8 +68,9 @@ export function RiskChecklist() {
         </h2>
         <p className="risk-lede">
           Short checklist from Coinkite’s Aug 1 advisory, Block’s root-cause
-          writeup, and WizardSardine’s analysis. This tracker does not check
-          your wallet — follow the official steps before moving funds.
+          writeup, WizardSardine’s analysis, and Nunchuk’s multisig migration
+          guidance. This tracker does not check your wallet — follow the
+          official steps before moving funds.
         </p>
       </div>
 
