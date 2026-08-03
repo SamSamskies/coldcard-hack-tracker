@@ -96,15 +96,29 @@ describe('incident data invariants', () => {
       8,
     );
     expect(MORNING_WAVE.victimSweeps).toBeGreaterThan(0);
-    expect(WAVE4_WAVE.confirmedBtc).toBeCloseTo(
+    expect(WAVE4_WAVE.filteredBtc).toBeCloseTo(
       CLUSTER_BY_ID['wave4-aug3'].stolenBtc,
       8,
+    );
+    expect(WAVE4_WAVE.confirmedBtc).toBe(WAVE4_WAVE.filteredBtc);
+    expect(WAVE4_WAVE.coreBtc - WAVE4_WAVE.priorHistoryBtcExcluded).toBeCloseTo(
+      WAVE4_WAVE.filteredBtc,
+      8,
+    );
+    // Thorn’s IMPACT lines (857/−89→709 and 486.11/−20.58→448.73) don’t
+    // arithmetically reconcile; trust the published surviving-core figures.
+    expect(WAVE4_WAVE.coreAddresses).toBe(709);
+    expect(WAVE4_WAVE.coreBtc).toBeCloseTo(448.73, 8);
+    expect(WAVE4_WAVE.destinations).toBe(210);
+    expect(WAVE4_WAVE.filteredAddresses).toBe(
+      WAVE4_WAVE.coreAddresses -
+        WAVE4_WAVE.priorHistoryDestinationsExcluded,
     );
     const wave4 = HOLDING_ADDRESSES.filter((h) => h.clusterId === 'wave4-aug3');
     expect(wave4.length).toBeGreaterThan(0);
     expect(wave4.every((h) => h.reportBtc >= 0.5)).toBe(true);
     expect(wave4.reduce((s, h) => s + h.reportBtc, 0)).toBeLessThan(
-      WAVE4_WAVE.confirmedBtc,
+      WAVE4_WAVE.filteredBtc,
     );
   });
 

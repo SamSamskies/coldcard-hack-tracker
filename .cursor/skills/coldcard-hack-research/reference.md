@@ -29,7 +29,7 @@ Read this when you need concrete constants, source URLs, or script paths. Keep `
 | Evening | — | 1–2 | Distinct from Galaxy W2; Ocean peel ≠ stolen |
 | Morning | 960518–960523 | 15–50 | ~16 victim sweeps; direct → vault; Mk4 claim withdrawn |
 | Early Aug 2 | **960668** | 9 | 04:03 UTC; 902 inputs / 795 addrs; ~64.90 BTC landed |
-| Likely Wave 4 | **960778–960792** | 1–3 | Thorn; ~388.93 BTC; 462 victims → 216 1:1 dests; RBF; no collector |
+| Likely Wave 4 | **960778–960792** | 1–3 | Thorn pattern-match (no victim report yet); filtered ~443.34 BTC / 703 addrs after −89 multisig (−20.58) and −6 prior-history dests (−5.39); 210 fresh dests; RBF; no collector |
 
 Movement watch: block **> 960400**. Hop follow: depth ≤2, ≥0.01 BTC, ≤3 dests/spend.
 

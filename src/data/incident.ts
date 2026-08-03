@@ -87,22 +87,53 @@ export const EARLY_AUG2_WAVE = {
 } as const;
 
 /**
- * Likely Wave 4 (Alex Thorn / Galaxy research head). Confirmed window only —
- * mempool RBF sweeps were listed separately and are not folded into stolenBtc.
- * Topology is 1:1 parks (no collector funnel); watched holdings are a sparse
- * sample of still-held destinations ≥ 0.5 BTC, not the full 216-address set.
+ * Likely Wave 4 (Alex Thorn / Galaxy research head). Pattern-match only —
+ * Thorn has not yet confirmed via a direct victim report.
+ *
+ * Filters applied to the original pastebin sets (confirmed + mempool):
+ *   1) −6 prior-history destinations (−5.39 BTC) — not fresh attacker parks
+ *   2) −89 multisigs (−20.58 BTC) — Nunchuk flag; Waves 1–3 have zero multisigs
+ *
+ * `stolenBtc` / `filteredBtc` = surviving core after both filters (includes
+ * what was still in mempool at first report). Watched holdings are a sparse
+ * sample of still-held destinations ≥ 0.5 BTC, not the full destination set.
  */
 export const WAVE4_WAVE = {
   blockStart: 960_778,
   blockEnd: 960_792,
   feeSatPerVbMin: 1,
   feeSatPerVbMax: 3,
+  /** Pre-filter confirmed-window tweet stats (fingerprint context). */
   transactions: 218,
   victimAddresses: 462,
-  destinations: 216,
-  confirmedBtc: 388.92748828,
-  /** Additional RBF-signaling sweeps Thorn listed at ~01:01 UTC; not in stolenBtc. */
+  /** Fresh attacker destinations after excluding 6 prior-history addresses. */
+  destinations: 210,
+  /** Original confirmed-window total before destination/multisig filters. */
+  confirmedBtcAtReport: 388.92748828,
+  /** Additional RBF-signaling sweeps Thorn listed at ~01:01 UTC. */
   mempoolBtcAtReport: 70.16757699,
+  /** Combined pastebin total as first circulated (confirmed + mempool). */
+  circulatedAddresses: 857,
+  circulatedBtc: 486.11,
+  /**
+   * Multisig cut Thorn cited (Nunchuk). Note: 857−89≠709 and
+   * 486.11−20.58≠448.73 — trust `coreAddresses` / `coreBtc` as the outcome.
+   */
+  multisigDiscountAddresses: 89,
+  multisigDiscountBtc: 20.58,
+  /** After multisig discount (Thorn / Nunchuk surviving core). */
+  coreAddresses: 709,
+  coreBtc: 448.73,
+  priorHistoryDestinationsExcluded: 6,
+  priorHistoryBtcExcluded: 5.39,
+  /**
+   * After both filters. Aligns with cluster stolenBtc. Assumes the 6
+   * prior-history destinations were not among the 89 multisigs.
+   */
+  filteredAddresses: 703,
+  filteredBtc: 443.34,
+  /** @deprecated Use filteredBtc — kept as alias for cluster alignment tests. */
+  confirmedBtc: 443.34,
   windowUtc: 'blocks 960778–960792 (~2.5h window; still expanding at report)',
   pastebinConfirmedUrl: 'https://pastebin.com/6AG9s0pP',
   pastebinMempoolUrl: 'https://pastebin.com/zR5Wk2cz',
@@ -218,12 +249,13 @@ export const CLUSTERS: readonly Cluster[] = [
     id: 'wave4-aug3',
     label: 'Likely Wave 4 · Aug 3',
     /**
-     * Thorn’s confirmed-in-block total for the 960778–960792 window. Mempool
-     * RBF sweeps (~70 BTC at report) excluded until confirmed.
+     * Thorn’s pastebin set after multisig (−20.58) and prior-history dest
+     * (−5.39) filters — confirmed + mempool-at-report. Pattern-match only;
+     * no direct victim confirmation yet.
      */
-    stolenBtc: 388.92748828,
+    stolenBtc: 443.34,
     date: '2026-08-03',
-    note: 'Watched addresses are a sparse still-held sample.',
+    note: 'Pattern-match only (no victim report yet). Watched addresses are a sparse still-held sample.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
@@ -277,7 +309,7 @@ export const SOURCES = [
   },
   {
     label: 'Alex Thorn · Likely Wave 4',
-    note: 'Aug 3: likely 4th organized wave — ~388.93 BTC confirmed (blocks 960778–960792), 462 victims → 216 fresh 1:1 destinations; full address lists on Pastebin (confirmed + mempool/RBF).',
+    note: 'Aug 3: likely 4th wave by pattern match (no victim report yet). Filtered core ~443.34 BTC / 703 addrs after removing 89 multisigs (−20.58 BTC, per Nunchuk) and 6 prior-history destinations (−5.39 BTC). Original pastebins still list the unfiltered set.',
     url: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
   {

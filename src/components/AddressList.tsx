@@ -308,11 +308,12 @@ function Wave4Meta() {
         <dd>
           <span className="meta-primary">
             {formatBtc(wave.stolenBtc)} BTC ·{' '}
-            {w.transactions.toLocaleString()} txs
+            {w.filteredAddresses.toLocaleString()} addrs
           </span>
           <span className="meta-sub">
-            {w.victimAddresses.toLocaleString()} victims →{' '}
-            {w.destinations.toLocaleString()} dests
+            after −{w.multisigDiscountAddresses} multisig / −
+            {w.priorHistoryDestinationsExcluded} prior-history ·{' '}
+            {w.destinations.toLocaleString()} fresh dests
           </span>
         </dd>
       </div>
@@ -337,7 +338,9 @@ function Wave4Meta() {
         <dt>Pattern</dt>
         <dd>
           <span className="meta-primary">1:1 victim → fresh dest</span>
-          <span className="meta-sub">no collector funnel</span>
+          <span className="meta-sub">
+            likely only — no victim report yet
+          </span>
         </dd>
       </div>
       <div>
@@ -362,7 +365,7 @@ function Wave4Meta() {
             >
               Mempool / RBF list
             </a>{' '}
-            at report
+            — unfiltered originals
           </span>
         </dd>
       </div>
