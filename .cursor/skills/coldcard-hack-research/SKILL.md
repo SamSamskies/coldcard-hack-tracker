@@ -27,7 +27,7 @@ Canonical facts live in code; explorers only supply live balances.
 2. **Firecrawl** — search/scrape articles, advisories, and any public pages. Prefer writing to `.firecrawl/` (already gitignored).
 3. **X/Twitter** — scrape via **[xcancel.com](https://xcancel.com/)** first: rewrite `https://x.com/...` → `https://xcancel.com/...` (same path). It usually returns readable thread text plus original media URLs (`pbs.twimg.com/...name=orig`) needed for Galaxy chart OCR. Keep the canonical `x.com` URL in `sourceUrl` citations. If xcancel fails, try `x.com` directly, then ask the user for text/screenshot. Never guess totals from a broken scrape.
 4. **Reddit** — use Firecrawl **search** (`site:reddit.com`, `r/Bitcoin`, `r/coldcard`, etc.) for leads. Firecrawl often **cannot scrape** Reddit thread pages (blocked / unsupported); Reddit’s public JSON API is also frequently 403 from agents. Treat search titles/snippets as leads only — ask the user to paste a thread if comments matter. Prefer primary X/blog links from posts, then verify on-chain before editing data.
-5. **On-chain** — public Esplora only. Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
+5. **On-chain** — follow **[btc-esplora-verify](../btc-esplora-verify/SKILL.md)** (curl/jq recipes, fingerprint checklist, hop rules). Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
 6. **OCR** — for chart images (Galaxy maps), use local Vision/OCR; do not trust eyeballed BTC figures.
 
 ### When blocked
@@ -99,7 +99,7 @@ Task:
 
 ## On-chain verification checklist
 
-For each candidate address:
+Use **[btc-esplora-verify](../btc-esplora-verify/SKILL.md)** for commands. Summary:
 
 1. Confirm current balance vs claimed `reportBtc` (allow fees / partial moves).
 2. Confirm funding txs sit in the claimed block/fee band when asserting a fingerprint match.
