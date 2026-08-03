@@ -35,7 +35,7 @@ const POINTS = [
   },
   {
     label: 'Migrate before you upgrade',
-    text: 'If this Coldcard is your only signer for a weak seed, move funds first. Community reports (including [Jameson Lopp](https://x.com/lopp/status/2083958797354127631)) flag a non-zero chance the hotfix upgrade bricks the unit. Prefer sweeping to a new seed on a second fixed device when possible.',
+    text: 'If this Coldcard is your only signer for a weak seed, move funds first. Community reports (including [Jameson Lopp](https://x.com/lopp/status/2083958797354127631)) flag a non-zero chance the hotfix upgrade bricks the unit; an open [firmware PR](https://github.com/Coldcard/firmware/pull/692) argues a sticky TRNG fault after the hotfix can lock the keypad before login. Prefer sweeping to a new seed on a second fixed device when possible.',
   },
   {
     label: 'Origin of the seed',
