@@ -95,3 +95,17 @@ Target vs Galaxy: ~293 vaults / ~207.73 BTC. Watched set is intentionally partia
 - Early Aug 2 matches weak-seed profile but is **not** a Galaxy-published wave.
 - Snapshot keeps prior balance on explorer failure rather than writing zeros.
 - `build-snapshot.mjs` parses bech32 + base58 holdings from core + Wave 3; P2SH *service hubs* in `KNOWN_ADDRESS_LABELS` are labels only.
+
+## Deferred / unverified
+
+### Duel.com cash-out (~30 BTC)
+
+Alex Thorn ([thread](https://x.com/intangiblecoins/status/2083792644048597326)) reported a ~30 BTC one-off Coldcard victim with ~17 BTC peeled via THORChain → ~229.72 ETH into Duel.com. Briefly added to `CLUSTERS` / Total stolen, then **removed** until public txids/addresses appear.
+
+Keep out for now:
+
+- No published victim/attacker addresses or hop txids
+- On-chain search did not find a matching ~17 BTC peel into the known THOR vault
+- Duel disputed freeze process; claim is thinner than fingerprint waves
+
+Re-add only if primary evidence surfaces (BTC/ETH txids or addresses). Do not fold into `GALAXY.totalStolenBtc`.
