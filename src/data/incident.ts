@@ -402,14 +402,12 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 8.55600708,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
   {
     address: 'bc1qjenjhm6wgyz9m50svnvlyv6339z6jtmlmv4z23',
     label: 'Wave 4 park',
     reportBtc: 5.07348539,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
   {
     address: '1N8knQCfjqUeJQwjkZZavbboXXL6WVqfDo',
@@ -423,42 +421,36 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 2.02374869,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
   {
     address: 'bc1q65e6cd2k5ee2326fwwxsng370vf9pz85yce9u8',
     label: 'Wave 4 park',
     reportBtc: 1.14852067,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
   {
     address: '36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G',
     label: 'Wave 4 park',
     reportBtc: 1.09429601,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
   {
     address: 'bc1qcmnjt058q8hs4fvjr9wlu2kt974fyqnprfjvtl',
     label: 'Wave 4 park',
     reportBtc: 1.04998888,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
   {
     address: 'bc1pj7f35576cz0cznm75h6scp9eknqeqx4r666kdpcnk9slgh4sp5vs4sulc2',
     label: 'Wave 4 park',
     reportBtc: 1.03514173,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
   {
     address: '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ',
     label: 'Wave 4 park',
     reportBtc: 0.96227191,
     clusterId: 'wave4-aug3',
-    note: '1:1 destination sample (still held at add)',
   },
 ];
 
