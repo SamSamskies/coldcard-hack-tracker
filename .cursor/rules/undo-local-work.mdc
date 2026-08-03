@@ -1,0 +1,10 @@
+---
+description: Prefer git restore when undoing uncommitted agent edits
+alwaysApply: true
+---
+
+# Undo local work
+
+If the user asks to drop or undo recent agent edits and those changes are **still uncommitted**, prefer `git restore <paths>` (or `git checkout -- <paths>`) over manually reversing the diff. Do not invent a compensating edit when git can put the files back exactly.
+
+Only use destructive git commands (`reset --hard`, etc.) when the user explicitly asks for them.
