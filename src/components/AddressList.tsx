@@ -587,8 +587,8 @@ function EveningCashoutFlow() {
             <span className="cashout-note">
               {' '}
               · emptied Aug 3 01:22 UTC; ~0.27 mixed into a 1.54 BTC multi-input
-              stack (block 960800), then peeled to two Arkham KuCoin deposits
-              (~0.70 + ~0.84)
+              stack (block 960800), then peeled to two KuCoin deposits (~0.70 +
+              ~0.84)
             </span>
           </dd>
         </div>
