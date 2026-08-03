@@ -310,11 +310,6 @@ function Wave4Meta() {
             {formatBtc(wave.stolenBtc)} BTC ·{' '}
             {w.filteredAddresses.toLocaleString()} addrs
           </span>
-          <span className="meta-sub">
-            after −{w.multisigDiscountAddresses} multisig / −
-            {w.priorHistoryDestinationsExcluded} prior-history ·{' '}
-            {w.destinations.toLocaleString()} fresh dests
-          </span>
         </dd>
       </div>
       <div>

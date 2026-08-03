@@ -255,7 +255,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 443.34,
     date: '2026-08-03',
-    note: 'Pattern-match only (no victim report yet). Watched addresses are a sparse still-held sample.',
+    note: 'Pattern-match only (no victim report yet). Galaxy’s revised Wave 4 figure is 448.73 BTC after cutting 89 multisig destinations. We go one step further and also drop 6 destinations that already had prior on-chain history (−5.39 BTC), so our total is 443.34. Press totals near 1,816 BTC are Galaxy’s Waves 1–3 (1,367.05) plus their 448.73 — not our stricter cut. Watched addresses are a sparse still-held sample.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
