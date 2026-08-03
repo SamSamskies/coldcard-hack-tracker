@@ -223,7 +223,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 388.92748828,
     date: '2026-08-03',
-    note: 'Alex Thorn (Galaxy research head): likely Coldcard wave — elevated sweep rate, zero pre-firmware-boundary inputs, 1:1 fresh destinations (no collector). Low fee (~1–3 sat/vB) + RBF opt-in. Watched parks are a sparse still-held sample; full victim/destination lists linked below. Early 2nd-hop: Thorn’s unique dual-sweep destination partially peeled (~2.79 BTC) into a busy P2SH service hub; other watched parks still held.',
+    note: 'Watched addresses are a sparse still-held sample.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
@@ -518,6 +518,8 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH service hub',
   /** Wave 4 dual-sweep park peel (block 960793); busy custodial/swap-style hub. */
   '3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH': 'P2SH service hub',
+  /** Wave 4 hop (block 960797): multi-park consolidate → this high-volume P2WPKH hub. */
+  bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh: 'P2WPKH service hub',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
