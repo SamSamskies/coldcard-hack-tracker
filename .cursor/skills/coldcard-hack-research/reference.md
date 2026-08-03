@@ -95,6 +95,9 @@ Target vs Galaxy: ~293 vaults / ~207.73 BTC. Watched set is intentionally partia
 - Early Aug 2 matches weak-seed profile but is **not** a Galaxy-published wave.
 - Snapshot keeps prior balance on explorer failure rather than writing zeros.
 - `build-snapshot.mjs` parses bech32 + base58 holdings from core + Wave 3; P2SH *service hubs* in `KNOWN_ADDRESS_LABELS` are labels only.
+- **Dual totals (not a bug):** `GALAXY.totalStolenBtc` (~1367.05) = Waves 1–3 only. `ORIGINAL_STOLEN_BTC` (~1876.83) = all seven clusters. Gap ≈509.78 is evening + morning + early Aug 2 + Wave 4. External auditors often flag this as inconsistency.
+- **`reportBtc` ≠ live balance:** It is the original reported stack used for held/partial/moved status. Emptied vaults keep non-zero `reportBtc` on purpose; live Balance/snapshot shows 0. Do not “fix” by zeroing `reportBtc`.
+- **Empty balance meaning depends on address role:** Exchange deposit empty ⇒ custodian swept (good for compliance). Attacker vault empty ⇒ funds moved. darkness-svc ([Nostr note](https://damus.io/nevent1qqs0muc6qzuvgq54wfrf64czxpp9386tg4ds5wtvclclly4udgtau8qtdcjm9), Aug 3 2026) verified KuCoin `328Gx…` (~9.79 BTC / 37 txs) + `3JEQ…` (~8.84 BTC / 26 txs) and consol. `bc1qs86u…` (1.54 BTC) all at zero — deposit empties intentional.
 
 ## Deferred / unverified
 
