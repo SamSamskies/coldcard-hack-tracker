@@ -2,18 +2,19 @@
 """
 Tip-following scout for Coldcard-hack-like sweep waves.
 
-Always looks at a short window ending at chain tip. Does **not** catch up
-missed history — if you skipped a day, that day is abandoned (others are
-watching too). Checkpoint only skips blocks already fetched inside the
-current tip window.
+Always looks at a short window ending at chain tip (default 3 blocks). Does
+**not** catch up missed history. If the shallow pass finds candidates, auto-
+escalates to a deeper tip window (--escalate-blocks, default 12) unless
+--no-escalate. Checkpoint only skips blocks already fetched inside the window.
 
 Usage:
-  python3 scripts/scan-new-waves.py                  # last 12 blocks at tip
-  python3 scripts/scan-new-waves.py --blocks 6       # tighter tip window
-  python3 scripts/scan-new-waves.py --sample-every 1 # force full resolution
+  python3 scripts/scan-new-waves.py                  # last 3 blocks; escalate on hit
+  python3 scripts/scan-new-waves.py --blocks 12      # start deep
+  python3 scripts/scan-new-waves.py --no-escalate    # shallow only
   python3 scripts/scan-new-waves.py --start 960800 --end 960850  # research only
 
-Checkpoint: scripts/wave-scan-out/checkpoint.json. Prefer mirrors; pace ≥400ms.
+Checkpoint: scripts/wave-scan-out/checkpoint.json. Default host: blockstream.info
+(free Esplora), then bitaroo/emzy. Default pace 200ms.
 """
 
 from __future__ import annotations
@@ -29,6 +30,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 DEFAULT_HOSTS = [
+    # Tip scout: free Blockstream Esplora was faster / less 429-prone than
+    # community mirrors in Aug 2026 probes. Keep mirrors as failover.
+    "https://blockstream.info",
     "https://mempool.bitaroo.net",
     "https://mempool.emzy.de",
 ]
@@ -413,8 +417,8 @@ def main() -> int:
     p.add_argument(
         "--blocks",
         type=int,
-        default=12,
-        help="Tip window size (blocks back from tip; default 12, ~2h)",
+        default=3,
+        help="Tip window size (blocks back from tip; default 3)",
     )
     p.add_argument("--start", type=int, help="Fixed range start (inclusive)")
     p.add_argument("--end", type=int, help="Fixed range end (inclusive)")
@@ -434,7 +438,7 @@ def main() -> int:
     )
     p.add_argument("--fee-slack", type=int, default=2)
     p.add_argument("--timeout", type=float, default=45.0)
-    p.add_argument("--min-interval", type=float, default=0.4)
+    p.add_argument("--min-interval", type=float, default=0.2)
     p.add_argument(
         "--out",
         type=Path,
@@ -450,6 +454,17 @@ def main() -> int:
         "--refetch",
         action="store_true",
         help="Re-fetch the whole tip window even if checkpoint covers it",
+    )
+    p.add_argument(
+        "--escalate-blocks",
+        type=int,
+        default=12,
+        help="If shallow tip scan finds candidates, widen to this many tip blocks",
+    )
+    p.add_argument(
+        "--no-escalate",
+        action="store_true",
+        help="Do not auto-widen tip window when candidates appear",
     )
     args = p.parse_args()
 
@@ -566,6 +581,46 @@ def main() -> int:
     for s in fresh:
         hist[int(s.fee_sat_vb)] += 1
 
+    escalated = False
+    escalate_fetched_start = None
+    escalate_fetched_end = None
+    if (
+        candidates
+        and mode != "fixed"
+        and not args.no_escalate
+        and args.blocks < args.escalate_blocks
+    ):
+        deep_start = max(1, tip - args.escalate_blocks + 1)
+        if deep_start < window_start:
+            print(
+                f"\n*** {len(candidates)} candidate(s) in shallow window — "
+                f"escalating to blocks {deep_start}–{tip} "
+                f"({args.escalate_blocks} tip blocks) ***",
+                flush=True,
+            )
+            esc_end = window_start - 1
+            more = collect_sweeps(api, deep_start, esc_end, sample_every=1)
+            escalate_fetched_start = deep_start
+            escalate_fetched_end = esc_end
+            for s in more:
+                if s.txid:
+                    by_txid[s.txid] = s
+                hist[int(s.fee_sat_vb)] += 1
+            fresh.extend(more)
+            window_start = deep_start
+            sweeps = [
+                s for s in by_txid.values() if window_start <= s.height <= window_end
+            ]
+            candidates = cluster_candidates(
+                sweeps,
+                min_sweeps=args.min_sweeps,
+                min_btc=args.min_btc,
+                window_blocks=args.window_blocks,
+                fee_slack=args.fee_slack,
+            )
+            mode = "tip-escalated"
+            escalated = True
+
     summary = {
         "tip": tip,
         "mode": mode,
@@ -573,6 +628,9 @@ def main() -> int:
         "window_end": window_end,
         "fetched_start": fetch_start,
         "fetched_end": fetch_end,
+        "escalated": escalated,
+        "escalate_fetched_start": escalate_fetched_start,
+        "escalate_fetched_end": escalate_fetched_end,
         "host": api.host,
         "one_vout_sweeps_fresh": len(fresh),
         "one_vout_sweeps_clustered": len(sweeps),
@@ -613,6 +671,11 @@ def main() -> int:
         )
 
     print(f"\n=== {summary['verdict']} ===", flush=True)
+    if escalated:
+        print(
+            f"(escalated tip window to {window_start}–{window_end})",
+            flush=True,
+        )
     print(
         f"fresh 1-vout sweeps: {len(fresh)} (cluster set {len(sweeps)} w/ cache)",
         flush=True,

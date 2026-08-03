@@ -9,9 +9,9 @@ description: >-
 
 # New Wave Scan
 
-Proactive **tip-only** scout for this tracker. Always checks a short window at
-chain tip. Does **not** catch up missed history — if a check was skipped, that
-gap is abandoned (community monitors cover the same ground). Does **not**
+Proactive **tip-only** scout for this tracker. Default: last **3** tip blocks.
+If that shallow pass finds candidates, the script **auto-escalates** to 12 tip
+blocks. Does **not** catch up missed history beyond the tip window. Does **not**
 auto-edit `incident.ts`.
 
 Related: [btc-esplora-verify](../btc-esplora-verify/SKILL.md),
@@ -24,10 +24,10 @@ Related: [btc-esplora-verify](../btc-esplora-verify/SKILL.md),
 ## Workflow
 
 ```
-- [ ] Run scripts/scan-new-waves.py (default: last 12 tip blocks)
+- [ ] Run scripts/scan-new-waves.py (3 tip blocks; auto-escalates to 12 on hit)
 - [ ] Read verdict from stdout / scripts/wave-scan-out/latest.json
 - [ ] If NO_NEW_CANDIDATES → report clean tip window; stop
-- [ ] If candidates → verify 2–3 sample txids (fee + 1-vout + fresh dest)
+- [ ] If candidates (after any escalate) → verify sample txids + dest freshness
 - [ ] Optional community lead check (xcancel)
 - [ ] Only then follow coldcard-hack-research to add cluster/holdings
 ```
@@ -35,44 +35,50 @@ Related: [btc-esplora-verify](../btc-esplora-verify/SKILL.md),
 ## Run the scout
 
 ```bash
-# Default: last ~12 blocks at tip (~2h). Checkpoint skips already-fetched tip blocks.
+# Default: 3 tip blocks; on candidates, fetch back to 12 tip blocks automatically
 python3 scripts/scan-new-waves.py
 
-# Tighter / wider tip window
-python3 scripts/scan-new-waves.py --blocks 6
-python3 scripts/scan-new-waves.py --blocks 18
+# Shallow only (no auto-widen)
+python3 scripts/scan-new-waves.py --no-escalate
+
+# Start deep / custom escalate depth
+python3 scripts/scan-new-waves.py --blocks 12
+python3 scripts/scan-new-waves.py --escalate-blocks 18
 
 # Force re-fetch the whole tip window
 python3 scripts/scan-new-waves.py --refetch
 
-# Historical research only (no tip cursor update)
+# Historical research only (no tip cursor / no escalate)
 python3 scripts/scan-new-waves.py --start 960800 --end 960820 --sample-every 1
 ```
 
-**Policy:** tip window only. Never backfill `last_scanned → window_start`. Missed
-blocks behind the window are dropped on purpose.
+**Policy:** tip window only — never backfill ancient missed history. Shallow-first,
+deepen only when suspicious.
 
 | Mode | Meaning |
 |------|---------|
-| `tip` | Fetch whole tip window |
-| `tip-delta` | Tip advanced; only fetch new blocks inside the window |
+| `tip` / `tip-delta` | Shallow tip window |
+| `tip-escalated` | Candidates found → widened to `--escalate-blocks` |
 | `uptodate` | Checkpoint already covers tip |
 | `fixed` | Explicit `--start/--end` research range |
 
-Hosts: bitaroo → emzy. Pace ≥400ms. Output gitignored under `scripts/wave-scan-out/`.
+Hosts: **blockstream.info** first, then bitaroo → emzy. Pace default **200ms**.
+Output gitignored under `scripts/wave-scan-out/`.
 
-Expect ~2–3 min per **fetched** block. After the first tip pass, later checks
-usually only fetch a few new blocks (~5–15 min if you check every few hours).
+Expect ~1–2 min/block on Blockstream. Clean 3-block checks ~5 min; escalate adds
+~the extra 9 blocks when something looks off.
 
 ## Interpreting results
 
 | Signal | Meaning |
 |--------|---------|
 | `NO_NEW_CANDIDATES` | No Coldcard-shaped fee peak in the tip window |
+| `escalated: true` | Shallow hit triggered deeper tip scan |
 | `shape: park-like` / `vault-like` | Wave-like lead — still verify |
 | `noisy_fee_band: true` | Skepticism required |
 
-Never edit `incident.ts` from scout output alone.
+Never edit `incident.ts` from scout output alone. One destination eating most BTC
+in a “park-like” cluster is usually ordinary traffic, not a Coldcard wave.
 
 ## Confirm a candidate
 
@@ -85,7 +91,7 @@ Never edit `incident.ts` from scout output alone.
 
 ```
 Wave scan · {mode} · window {start}–{end} (tip {tip})
-Verdict: clean | N candidate(s)
+Verdict: clean | N candidate(s) [escalated]
 ```
 
 ## Maintenance
