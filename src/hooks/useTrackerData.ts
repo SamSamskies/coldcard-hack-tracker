@@ -12,7 +12,6 @@ import {
   type HoldingAddress,
 } from '../data/incident';
 import {
-  activeHostName,
   addressBalanceSats,
   fetchAddress,
   fetchAddressTxs,
@@ -53,9 +52,6 @@ export type TrackerData = {
   usdPrice: number | null;
   movements: Movement[];
   lastMovement: Movement | null;
-  lastUpdated: Date | null;
-  snapshotUpdatedAt: Date | null;
-  source: string | null;
   loading: boolean;
   error: string | null;
   refresh: () => void;
@@ -103,9 +99,6 @@ export function useTrackerData(): TrackerData {
   const [addresses, setAddresses] = useState<LiveAddress[]>([]);
   const [usdPrice, setUsdPrice] = useState<number | null>(null);
   const [movements, setMovements] = useState<Movement[]>([]);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
-  const [snapshotUpdatedAt, setSnapshotUpdatedAt] = useState<Date | null>(null);
-  const [source, setSource] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const prevBalances = useRef<Map<string, number>>(new Map());
@@ -115,8 +108,6 @@ export function useTrackerData(): TrackerData {
   const snapshotMovementsRef = useRef<Movement[]>([]);
   const liveMovementsRef = useRef<Movement[]>([]);
   const snapshotAtRef = useRef(0);
-  const liveSourceRef = useRef<string | null>(null);
-  const hasSnapshotRef = useRef(false);
 
   const scheduleFlashClear = useCallback((address: string) => {
     const existing = flashTimers.current.get(address);
@@ -137,17 +128,6 @@ export function useTrackerData(): TrackerData {
         ...liveMovementsRef.current,
       ]),
     );
-  }, []);
-
-  const updateSourceLabel = useCallback(() => {
-    const live = liveSourceRef.current;
-    if (live && hasSnapshotRef.current) {
-      setSource(`${live} · Wave 3 snapshot`);
-    } else if (live) {
-      setSource(live);
-    } else if (hasSnapshotRef.current) {
-      setSource('snapshot');
-    }
   }, []);
 
   /** Apply snapshot to Wave 3 rows; optionally seed core if we have no live data yet. */
@@ -185,17 +165,11 @@ export function useTrackerData(): TrackerData {
       addressesRef.current = live;
       snapshotMovementsRef.current = snapshot.movements;
       snapshotAtRef.current = Date.parse(snapshot.updatedAt) || Date.now();
-      hasSnapshotRef.current = true;
       setAddresses(live);
-      setSnapshotUpdatedAt(new Date(snapshotAtRef.current));
       if (snapshot.usdPrice != null) setUsdPrice(snapshot.usdPrice);
       publishMovements();
-      if (!liveSourceRef.current) {
-        setLastUpdated(new Date(snapshotAtRef.current));
-      }
-      updateSourceLabel();
     },
-    [publishMovements, scheduleFlashClear, updateSourceLabel],
+    [publishMovements, scheduleFlashClear],
   );
 
   const refreshSnapshot = useCallback(async () => {
@@ -338,13 +312,10 @@ export function useTrackerData(): TrackerData {
 
     addressesRef.current = live;
     liveMovementsRef.current = allMovements;
-    liveSourceRef.current = activeHostName();
     setAddresses(live);
     if (price != null) setUsdPrice(price);
     publishMovements();
-    setLastUpdated(new Date());
-    updateSourceLabel();
-  }, [publishMovements, scheduleFlashClear, updateSourceLabel]);
+  }, [publishMovements, scheduleFlashClear]);
 
   const refresh = useCallback(async () => {
     setError(null);
@@ -397,9 +368,6 @@ export function useTrackerData(): TrackerData {
     usdPrice,
     movements,
     lastMovement,
-    lastUpdated,
-    snapshotUpdatedAt,
-    source,
     loading,
     error,
     refresh,

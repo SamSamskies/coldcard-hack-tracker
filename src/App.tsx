@@ -66,26 +66,7 @@ export default function App() {
         <SourcesStrip />
 
         <footer className="site-footer">
-          <p>
-            Core vaults live via{' '}
-            <span className="mono">{data.source ?? 'mempool.space'}</span>
-            {data.snapshotUpdatedAt ? (
-              <>
-                ; Wave 3 from cron snapshot (
-                <span className="mono">
-                  {data.snapshotUpdatedAt.toLocaleString(undefined, {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </span>
-                )
-              </>
-            ) : null}
-            . Incident facts from Galaxy Research and community cluster reports.
-            Not affiliated with Coinkite or Coldcard.
-          </p>
+          <p>Not affiliated with Coinkite or Coldcard.</p>
         </footer>
       </main>
     </div>
