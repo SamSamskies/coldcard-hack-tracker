@@ -305,7 +305,16 @@ function EveningCashoutFlow() {
         <div className="cashout-rail">
           <dt>BTC · ~0.69</dt>
           <dd>
-            Aug 1 hop vault
+            <a
+              className="note-link"
+              href={explorerAddressUrl(
+                'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s',
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Aug 1 hop vault
+            </a>
             <span className="cashout-arrow" aria-hidden="true">
               →
             </span>
@@ -329,7 +338,16 @@ function EveningCashoutFlow() {
         <div className="cashout-rail">
           <dt>ETH · ~11.7</dt>
           <dd>
-            Evening vault
+            <a
+              className="note-link"
+              href={explorerAddressUrl(
+                'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
+              )}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Evening vault
+            </a>
             <span className="cashout-arrow" aria-hidden="true">
               →
             </span>
