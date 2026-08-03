@@ -337,7 +337,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
-    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2 — see ETH rail in flow above',
+    note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2 via THOR→ETH; ETH park 0xC61F emptied Aug 2 20:29 UTC into vanity hops → KuCoin 17',
   },
   {
     address: 'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s',

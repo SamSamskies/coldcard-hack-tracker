@@ -327,7 +327,7 @@ function EveningCashoutFlow() {
           </dd>
         </div>
         <div className="cashout-rail">
-          <dt>ETH · ~0.24</dt>
+          <dt>ETH · ~11.7</dt>
           <dd>
             Evening vault
             <span className="cashout-arrow" aria-hidden="true">
@@ -365,9 +365,25 @@ function EveningCashoutFlow() {
             >
               0xC61F…
             </a>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            vanity hops
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="mono note-link"
+              href="https://etherscan.io/address/0x45300136662dD4e58fc0DF61E6290DFfD992B785"
+              target="_blank"
+              rel="noreferrer"
+            >
+              KuCoin 17
+            </a>
             <span className="cashout-note">
               {' '}
-              · also ~3.6 ETH via{' '}
+              · emptied Aug 2 20:29 UTC (~11.70 ETH); consolidated with ~11.08
+              ETH from a parallel stack into a 23 ETH deposit; also funded via{' '}
               <a
                 className="mono note-link"
                 href="https://etherscan.io/address/0x3bDB03ad7363152DFBc185Ee23eBC93F0CF93fd1"
