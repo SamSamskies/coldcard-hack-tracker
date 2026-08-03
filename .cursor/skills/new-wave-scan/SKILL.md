@@ -1,21 +1,35 @@
 ---
 name: new-wave-scan
 description: >-
-  Periodically scout recent Bitcoin tip blocks for unreported Coldcard-hack-like
-  sweep waves (dense 1-vout fee clusters). Use when the user asks to check for
-  new waves, scan for new sweeps, hunt for unreported waves, or run a local
-  periodic wave check — before waiting on Galaxy/community reports.
+  Periodically scout the last 3 Bitcoin tip blocks for unreported
+  Coldcard-hack-like sweep waves (dense 1-vout fee clusters). Default is
+  shallow tip-only (--no-escalate); do not deep-scan or backfill unless the
+  user explicitly asks. Use when checking for new waves, tip sweeps, or a
+  local periodic wave check — before waiting on Galaxy/community reports.
 ---
 
 # New Wave Scan
 
 Proactive **tip-only** scout for this tracker. Default: last **3** tip blocks.
-If that shallow pass finds candidates, the script **auto-escalates** to 12 tip
-blocks. Does **not** catch up missed history beyond the tip window. Does **not**
-auto-edit `incident.ts`.
+Does **not** auto-edit `incident.ts`.
 
 Related: [btc-esplora-verify](../btc-esplora-verify/SKILL.md),
 [coldcard-hack-research](../coldcard-hack-research/SKILL.md).
+
+## Hard scope (do not improvise)
+
+Unless the user **explicitly** asks for a deep / wider / historical scan:
+
+- Run **only** the last **3** tip blocks.
+- Prefer: `python3 scripts/scan-new-waves.py --no-escalate`
+- Do **not** use `--blocks`, `--escalate-blocks`, `--start`/`--end`, or `--refetch`.
+- Do **not** “fill a tip gap,” catch up a behind checkpoint, or widen after a
+  noisy/false-looking candidate on your own.
+- A script note that the checkpoint skipped blocks is **not** permission to
+  backfill — report the tip-window verdict and stop.
+
+Deep modes (auto-escalate to 12, `--blocks N`, fixed `--start`/`--end`) only
+when the user asks (e.g. “deep scan,” “scan 12 blocks,” “scan blocks X–Y”).
 
 ## When to run
 
@@ -24,36 +38,37 @@ Related: [btc-esplora-verify](../btc-esplora-verify/SKILL.md),
 ## Workflow
 
 ```
-- [ ] Run scripts/scan-new-waves.py (3 tip blocks; auto-escalates to 12 on hit)
+- [ ] Run: python3 scripts/scan-new-waves.py --no-escalate   # 3 tip blocks only
 - [ ] Read verdict from stdout / scripts/wave-scan-out/latest.json
 - [ ] If NO_NEW_CANDIDATES → report clean tip window; stop
-- [ ] If candidates (after any escalate) → verify sample txids + dest freshness
+- [ ] If candidates → verify sample txids + dest freshness (still no widen)
 - [ ] Optional community lead check (xcancel)
 - [ ] Only then follow coldcard-hack-research to add cluster/holdings
+- [ ] Ask before any deeper scan if verification needs a wider window
 ```
 
 ## Run the scout
 
 ```bash
-# Default: 3 tip blocks; on candidates, fetch back to 12 tip blocks automatically
-python3 scripts/scan-new-waves.py
-
-# Shallow only (no auto-widen)
+# Default for agents / research check-ins: last 3 tip blocks, no auto-widen
 python3 scripts/scan-new-waves.py --no-escalate
 
-# Start deep / custom escalate depth
+# Only if user asks for auto-widen on hit (shallow 3 → escalate to 12)
+python3 scripts/scan-new-waves.py
+
+# Only if user asks for deep / custom depth
 python3 scripts/scan-new-waves.py --blocks 12
 python3 scripts/scan-new-waves.py --escalate-blocks 18
 
-# Force re-fetch the whole tip window
+# Only if user asks to force re-fetch the tip window
 python3 scripts/scan-new-waves.py --refetch
 
-# Historical research only (no tip cursor / no escalate)
+# Only if user asks for a historical / fixed range
 python3 scripts/scan-new-waves.py --start 960800 --end 960820 --sample-every 1
 ```
 
-**Policy:** tip window only — never backfill ancient missed history. Shallow-first,
-deepen only when suspicious.
+**Policy:** tip window only (3 blocks) unless explicitly asked for deeper.
+Never backfill missed history on your own.
 
 | Mode | Meaning |
 |------|---------|
