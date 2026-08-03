@@ -232,10 +232,15 @@ export function discoverNextHops(
       if (!shouldEmitOutbound(w, txs, tx)) continue;
       const { recipients } = outboundFromAddress(tx, w.address);
 
-      for (const r of recipients.slice(0, MAX_DESTINATIONS_PER_SPEND)) {
-        if (r.valueSats < MIN_HOP_FOLLOW_SATS) continue;
-        if (known.has(r.address)) continue;
+      const follow = recipients
+        .filter(
+          (r) =>
+            r.valueSats >= MIN_HOP_FOLLOW_SATS && !known.has(r.address),
+        )
+        .sort((a, b) => b.valueSats - a.valueSats)
+        .slice(0, MAX_DESTINATIONS_PER_SPEND);
 
+      for (const r of follow) {
         const nextHop = w.hop + 1;
         const prev = scored.get(r.address);
         if (!prev || r.valueSats > prev.valueSats) {

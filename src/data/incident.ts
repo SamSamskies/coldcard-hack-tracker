@@ -223,7 +223,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 388.92748828,
     date: '2026-08-03',
-    note: 'Alex Thorn (Galaxy research head): likely Coldcard wave — elevated sweep rate, zero pre-firmware-boundary inputs, 1:1 fresh destinations (no collector). Low fee (~1–3 sat/vB) + RBF opt-in. Watched parks are a sparse still-held sample; full victim/destination lists linked below.',
+    note: 'Alex Thorn (Galaxy research head): likely Coldcard wave — elevated sweep rate, zero pre-firmware-boundary inputs, 1:1 fresh destinations (no collector). Low fee (~1–3 sat/vB) + RBF opt-in. Watched parks are a sparse still-held sample; full victim/destination lists linked below. Early 2nd-hop: Thorn’s unique dual-sweep destination partially peeled (~2.79 BTC) into a busy P2SH service hub; other watched parks still held.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
@@ -416,7 +416,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 5.61303754,
     clusterId: 'wave4-aug3',
-    note: 'Received two sweeps; partial 2nd-hop already underway at add',
+    note: 'Thorn’s unique dual-sweep destination (2 victims → this park). One UTXO (~2.79 BTC) peeled block 960793 into P2SH service hub ([3CTpBmp…](address:3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH)); ~2.82 BTC still held.',
   },
   {
     address: '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz',
@@ -516,6 +516,8 @@ export const WATCH_AFTER_BLOCK = 960_400;
 export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794: 'THORChain BTC vault',
   '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH service hub',
+  /** Wave 4 dual-sweep park peel (block 960793); busy custodial/swap-style hub. */
+  '3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH': 'P2SH service hub',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */

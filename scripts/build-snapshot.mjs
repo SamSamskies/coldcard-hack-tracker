@@ -507,9 +507,12 @@ function discoverNextHops(watches, txLists, known, slotsLeft) {
         if (!dest || dest === w.address) continue;
         byAddr.set(dest, (byAddr.get(dest) ?? 0) + o.value);
       }
+      // Re-sort by value after filter so the largest exit (e.g. service hub)
+      // is always among the followed hops, not a smaller sibling output.
       const recipients = destinations
         .map((addr) => ({ address: addr, valueSats: byAddr.get(addr) ?? 0 }))
-        .filter((r) => r.valueSats >= MIN_HOP_FOLLOW_SATS && !known.has(r.address));
+        .filter((r) => r.valueSats >= MIN_HOP_FOLLOW_SATS && !known.has(r.address))
+        .sort((a, b) => b.valueSats - a.valueSats);
       for (const r of recipients.slice(0, MAX_DESTINATIONS_PER_SPEND)) {
         scored.push({
           address: r.address,
