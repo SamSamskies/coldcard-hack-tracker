@@ -69,6 +69,19 @@ Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blo
 
 COLDCARD RNG chain map: public cross-check for Wave 3; no URL constant in repo — find the current public map when reconstructing.
 
+## Chainabuse (victim reports)
+
+Public scam/theft reports: [chainabuse.com](https://www.chainabuse.com/).
+
+| Use | How |
+|-----|-----|
+| Address check | Search the candidate attacker / vault address; open matching report(s) |
+| Keyword scout | Firecrawl search `site:chainabuse.com coldcard` (or `cold card hack`) for new leads |
+| What to extract | Reported destination address(es), sweep txids, claimed USD/BTC, report URL |
+| Weight | Corroboration only — self-reports are unverified until Esplora fingerprint match |
+
+Cite report URLs in cluster `note` / sources when they back a holding (e.g. Kelbie P2TR vault + report `6e9ac9f1-…`). Do not add holdings from Chainabuse alone.
+
 ## Known exit labels
 
 Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md). Arkham:

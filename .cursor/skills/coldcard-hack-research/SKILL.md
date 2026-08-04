@@ -5,8 +5,8 @@ description: >-
   wave fingerprints, consolidation vaults, collectors, hop cash-outs, and
   snapshot data. Use when researching the Coldcard RNG/seed-entropy hack,
   finding or verifying BTC addresses, updating incident.ts or wave3Vaults.ts,
-  investigating a new wave, checking X/Reddit/community reports, or refreshing
-  on-chain facts for this repo.
+  investigating a new wave, checking X/Reddit/Chainabuse/community reports, or
+  refreshing on-chain facts for this repo.
 ---
 
 # Coldcard Hack Research
@@ -27,9 +27,10 @@ Canonical facts live in code; explorers only supply live balances.
 2. **Firecrawl** — search/scrape articles, advisories, and any public pages. Prefer writing to `.firecrawl/` (already gitignored).
 3. **X/Twitter** — scrape via **[xcancel.com](https://xcancel.com/)** first: rewrite `https://x.com/...` → `https://xcancel.com/...` (same path). It usually returns readable thread text plus original media URLs (`pbs.twimg.com/...name=orig`) needed for Galaxy chart OCR. Keep the canonical `x.com` URL in `sourceUrl` citations. If xcancel fails, try `x.com` directly, then ask the user for text/screenshot. Never guess totals from a broken scrape.
 4. **Reddit** — use Firecrawl **search** (`site:reddit.com`, `r/Bitcoin`, `r/coldcard`, etc.) for leads. Firecrawl often **cannot scrape** Reddit thread pages (blocked / unsupported); Reddit’s public JSON API is also frequently 403 from agents. Treat search titles/snippets as leads only — ask the user to paste a thread if comments matter. Prefer primary X/blog links from posts, then verify on-chain before editing data.
-5. **On-chain** — follow **[btc-esplora-verify](../btc-esplora-verify/SKILL.md)** (curl/jq recipes, fingerprint checklist, hop rules). Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
-6. **Cash-outs / labels** — when vaults empty or hops hit exchanges/bridges, follow **[cashout-labeling](../cashout-labeling/SKILL.md)** (holding vs label-only, Arkham, `KNOWN_ADDRESS_LABELS`).
-7. **OCR** — for chart images (Galaxy maps), use local Vision/OCR; do not trust eyeballed BTC figures.
+5. **Chainabuse** — secondary victim-corroboration / lead source ([chainabuse.com](https://www.chainabuse.com/)). Search for candidate attacker addresses, or keywords like `coldcard` / `cold card hack`. Reports often list destination addresses + sweep txids. Treat as **unverified self-reports**: useful to strengthen a pattern-matched sink or surface small waves early, never as proof of totals or attribution. Always verify reported addresses/txids on-chain before editing data. Cite the report URL in notes when it corroborates a holding. If scrape/search is blocked, ask the user for the report link or paste — do not invent victim claims.
+6. **On-chain** — follow **[btc-esplora-verify](../btc-esplora-verify/SKILL.md)** (curl/jq recipes, fingerprint checklist, hop rules). Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
+7. **Cash-outs / labels** — when vaults empty or hops hit exchanges/bridges, follow **[cashout-labeling](../cashout-labeling/SKILL.md)** (holding vs label-only, Arkham, `KNOWN_ADDRESS_LABELS`).
+8. **OCR** — for chart images (Galaxy maps), use local Vision/OCR; do not trust eyeballed BTC figures.
 
 Do **not** run `scan-new-waves.py` from this skill — tip / new-wave scouting is a separate ask via **[new-wave-scan](../new-wave-scan/SKILL.md)**.
 
@@ -65,6 +66,7 @@ Task:
 - [ ] Identify claim (new wave / new vault / cash-out / total update)
 - [ ] Locate primary source (Galaxy X, community reporter, advisory)
 - [ ] Check Reddit for corroborating / earlier community leads
+- [ ] Check Chainabuse for victim reports on candidate addresses (or coldcard keyword leads)
 - [ ] Extract fingerprint: blocks, fee sat/vB, structure (1-out sweep, park→P2WSH, etc.)
 - [ ] Cross-check on-chain (address balance, funding txs, fee rates)
 - [ ] Decide: core holding vs Wave 3 watch vs label-only
@@ -123,6 +125,7 @@ Use **[btc-esplora-verify](../btc-esplora-verify/SKILL.md)** for commands. Summa
 
 - Treat Ocean miner peels or surplus pass-through as stolen movement.
 - Add P2SH service hubs as holdings (labels only in `KNOWN_ADDRESS_LABELS`; Wave 4 destination parks that happen to be base58 `1…`/`3…` *are* holdings and must stay in `CORE_HOLDING_ADDRESSES`).
+- Treat Chainabuse filings as proof of stolen totals or same-operator attribution without on-chain fingerprint match.
 - Stampede public explorers or invent Wave 3 addresses from incomplete scrapes.
 - Quietly skip a blocked primary source and guess totals from secondary press.
 - Commit `.firecrawl/` or raw `scripts/wave3-out/` checkpoints unless the user asks.
