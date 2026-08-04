@@ -521,7 +521,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 2 vault',
     reportBtc: 64.90373764,
     clusterId: 'early-aug2',
-    note: 'Emptied Aug 4 (block 961065, ~5 sat/vB): [bc1q0rvn…](address:bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m) → Taproot hop [bc1pynd6…](address:bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92) ([e3274a1b…2b3ddf](txid:e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf)). Hop emptied same day in Wasabi-style CoinJoin (block 961069, ~2 sat/vB, 324→382, base-3 denoms; likely Wasabi 2 — [f3ee6e61…7b24](txid:f3ee6e61129b90b4746275a2ea17b08ac53769556d61994c94f03db9bcc37b24)): equal ~1.2914 BTC outs ×20 + residual ~54.32 BTC still at [bc1qajcr…](address:bc1qajcrhj3s2x0yfcj54emjukghv93su80svp2d3t).',
+    note: 'Emptied Aug 4 (block 961065, ~5 sat/vB): [bc1q0rvn…](address:bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m) → Taproot hop [bc1pynd6…](address:bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92) ([e3274a1b…2b3ddf](txid:e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf)). Hop emptied same day in Wasabi-style CoinJoin (block 961069, ~2 sat/vB, 324→382; [f3ee6e61…7b24](txid:f3ee6e61129b90b4746275a2ea17b08ac53769556d61994c94f03db9bcc37b24)): equal ~1.2914 BTC outs ×20 + residual ~54.32 BTC at [bc1qajcr…](address:bc1qajcrhj3s2x0yfcj54emjukghv93su80svp2d3t). Residual re-entered a second CJ (mempool, ~2 sat/vB, 320→374; [3bdac8ed…cdf935](txid:3bdac8ed822fc4cb123bc78689da3179ea8321d6daa5034c2170100399cdf935)): equal denoms (1 / 0.3355 / 0.2 / …) + new residual ~47.12 BTC at [bc1qq6s7…](address:bc1qq6s7wsmf6an78xyjkst707x32nyakj3u4jy2fr). No exchange exit yet.',
   },
   {
     address: 'bc1pum5zf6efxgt7a8xcyjg79u25jdhz6ex9ff2m390d544v05pg698s8ftmy8',
@@ -719,6 +719,11 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * Messenger (OUT:<hash> peels). Terminal — hub churn is not stolen movement.
    */
   bc1q2nfxrvvg67nhey0gk0cc8ke2ea4akge8kskyyq: 'OP_RETURN messenger hub',
+  /**
+   * Commingled P2TR later-vault hop hub (blocks 961019+). Arkham: OP_RETURN
+   * Messenger (OUT:<hash> peels to bc1qesrv… / others). Terminal — stop hop-follow.
+   */
+  bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr: 'OP_RETURN messenger hub',
   /**
    * Repeated ~0.33 BTC peel target from P2TR hop hub bc1qqa7p9… (blocks 961056+).
    * Arkham: High Transacting + OP_RETURN Messenger (OUT:<hash> memos); feeds Binance.
