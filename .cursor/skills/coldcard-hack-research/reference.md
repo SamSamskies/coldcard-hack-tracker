@@ -43,6 +43,15 @@ Browser probe order (`MEMPOOL_HOSTS`): mempool.space → emzy → bitaroo.
 
 Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blockstream.
 
+## X MCP workflow (no full-archive search)
+
+Do **not** call `search_posts_all` (App-Only + pay-per-use; MCP user OAuth 403s).
+
+1. `get_users_by_username` for: `glxyresearch`, `intangiblecoins`, `KevinKelbie`, `mariusoffchain`, `evands`, `TomerStrolight`, `Rob1Ham`, `nunchuk_io`, `eriklocalhost`
+2. `get_users_posts` with `start_time` / `exclude=replies` on the accounts above
+3. `get_posts_by_id(s)` for thread replies and quoted posts
+4. Optional 7-day keyword search via CLI only: `npx -y @xdevplatform/xurl search 'QUERY' -n 20`
+
 ## Primary sources (encoded)
 
 **Galaxy (X)**

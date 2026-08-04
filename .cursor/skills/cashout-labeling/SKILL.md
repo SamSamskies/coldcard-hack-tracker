@@ -46,9 +46,9 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
 2. **Arkham** (primary label source used in this repo):
    `https://arkm.com/explorer/address/{ADDR}`
    Firecrawl/scrape the page; if blocked, ask user for the entity name / screenshot.
-3. Cross-check community X (X MCP `search_posts_all` / `get_users_posts`; xcancel
-   fallback) only as leads — prefer Arkham or explorer entity tags with a cited
-   block height.
+3. Cross-check community X (X MCP `get_users_posts` on known reporters /
+   `get_posts_by_id`; **not** `search_posts_all`; xcancel fallback) only as
+   leads — prefer Arkham or explorer entity tags with a cited block height.
 4. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
    `Bullish.com deposit`, `THORChain BTC vault`, `P2SH service hub`). Prefer
    “deposit” / “hub” / “vault” so empty balances read correctly.

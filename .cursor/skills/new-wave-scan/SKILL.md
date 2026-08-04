@@ -42,7 +42,7 @@ when the user asks (e.g. “deep scan,” “scan 12 blocks,” “scan blocks X
 - [ ] Read verdict from stdout / scripts/wave-scan-out/latest.json
 - [ ] If NO_NEW_CANDIDATES → report clean tip window; stop
 - [ ] If candidates → verify sample txids + dest freshness (still no widen)
-- [ ] Optional community lead check (X MCP, else xcancel)
+- [ ] Optional community lead check (X MCP timelines / post IDs, else xcancel)
 - [ ] Only then follow coldcard-hack-research to add cluster/holdings
 - [ ] Ask before any deeper scan if verification needs a wider window
 ```
@@ -99,7 +99,8 @@ in a “park-like” cluster is usually ordinary traffic, not a Coldcard wave.
 
 1. Sample txids → 1-vout + fee via esplora skill.
 2. Dest freshness; consolidation pattern.
-3. Optional same-day reports via X MCP (else xcancel).
+3. Optional same-day reports via X MCP timelines / known accounts (else xcancel).
+   Do not use `search_posts_all`.
 4. If real → coldcard-hack-research; add range to `KNOWN_WINDOWS`.
 
 ## Report format
