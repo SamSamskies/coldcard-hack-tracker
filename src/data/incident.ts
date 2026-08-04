@@ -16,15 +16,50 @@ export const EARLY_WAVE = {
 } as const;
 
 /**
- * Galaxy’s three-wave same-operator fingerprint (Aug 1 updates).
- * Headline total 1,367.05 BTC across 4,585 victim addresses.
+ * Galaxy investigation totals.
+ *
+ * `totalStolenBtc` / `victimAddresses` stay Waves 1–3 only (same-operator
+ * fingerprint; Aug 1 map) so cluster invariants keep working.
+ *
+ * Aug 3 update ([thread](https://x.com/glxyresearch/status/2084411904924045370)):
+ * high-confidence headline adds owner-confirmed lettered footprints; candidate
+ * Wave 4 is still excluded from that headline. Chart Sankey used 1,591 BTC
+ * (= 1,367.05 + 223.85 footprints A–N); the tweet/press figure is 1,596.
  */
 export const GALAXY = {
+  /** Waves 1–3 same-operator total — must equal those three cluster sums. */
   totalStolenBtc: 1367.05,
   victimAddresses: 4585,
   /** Galaxy’s reported finals; our live Wave 3 watch list is a partial reconstruct. */
   holdingAddresses: 7 + 293,
+  /** Aug 3 tweet/press high-confidence: Waves 1–3 + owner-confirmed footprints. */
+  highConfidenceBtc: 1596,
+  /** ~7,300 addresses across Waves 1–3 + 14 smaller incidents (Aug 3). */
+  highConfidenceVictimAddresses: 7300,
+  /** Chart: owner-confirmed footprints A–N taken (Aug 3 cut). */
+  footprintsConfirmedBtc: 223.85,
+  /** Chart: of those footprints, still at first receive addresses. */
+  footprintsStillHeldBtc: 204.18,
+  /** Chart: pattern-matched, no owner confirmation yet. */
+  patternMatchedUnconfirmedBtc: 15.27,
+  /** Chart / tweet: add candidate Wave 4 (448.73) → ~2,055 BTC / ~$130m. */
+  withCandidateWave4Btc: 2055,
+  wave4CandidateBtc: 448.73,
+  /** Wave 3 map (Aug 1). */
   sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
+  /** Losses exceed $100M / multi-attacker footprints (Aug 3). */
+  aug3UpdateUrl: 'https://x.com/glxyresearch/status/2084411904924045370',
+} as const;
+
+/**
+ * Thorn’s Aug 4 “footprint O” — new overnight attacker pattern from one
+ * victim report. No public destination/txid list yet, so not a watched cluster.
+ */
+export const FOOTPRINT_O = {
+  btc: 12,
+  addresses: 126,
+  date: '2026-08-04',
+  sourceUrl: 'https://x.com/intangiblecoins/status/2084584284837322868',
 } as const;
 
 /**
@@ -265,7 +300,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 64.90947964,
     date: '2026-08-02',
-    note: 'Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 drain report plus a Mk3 testing-device victim in the same consolidation; sampled inputs long-dormant and funded after the March 2021 vuln window.',
+    note: 'Distinct fee/structure from Galaxy Waves 1–3. Community Mk2 drain report plus a Mk3 testing-device victim in the same consolidation; sampled inputs long-dormant and funded after the March 2021 vuln window. [Chainabuse victim](https://chainabuse.com/report/61e7b80a-4ec6-42b4-a8b4-4cab1a29c9ac) lands in the same vault/tx (block 960668). Likely one of Galaxy’s lettered footprints.',
     sourceUrl: 'https://x.com/mariusoffchain/status/2083814011859030252',
   },
   {
@@ -293,7 +328,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 443.34,
     date: '2026-08-03',
-    note: 'Pattern-match only (no victim report yet). Galaxy’s revised Wave 4 figure is 448.73 BTC after cutting 89 multisig destinations. We go one step further and also drop 6 destinations that already had prior on-chain history (−5.39 BTC), so our total is 443.34. Press totals near 1,816 BTC are Galaxy’s Waves 1–3 (1,367.05) plus their 448.73 — not our stricter cut. Watched addresses are a sparse still-held sample.',
+    note: 'Pattern-match only (no victim report yet). Galaxy’s revised Wave 4 figure is 448.73 BTC after cutting 89 multisig destinations. We go one step further and also drop 6 destinations that already had prior on-chain history (−5.39 BTC), so our total is 443.34. Galaxy’s Aug 3 ceiling ~2,055 BTC is their high-confidence 1,596 plus this 448.73 candidate — not our stricter 443.34 cut. Watched addresses are a sparse still-held sample.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
@@ -310,6 +345,16 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
+  {
+    label: 'Galaxy Research · $100M update',
+    note: 'Aug 3: high-confidence 1,596 BTC / ~7,300 addresses across Waves 1–3 + 14 owner-confirmed footprints; candidate Wave 4 would bring ~2,055 BTC. Multiple independent attackers. Waves 1–3 coins still unmoved.',
+    url: 'https://x.com/glxyresearch/status/2084411904924045370',
+  },
+  {
+    label: 'Alex Thorn · Footprint O',
+    note: 'Aug 4: ≥15 attackers (footprints A–O). Overnight footprint O ~12 BTC from 126 addresses from one victim report; no public address list yet.',
+    url: 'https://x.com/intangiblecoins/status/2084584284837322868',
+  },
   {
     label: 'Galaxy Research · Wave 3',
     note: 'Aug 1: third wave (~207.73 BTC into 293 P2WSH vaults). Observed total 1,367.05 BTC across 4,585 addresses.',

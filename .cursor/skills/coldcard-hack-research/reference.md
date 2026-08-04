@@ -50,6 +50,10 @@ Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blo
 - Wave 1: `https://x.com/glxyresearch/status/2083181683067506899`
 - Wave 2: `https://x.com/glxyresearch/status/2083560940469981591`
 - Wave 3 / headline: `https://x.com/glxyresearch/status/2083623500183421043`
+- Aug 3 $100M / footprints: `https://x.com/glxyresearch/status/2084411904924045370`
+  - High-confidence ~1,596 BTC / ~7,300 addrs (W1–3 + footprints A–N)
+  - Chart: footprints A–N 223.85 BTC; pattern-matched 15.27; +W4 → ~2,055
+  - Footprint O (Aug 4, Thorn): `https://x.com/intangiblecoins/status/2084584284837322868` (~12 BTC / 126 addrs)
 
 **Community**
 

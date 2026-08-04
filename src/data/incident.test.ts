@@ -5,6 +5,7 @@ import {
   CONSOLIDATED_BTC,
   EARLY_AUG2_WAVE,
   EVENING_WAVE,
+  FOOTPRINT_O,
   GALAXY,
   HOLDING_ADDRESSES,
   INCIDENT,
@@ -41,6 +42,32 @@ describe('incident data invariants', () => {
     ];
     const sum = galaxyIds.reduce((s, id) => s + CLUSTER_BY_ID[id].stolenBtc, 0);
     expect(sum).toBeCloseTo(GALAXY.totalStolenBtc, 2);
+  });
+
+  it('keeps Galaxy Aug 3 headline tiers ordered', () => {
+    expect(GALAXY.highConfidenceBtc).toBeGreaterThan(GALAXY.totalStolenBtc);
+    expect(GALAXY.withCandidateWave4Btc).toBeGreaterThan(GALAXY.highConfidenceBtc);
+    // Chart labels round to whole BTC (1,591 / 2,055).
+    expect(
+      GALAXY.totalStolenBtc + GALAXY.footprintsConfirmedBtc,
+    ).toBeCloseTo(1591, 0);
+    expect(
+      GALAXY.totalStolenBtc +
+        GALAXY.footprintsConfirmedBtc +
+        GALAXY.patternMatchedUnconfirmedBtc +
+        GALAXY.wave4CandidateBtc,
+    ).toBeCloseTo(GALAXY.withCandidateWave4Btc, 0);
+    expect(GALAXY.footprintsStillHeldBtc).toBeLessThanOrEqual(
+      GALAXY.footprintsConfirmedBtc,
+    );
+  });
+
+  it('documents Footprint O without adding a watched cluster', () => {
+    expect(FOOTPRINT_O.btc).toBe(12);
+    expect(FOOTPRINT_O.addresses).toBe(126);
+    expect(CLUSTERS.some((c) => c.sourceUrl === FOOTPRINT_O.sourceUrl)).toBe(
+      false,
+    );
   });
 
   it('has unique holding addresses', () => {
