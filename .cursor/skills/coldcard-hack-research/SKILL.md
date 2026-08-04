@@ -25,7 +25,7 @@ Canonical facts live in code; explorers only supply live balances.
 
 1. **Read repo first** — `src/data/incident.ts`, `src/data/wave3Vaults.ts`, tests, README. Do not invent addresses that contradict existing clusters.
 2. **Firecrawl** — search/scrape articles, advisories, and any public pages. Prefer writing to `.firecrawl/` (already gitignored).
-3. **X/Twitter** — scrape via **[xcancel.com](https://xcancel.com/)** first: rewrite `https://x.com/...` → `https://xcancel.com/...` (same path). It usually returns readable thread text plus original media URLs (`pbs.twimg.com/...name=orig`) needed for Galaxy chart OCR. Keep the canonical `x.com` URL in `sourceUrl` citations. If xcancel fails, try `x.com` directly, then ask the user for text/screenshot. Never guess totals from a broken scrape.
+3. **X/Twitter** — prefer the **X MCP** (`xapi` via `@xdevplatform/xurl` → `https://api.x.com/mcp`). Use read tools only: `search_posts_all`, `get_users_posts`, `get_posts_by_id` / `get_posts_by_ids`, `get_users_by_username`. Pace calls — Free/pay-per-use quotas burn fast. Keep canonical `x.com` URLs in `sourceUrl`. For Galaxy chart **media/OCR**, MCP text is often enough; if you need `pbs.twimg.com/...name=orig` image URLs, fall back to **[xcancel.com](https://xcancel.com/)** (rewrite `https://x.com/...` → `https://xcancel.com/...`). If MCP auth fails or is rate-limited, try xcancel, then ask the user for text/screenshot. Never guess totals from a broken fetch. Do not use bookmark/write tools for research.
 4. **Reddit** — use Firecrawl **search** (`site:reddit.com`, `r/Bitcoin`, `r/coldcard`, etc.) for leads. Firecrawl often **cannot scrape** Reddit thread pages (blocked / unsupported); Reddit’s public JSON API is also frequently 403 from agents. Treat search titles/snippets as leads only — ask the user to paste a thread if comments matter. Prefer primary X/blog links from posts, then verify on-chain before editing data.
 5. **Chainabuse** — secondary victim-corroboration / lead source ([chainabuse.com](https://www.chainabuse.com/)). Search for candidate attacker addresses, or keywords like `coldcard` / `cold card hack`. Reports often list destination addresses + sweep txids. Treat as **unverified self-reports**: useful to strengthen a pattern-matched sink or surface small waves early, never as proof of totals or attribution. Always verify reported addresses/txids on-chain before editing data. Cite the report URL in notes when it corroborates a holding. If scrape/search is blocked, ask the user for the report link or paste — do not invent victim claims.
 6. **On-chain** — follow **[btc-esplora-verify](../btc-esplora-verify/SKILL.md)** (curl/jq recipes, fingerprint checklist, hop rules). Prefer `mempool.bitaroo.net` or `mempool.emzy.de` for bulk scans; do not stampede `mempool.space` / Blockstream. Pace ≥400ms between host calls.
@@ -40,7 +40,7 @@ After **one** clear failure (bot wall, unsupported site, 403/429 that retries wo
 
 - Paste the X/Reddit/blog text or a screenshot
 - Open a URL and confirm what it shows
-- Supply an API key / re-auth (`firecrawl login`) if credits or auth died
+- Re-auth X MCP (`npx -y @xdevplatform/xurl auth oauth2`) or `firecrawl login` if credits/auth died
 - Approve a slower/manual path (browser, different host)
 
 Do not invent facts to paper over a blocked fetch. Partial results are fine — report what you have and what’s missing.
