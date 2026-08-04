@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-04T23:44:00.027Z",
+  "updatedAt": "2026-08-04T23:50:13.956Z",
   "source": "mempool.space",
-  "usdPrice": 64132,
+  "usdPrice": 64159,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -1342,6 +1342,19 @@
       "blockTime": 1785873200
     },
     {
+      "txid": "f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281",
+      "fromAddress": "34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ",
+      "fromLabel": "Wave 4 park",
+      "amountBtc": 0.96227191,
+      "destinations": [
+        "334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 961064,
+      "blockTime": 1785873200
+    },
+    {
       "txid": "d969fd1c2a1558c000c8e5e15b069dbd383f4e63a0427fa0ba7f58d41e7e16ef",
       "fromAddress": "bc1p0l0xs2a0ffn2d9pek28k3vm9rjr2p0c5hvdlu03gpdwgzdgpscnq6qlk0h",
       "fromLabel": "P2TR vault",
@@ -1487,48 +1500,6 @@
       "confirmed": true,
       "blockHeight": 960818,
       "blockTime": 1785729307
-    },
-    {
-      "txid": "24ed08ad161b39d7e3cdead638e4be0f80c0b380e6285835edecf41856a7f583",
-      "fromAddress": "bc1qhfdzxfuj6hjxgwu58nnwhdghpr0rmpl9yj3wcx",
-      "fromLabel": "Hop 2 from Hop 1 from Wave 4 park",
-      "amountBtc": 4.27762101,
-      "destinations": [
-        "bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh",
-        "bc1qm26vfs8v57n8azmx4nl4u7q3y5e339lzx73q52",
-        "bc1qemas2aylvgwrx03nexs74gz4wrxuclxdak7dm323pjn0pen0qp6qw9ahmt",
-        "bc1qnmldglw7ycgep9pt2mtm933nq9ftn7v0mgwcty",
-        "bc1q6y9v0d7sfz04rm3dyfrgvnqaeznqkszd6f8paa",
-        "bc1qmyx72s2trzutfagwu53famys5l426u6wks86qx",
-        "bc1qjdy7dg0rgg70t2pej5m5fg784d4nd5dh5ftff7",
-        "3CMMdFUqVTMLtYVs1x8t7RrPdBpoRmC5zy",
-        "bc1qajvnke468vdemawpv47kndjg8castmkdem7qfd",
-        "bc1q82s4xsapw5xzerclgzm0c0c243pm7jctc2ss2s",
-        "bc1qczw85tl89vv7d94thv7kux5j5q8yy3s3vduf4c",
-        "bc1qeggwhpzc0lgty80dw4eg9p5rdrwgaywucc6yyx",
-        "bc1qdsd4edwzztks54kn8zpjsftcvm2ejf9vj2k980",
-        "bc1qgetn4yjqlu3e6vm4ljqhntnyrhpvg8vah3mnpd",
-        "bc1qja4lrx2x7v5a6fjkglf4hrxwsrgeum9c6rfksw",
-        "bc1qcqrhu5jeeu4mhqkvhm0t0cp58wnhyyvuzews4g",
-        "bc1qh6dxglknw4t0zsmctrl7ulxxs6580pmdhhhrtu",
-        "bc1qjq0q6tdjm4my2djzufgxue5mxggnjugz5ssfv5",
-        "bc1q5va8yz0gnt9x7z32hqymsyet4ewzl4anrt69dr",
-        "bc1q6cxcy4dkyf8uarn4f5saq228whw4tetuapxqgen3cnqnyw4u6lzs3ynecz",
-        "bc1q9ls0mkndlctapjnw8yvq88e4gx4z2kt7t47hdn",
-        "bc1qvcf6puahs28pdqx4zzv5keva7ehgmnhst7cwhg",
-        "bc1qzrxfqu8jkxld86m753mcq4h7mpduhej7pa4wlr",
-        "bc1qyhcqnr6u9wuygzvce2p8vd5c55s023shar8d5y",
-        "bc1q5wganprcvuhzhmv7nl658es7uj2xudjue5z0np",
-        "bc1qjy3hsqqe0g99ej36uqwswayzecjr0jzzqaehzq",
-        "bc1qg7m3p7vepyjc4wqewscpwyv2xjxwjjquyj7zr3",
-        "34SBpZXP1DfQpWmzdnZrwjYo4wiWjfxQ6n",
-        "bc1qhjqpxcr3h4h5xzz2x83chy72hl690t8kmewnnw",
-        "bc1pqe65c7sdu0y9m97523dw94sujmkfwmtdev8zfzzregel60k4zcpqfkhm75"
-      ],
-      "hop": 2,
-      "confirmed": true,
-      "blockHeight": 960797,
-      "blockTime": 1785719858
     },
     {
       "txid": "6c85668ec49c89b32afe94d53cc65c12518255f27c1c5b7932059307bdd30bbb",
