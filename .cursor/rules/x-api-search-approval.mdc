@@ -1,0 +1,24 @@
+---
+description: Require user approval before X keyword / recent-search API calls (pay-per-use credits)
+alwaysApply: true
+---
+
+# X API keyword search — ask first
+
+X API is **pay-per-use** (Posts: Read ≈ **$0.005 per returned post**). MCP and CLI share the same credit pool.
+
+## Requires explicit user approval before running
+
+- `npx … xurl search …` / `xurl search …`
+- Raw `GET /2/tweets/search/recent` (or any keyword recent-search)
+- MCP `search_posts_all` (full-archive; also App-Only — usually 403 on our OAuth session)
+
+When you want a keyword search, **stop and ask**: proposed query, approx `max_results`, and rough cost (`$0.005 × N`). Do not run until the user approves.
+
+## OK without extra approval (prefer these)
+
+- MCP `get_posts_by_id` / `get_posts_by_ids`
+- MCP `get_users_by_username` → `get_users_posts` on known accounts
+- Other non-search read tools already in use for research
+
+Prefer targeted MCP lookups over keyword search whenever possible.
