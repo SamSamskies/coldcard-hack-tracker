@@ -10,6 +10,7 @@ import {
   INCIDENT,
   MORNING_WAVE,
   ORIGINAL_STOLEN_BTC,
+  P2TR_WAVE,
   WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
   WAVE4_WAVE,
@@ -96,6 +97,17 @@ describe('incident data invariants', () => {
       8,
     );
     expect(MORNING_WAVE.victimSweeps).toBeGreaterThan(0);
+    expect(
+      P2TR_WAVE.smallVaultBtc +
+        P2TR_WAVE.hopVaultBtc +
+        P2TR_WAVE.laterVaultBtc,
+    ).toBeCloseTo(CLUSTER_BY_ID['p2tr-aug1'].stolenBtc, 8);
+    const p2tr = HOLDING_ADDRESSES.filter((h) => h.clusterId === 'p2tr-aug1');
+    expect(p2tr).toHaveLength(3);
+    expect(p2tr.reduce((s, h) => s + h.reportBtc, 0)).toBeCloseTo(
+      CLUSTER_BY_ID['p2tr-aug1'].stolenBtc,
+      8,
+    );
     expect(WAVE4_WAVE.filteredBtc).toBeCloseTo(
       CLUSTER_BY_ID['wave4-aug3'].stolenBtc,
       8,

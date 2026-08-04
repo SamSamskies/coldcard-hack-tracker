@@ -87,6 +87,30 @@ export const EARLY_AUG2_WAVE = {
 } as const;
 
 /**
+ * Community P2TR sinks (Kevin Kelbie + Chainabuse victim). Distinct from
+ * Wave 4: ~5 sat/vB (later vault also 25/40) into Taproot consolidations,
+ * not Wave 4’s 1–3 sat/vB multi-park pattern. Watched set is the three
+ * sinks Kelbie published — not a full wave census.
+ */
+export const P2TR_WAVE = {
+  blockStart: 960_624,
+  blockEnd: 960_897,
+  /** Dominant fee band across all three sinks. */
+  feeSatPerVbPrimary: 5,
+  /** Secondary bands on the later vault (bc1p0l…). */
+  feeSatPerVbSecondaryMin: 25,
+  feeSatPerVbSecondaryMax: 40,
+  smallVaultBtc: 0.50992489,
+  /** Emptied collector bc1ptd… consolidated here @ block 960736. */
+  hopVaultBtc: 36.01585057,
+  laterVaultBtc: 10.44811501,
+  emptiedCollector:
+    'bc1ptd5x926gkxdu0p8a2rufr7u8lklrfqapucj8yha7vjqh5z6md9kqf53nap',
+  chainabuseReportUrl:
+    'https://chainabuse.com/report/6e9ac9f1-61e5-49c5-947c-062afc70b73b',
+} as const;
+
+/**
  * Likely Wave 4 (Alex Thorn / Galaxy research head). Pattern-match only —
  * Thorn has not yet confirmed via a direct victim report.
  *
@@ -165,6 +189,7 @@ export type ClusterId =
   | 'evening-july31'
   | 'morning-aug1'
   | 'early-aug2'
+  | 'p2tr-aug1'
   | 'wave4-aug3';
 
 export type Cluster = {
@@ -184,8 +209,8 @@ export type Cluster = {
 
 /**
  * Named consolidation clusters. Galaxy Waves 1–3 are attributed to the same
- * operator; evening/morning/early-Aug-2/Wave-4 waves may differ (fingerprint /
- * community report) and are not folded into GALAXY.totalStolenBtc.
+ * operator; evening/morning/early-Aug-2/P2TR/Wave-4 waves may differ
+ * (fingerprint / community report) and are not folded into GALAXY.totalStolenBtc.
  */
 export const CLUSTERS: readonly Cluster[] = [
   {
@@ -246,6 +271,21 @@ export const CLUSTERS: readonly Cluster[] = [
     sourceUrl: 'https://x.com/mariusoffchain/status/2083814011859030252',
   },
   {
+    id: 'p2tr-aug1',
+    label: 'P2TR wave · Aug 1–3',
+    /**
+     * Watched sinks only (Kelbie’s three P2TRs): small vault + hop from
+     * emptied collector + later vault. Not a full wave census.
+     */
+    stolenBtc:
+      P2TR_WAVE.smallVaultBtc +
+      P2TR_WAVE.hopVaultBtc +
+      P2TR_WAVE.laterVaultBtc,
+    date: '2026-08-01',
+    note: 'Distinct from Wave 4: ~5 sat/vB (later also 25/40) 1-vout multi-path sweeps into Taproot consolidations. Small vault corroborated by a Chainabuse Coldcard-hack victim report; larger sibling/hop verified on-chain with the same fingerprint. Watched set is Kelbie’s published sample, not every P2TR sink.',
+    sourceUrl: 'https://x.com/KevinKelbie/status/2084294469126361372',
+  },
+  {
     id: 'wave4-aug3',
     label: 'Likely Wave 4 · Aug 3',
     /**
@@ -291,6 +331,11 @@ export const SOURCES = [
     label: 'Kevin Kelbie',
     note: 'Independently flagged the ~45.9 BTC July 31 vault (now Galaxy Wave 2) after Block’s scan window; RBF differed from Wave 1.',
     url: 'https://x.com/KevinKelbie/status/2083368025864990857',
+  },
+  {
+    label: 'Kevin Kelbie · P2TR wave',
+    note: 'Aug 3: ~0.51 BTC Chainabuse-corroborated P2TR sink plus two larger sibling Taproot consolidations (~36 + ~10 BTC) at ~5 sat/vB — distinct from Wave 4.',
+    url: 'https://x.com/KevinKelbie/status/2084294469126361372',
   },
   {
     label: 'Evan Schoenberg',
@@ -433,6 +478,27 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 2 vault',
     reportBtc: 64.90373764,
     clusterId: 'early-aug2',
+  },
+  {
+    address: 'bc1pum5zf6efxgt7a8xcyjg79u25jdhz6ex9ff2m390d544v05pg698s8ftmy8',
+    label: 'P2TR vault',
+    reportBtc: P2TR_WAVE.smallVaultBtc,
+    clusterId: 'p2tr-aug1',
+    note: 'Chainabuse victim destination; 62× ~5 sat/vB sweeps (blocks 960737–960750).',
+  },
+  {
+    address: 'bc1pdl33jtqnausmx2d4r4c6wpnk5are8jz046y3yjkw8fryjel02p7sluu9ce',
+    label: 'P2TR hop vault',
+    reportBtc: P2TR_WAVE.hopVaultBtc,
+    clusterId: 'p2tr-aug1',
+    note: 'Consolidate from emptied collector bc1ptd5x… (101 inputs @ block 960736).',
+  },
+  {
+    address: 'bc1p0l0xs2a0ffn2d9pek28k3vm9rjr2p0c5hvdlu03gpdwgzdgpscnq6qlk0h',
+    label: 'P2TR vault',
+    reportBtc: P2TR_WAVE.laterVaultBtc,
+    clusterId: 'p2tr-aug1',
+    note: 'Later sibling; fees mostly ~5 sat/vB with 25/40 bands (blocks 960773–960897).',
   },
   {
     address: 'bc1q05g20l8k0tqjks9sq73mqgqx48pmw2cknju0ml',

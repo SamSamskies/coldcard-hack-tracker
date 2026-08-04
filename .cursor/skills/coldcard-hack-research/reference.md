@@ -32,6 +32,7 @@ workflow — use the separate **new-wave-scan** skill when the user asks.
 | Evening | — | 1–2 | Distinct from Galaxy W2; Ocean peel ≠ stolen |
 | Morning | 960518–960523 | 15–50 | ~16 victim sweeps; direct → vault; Mk4 claim withdrawn |
 | Early Aug 2 | **960668** | 9 | 04:03 UTC; 902 inputs / 795 addrs; ~64.90 BTC landed |
+| P2TR (Kelbie) | **960624–960897** | ~5 (later also 25/40) | 1-vout multi-path → P2TR sinks; Chainabuse victim on small vault; watched ~46.97 BTC (3 sinks incl. hop from emptied bc1ptd…); distinct from Wave 4 |
 | Likely Wave 4 | **960778–960792** | 1–3 | Thorn pattern-match (no victim report yet); filtered ~443.34 BTC / 703 addrs after −89 multisig (−20.58) and −6 prior-history dests (−5.39); 210 fresh dests; RBF; no collector |
 
 Movement watch: block **> 960400**. Hop follow: depth ≤2, ≥0.01 BTC, ≤3 dests/spend.
@@ -54,6 +55,7 @@ Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blo
 
 - Rob Hamilton (early): `https://x.com/Rob1Ham/status/2082896614218203616`
 - Kevin Kelbie (W2 vault): `https://x.com/KevinKelbie/status/2083368025864990857`
+- Kevin Kelbie (P2TR wave): `https://x.com/KevinKelbie/status/2084294469126361372`
 - Evan Schoenberg (evening): `https://x.com/evands/status/2083505832587587945`
 - Tomer Strolight (morning): `https://x.com/TomerStrolight/status/2083578868191957292`
 - Marius Offchain (early Aug 2): `https://x.com/mariusoffchain/status/2083814011859030252`
@@ -117,7 +119,7 @@ Target vs Galaxy: ~293 vaults / ~207.73 BTC. Watched set is intentionally partia
 - Early Aug 2 matches weak-seed profile but is **not** a Galaxy-published wave.
 - Snapshot keeps prior balance on explorer failure rather than writing zeros.
 - `build-snapshot.mjs` parses bech32 + base58 holdings from core + Wave 3; P2SH *service hubs* in `KNOWN_ADDRESS_LABELS` are labels only.
-- **Dual totals (not a bug):** `GALAXY.totalStolenBtc` (~1367.05) = Waves 1–3 only. `ORIGINAL_STOLEN_BTC` (~1876.83) = all seven clusters. Gap ≈509.78 is evening + morning + early Aug 2 + Wave 4. External auditors often flag this as inconsistency.
+- **Dual totals (not a bug):** `GALAXY.totalStolenBtc` (~1367.05) = Waves 1–3 only. `ORIGINAL_STOLEN_BTC` = all tracked clusters (Galaxy 1–3 + community). Community gap includes evening + morning + early Aug 2 + P2TR + Wave 4. External auditors often flag Galaxy vs all-clusters as inconsistency.
 - **`reportBtc` ≠ live balance:** It is the original reported stack used for held/partial/moved status. Emptied vaults keep non-zero `reportBtc` on purpose; live Balance/snapshot shows 0. Do not “fix” by zeroing `reportBtc`.
 - **Empty balance meaning depends on address role:** Exchange deposit empty ⇒ custodian swept (good for compliance). Attacker vault empty ⇒ funds moved. darkness-svc ([Nostr note](https://damus.io/nevent1qqs0muc6qzuvgq54wfrf64czxpp9386tg4ds5wtvclclly4udgtau8qtdcjm9), Aug 3 2026) verified KuCoin `328Gx…` (~9.79 BTC / 37 txs) + `3JEQ…` (~8.84 BTC / 26 txs) and consol. `bc1qs86u…` (1.54 BTC) all at zero — deposit empties intentional.
 

@@ -10,6 +10,7 @@ import {
   INCIDENT,
   MORNING_WAVE,
   ORIGINAL_STOLEN_BTC,
+  P2TR_WAVE,
   WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
   WAVE4_WAVE,
@@ -292,6 +293,58 @@ function EarlyAug2Meta() {
         <dt>Pattern</dt>
         <dd>
           <span className="meta-primary">multi-path → one P2WPKH</span>
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
+function P2trWaveMeta() {
+  const wave = CLUSTER_BY_ID['p2tr-aug1'];
+  const p = P2TR_WAVE;
+  return (
+    <dl className="cluster-meta">
+      <div>
+        <dt>Scope</dt>
+        <dd>
+          <span className="meta-primary">
+            {formatBtc(wave.stolenBtc)} BTC watched
+          </span>
+          <span className="meta-sub">3 Kelbie P2TR sinks</span>
+        </dd>
+      </div>
+      <div>
+        <dt>Blocks</dt>
+        <dd>
+          <span className="meta-primary">
+            {p.blockStart.toLocaleString()}–{p.blockEnd.toLocaleString()}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Fee</dt>
+        <dd>
+          <span className="meta-primary">~{p.feeSatPerVbPrimary} sat/vB</span>
+          <span className="meta-sub">
+            later also ~{p.feeSatPerVbSecondaryMin}–
+            {p.feeSatPerVbSecondaryMax}
+          </span>
+        </dd>
+      </div>
+      <div>
+        <dt>Pattern</dt>
+        <dd>
+          <span className="meta-primary">1-vout → P2TR</span>
+          <span className="meta-sub">
+            <a
+              href={p.chainabuseReportUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="note-link"
+            >
+              Chainabuse victim
+            </a>
+          </span>
         </dd>
       </div>
     </dl>
@@ -686,7 +739,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
           remaining ~{formatBtc(watchedGap)} BTC is mostly unwatched Wave 4
           destinations (sparse still-held sample), plus smaller/unmatched
           Wave 3 vaults and fees. Community waves (evening, morning, early
-          Aug 2, Wave 4) may be different operators.
+          Aug 2, P2TR, Wave 4) may be different operators.
         </p>
       </div>
 
@@ -749,6 +802,7 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                 ) : null}
                 {clusterId === 'morning-aug1' ? <MorningWaveMeta /> : null}
                 {clusterId === 'early-aug2' ? <EarlyAug2Meta /> : null}
+                {clusterId === 'p2tr-aug1' ? <P2trWaveMeta /> : null}
                 {clusterId === 'wave4-aug3' ? <Wave4Meta /> : null}
               </header>
 
