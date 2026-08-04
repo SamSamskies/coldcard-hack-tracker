@@ -115,7 +115,9 @@ Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md). Arkham
 - `13i9ZaXBYJ74qPuK7JrJ6Znws5uTa37vQt` — Binance deposit (P2TR later-vault peel; Arkham cluster 3476)
 - `14ajEkhPAgEoow6BHw8b42Dj6JjZSWtsxR` — Binance deposit (same cluster 3476)
 - `199JVFuJgimybw4RXBmftLAVufPeyP2GwG` — Binance deposit (same cluster 3476)
+- `12FuyGfaaiGbZTXd7Rk5jLNnPzpczMnwzY` — Binance deposit (via bc1q2nfx… → bc1qjwsuc… peel ~0.168 BTC; same cluster 3476)
 - `bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h` — Binance hot wallet (consolidate from those deposits; stop hop-follow)
+- `bc1q2nfxrvvg67nhey0gk0cc8ke2ea4akge8kskyyq` — OP_RETURN messenger hub (P2TR later-vault hop; Arkham OP_RETURN Messenger; stop hop-follow)
 - `bc1qesrvsn8g7ln6rmtru5kmuve4cma37r9gsrd78w` — OP_RETURN messenger hub (peels from bc1qqa7p9…; Arkham High Transacting + OP_RETURN Messenger)
 - `153La7Fb1p9JLeM26UGmwTXZuMdA9fWmav` — Binance deposit (batch from bc1qesrv…, block 961064; Arkham)
 
