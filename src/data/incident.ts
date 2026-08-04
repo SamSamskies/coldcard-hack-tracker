@@ -568,7 +568,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 2.17767618,
     clusterId: 'wave4-aug3',
-    note: 'Fingerprint match (block 960785, ~1 sat/vB) missed in the original sparse sample. Emptied Aug 4 (block 961064): same 14-input consolidate as [342L6n3b…](address:342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
+    note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [342L6n3b…](address:342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
   },
   {
     address: '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz',
