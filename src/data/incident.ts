@@ -563,6 +563,7 @@ const WAVE3_HOLDING_ADDRESSES: readonly HoldingAddress[] = WAVE3_VAULTS.map(
     label: v.label,
     reportBtc: v.reportBtc,
     clusterId: 'galaxy-wave3' as const,
+    ...('note' in v ? { note: v.note } : {}),
   }),
 );
 
