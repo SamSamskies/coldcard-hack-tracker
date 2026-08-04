@@ -568,7 +568,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 2.17767618,
     clusterId: 'wave4-aug3',
-    note: 'Emptied Aug 4 (block 961064, ~2 sat/vB): 14-input P2SH consolidate with sibling parks → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) still holding ~136.41 BTC ([f02164a9…50db281](txid:f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281)). Same tx as [342L6n3b…](address:342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz) + [36XfMDAYu…](address:36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G) + [34nHYNnc…](address:34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ). Mix includes parks funded outside Wave 4 window — Arkham unlabeled, no exchange exit yet.',
+    note: 'Emptied Aug 4 (block 961064, ~2 sat/vB): 14-input P2SH consolidate with sibling parks → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) still holding ~136.41 BTC ([f02164a9…50db281](txid:f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281)). Same tx as [342L6n3b…](address:342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz) + [36XfMDAYu…](address:36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G) + [34nHYNnc…](address:34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ). Mix includes parks funded outside Wave 4 window.',
   },
   {
     address: '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz',
