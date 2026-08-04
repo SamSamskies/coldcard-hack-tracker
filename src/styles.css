@@ -914,6 +914,12 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+.cashout-flow-sublabel {
+  margin: 0.55rem 0 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
 .cashout-rails {
   display: grid;
   gap: 0.45rem 1.25rem;

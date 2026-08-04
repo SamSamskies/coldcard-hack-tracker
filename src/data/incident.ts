@@ -541,7 +541,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'P2TR vault',
     reportBtc: P2TR_WAVE.laterVaultBtc,
     clusterId: 'p2tr-aug1',
-    note: 'Later sibling; fees mostly ~5 sat/vB with 25/40 bands (blocks 960773–960897).',
+    note: 'Later sibling; fees mostly ~5 sat/vB with 25/40 bands (blocks 960773–960897). Emptied Aug 4 — trail below.',
   },
   {
     address: 'bc1q05g20l8k0tqjks9sq73mqgqx48pmw2cknju0ml',
@@ -686,6 +686,18 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * Arkham: KuCoin (same cluster 27fe as 328Gx…).
    */
   '3JEQJdb1Cwbzvevzj1ECAoiMbvb2yckvCe': 'KuCoin deposit',
+  /**
+   * P2TR later-vault cash-out (blocks 961034–961046): hop peels → these deposits.
+   * Arkham: Binance deposit (cluster 3476).
+   */
+  '13i9ZaXBYJ74qPuK7JrJ6Znws5uTa37vQt': 'Binance deposit',
+  '14ajEkhPAgEoow6BHw8b42Dj6JjZSWtsxR': 'Binance deposit',
+  '199JVFuJgimybw4RXBmftLAVufPeyP2GwG': 'Binance deposit',
+  /**
+   * Binance hot wallet — custodian consolidate from 13i9Za / 14aj / 199JV peels
+   * (block 961043+). Hop follower must stop here.
+   */
+  bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h: 'Binance hot wallet',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */

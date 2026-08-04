@@ -16,8 +16,8 @@ import {
   WAVE4_WAVE,
   type ClusterId,
 } from '../data/incident';
-import { formatBtc, formatUsd, truncateAddress } from '../lib/format';
-import { explorerAddressUrl } from '../lib/mempool';
+import { formatBtc, formatUsd, truncateAddress, truncateTxid } from '../lib/format';
+import { explorerAddressUrl, explorerTxUrl } from '../lib/mempool';
 import type { LiveAddress } from '../hooks/useTrackerData';
 
 type Props = {
@@ -414,6 +414,172 @@ function Wave4Meta() {
 const WAVE4_DUAL_SWEEP_PARK =
   '1N8knQCfjqUeJQwjkZZavbboXXL6WVqfDo';
 
+const P2TR_LATER_VAULT =
+  'bc1p0l0xs2a0ffn2d9pek28k3vm9rjr2p0c5hvdlu03gpdwgzdgpscnq6qlk0h';
+
+/** Aug 4 empty of Kelbie later P2TR vault — vault peels then Binance rail. */
+const P2TR_LATER_CASHOUT = [
+  {
+    amt: '~0.01',
+    block: 961019,
+    txid: '780ea04371adee7490a2409484693cdf49f6ac4efc36ded59f53788c2fcf0326',
+    destLabel: 'hop bc1qqa7p9…',
+    dest: 'bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr',
+  },
+  {
+    amt: '~1.00',
+    block: 961021,
+    txid: '064eb61de80cff3e74408a99de840a6e469bca5c79faa4f54dc718e75d7ddd4f',
+    destLabel: 'hop bc1qqa7p9…',
+    dest: 'bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr',
+  },
+  {
+    amt: '~2.00',
+    block: 961026,
+    txid: '1a454301c7f9cb41193b63e82d05c88903fd4e356467b231b9b2e095aac772c2',
+    destLabel: 'hop bc1q2nfx…',
+    dest: 'bc1q2nfxrvvg67nhey0gk0cc8ke2ea4akge8kskyyq',
+  },
+  {
+    amt: '~1.00',
+    block: 961032,
+    txid: '2c7075a3388b88c29d976d862919f11a239c72e31b19ac459469586b815012cc',
+    destLabel: 'hop bc1qqa7p9…',
+    dest: 'bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr',
+  },
+  {
+    amt: '~2.00',
+    block: 961037,
+    txid: '927183853a12d34241fb61bbfb3e8f64e29d75768e2bf058497d5399e1cac6b9',
+    destLabel: 'hop bc1q2nfx…',
+    dest: 'bc1q2nfxrvvg67nhey0gk0cc8ke2ea4akge8kskyyq',
+  },
+  {
+    amt: '~4.44',
+    block: 961048,
+    txid: 'd969fd1c2a1558c000c8e5e15b069dbd383f4e63a0427fa0ba7f58d41e7e16ef',
+    destLabel: 'Taproot park (still held)',
+    dest: 'bc1prjnvz77lhd3t6kdxt34x4yzgwu4qfdgyges8h6qhwldj60z5mcqs7pprpr',
+  },
+] as const;
+
+const P2TR_LATER_BINANCE = [
+  {
+    amt: '~5.33',
+    block: 961034,
+    note: '8 peels from bc1q2nfx… (commingled hub)',
+    txid: '0c60a619c66e38bc508832a524415eaedaec88bde9477c9796bc041cce5b6850',
+    destLabel: 'Binance deposit',
+    dest: '13i9ZaXBYJ74qPuK7JrJ6Znws5uTa37vQt',
+    arkm: true,
+  },
+  {
+    amt: '~2.43',
+    block: 961046,
+    note: 'from bc1q2nfx… change chain',
+    txid: '57a9d5f2764153e9accc8f0207d5e33af68db73356c13e22b1aebd32247c90bc',
+    destLabel: 'Binance deposit',
+    dest: '14ajEkhPAgEoow6BHw8b42Dj6JjZSWtsxR',
+    arkm: true,
+  },
+  {
+    amt: '~1.81',
+    block: 961046,
+    note: 'includes vault UTXO taint via prior consolidate',
+    txid: '1c09bf59f1c39d8c698b5ec10fe51a70976646937bf99d6f971eac116aaf961f',
+    destLabel: 'Binance deposit',
+    dest: '199JVFuJgimybw4RXBmftLAVufPeyP2GwG',
+    arkm: true,
+  },
+  {
+    amt: '~5.33',
+    block: 961043,
+    note: '13i9Za… sweep',
+    txid: 'e8c70a9d91edbad984efc690c53c8c0f105b01a97c08e05b44dfda822415ce29',
+    destLabel: 'Binance hot',
+    dest: 'bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h',
+    arkm: true,
+  },
+] as const;
+
+function P2trLaterVaultCashout() {
+  return (
+    <div className="cashout-flow">
+      <p className="cashout-flow-label">
+        Aug 4 cash-out · later P2TR vault (~10.45)
+      </p>
+      <ul className="addr-peels">
+        {P2TR_LATER_CASHOUT.map((step) => (
+          <li key={step.txid}>
+            <span className="addr-peel-amt">{step.amt}</span>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="note-link"
+              href={explorerAddressUrl(step.dest)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {step.destLabel}
+            </a>
+            <span>
+              {' '}
+              · {step.block} ·{' '}
+              <a
+                className="mono note-link"
+                href={explorerTxUrl(step.txid)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {truncateTxid(step.txid)}
+              </a>
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="cashout-flow-sublabel">
+        Then via hop hubs (commingled) → Binance
+      </p>
+      <ul className="addr-peels">
+        {P2TR_LATER_BINANCE.map((step) => (
+          <li key={step.txid}>
+            <span className="addr-peel-amt">{step.amt}</span>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="note-link"
+              href={
+                step.arkm
+                  ? `https://arkm.com/explorer/address/${step.dest}`
+                  : explorerAddressUrl(step.dest)
+              }
+              target="_blank"
+              rel="noreferrer"
+            >
+              {step.destLabel}
+            </a>
+            <span>
+              {' '}
+              · {step.block}
+              {step.note ? ` · ${step.note}` : ''} ·{' '}
+              <a
+                className="mono note-link"
+                href={explorerTxUrl(step.txid)}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {truncateTxid(step.txid)}
+              </a>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Wave4DualSweepPeels() {
   return (
     <ul className="addr-peels">
@@ -662,6 +828,7 @@ function AddressRow({
 }) {
   const usd = usdPrice != null ? a.balanceBtc * usdPrice : null;
   const isDualSweep = a.address === WAVE4_DUAL_SWEEP_PARK;
+  const isP2trLater = a.address === P2TR_LATER_VAULT;
 
   return (
     <tr className={`status-${a.status}${a.flash ? ' flash' : ''}`}>
@@ -671,6 +838,7 @@ function AddressRow({
           <LinkedNote as="span" className="addr-note" text={a.note} />
         ) : null}
         {isDualSweep ? <Wave4DualSweepPeels /> : null}
+        {isP2trLater ? <P2trLaterVaultCashout /> : null}
       </td>
       <td className="mono">
         <a

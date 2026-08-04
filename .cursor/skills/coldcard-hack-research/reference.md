@@ -112,6 +112,10 @@ Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md). Arkham
 - `1KbDEg1tDz2ErYgaDbaDhhawnLrSQFaFx5` — Wintermute (Bullish hot-wallet peel target; Arkham)
 - `328GxewqTzMxLPvLemaKS7Q5Wi1io8EEYD` — KuCoin deposit (evening sibling peel, block 960802; Arkham cluster 27fe)
 - `3JEQJdb1Cwbzvevzj1ECAoiMbvb2yckvCe` — KuCoin deposit (evening sibling peel, block 960804; same Arkham cluster)
+- `13i9ZaXBYJ74qPuK7JrJ6Znws5uTa37vQt` — Binance deposit (P2TR later-vault peel; Arkham cluster 3476)
+- `14ajEkhPAgEoow6BHw8b42Dj6JjZSWtsxR` — Binance deposit (same cluster 3476)
+- `199JVFuJgimybw4RXBmftLAVufPeyP2GwG` — Binance deposit (same cluster 3476)
+- `bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h` — Binance hot wallet (consolidate from those deposits; stop hop-follow)
 
 ## Wave 3 pipeline
 
