@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-04T22:06:59.951Z",
+  "updatedAt": "2026-08-04T22:13:58.546Z",
   "source": "mempool.space",
-  "usdPrice": 64149,
+  "usdPrice": 64164,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -971,6 +971,19 @@
       "blockTime": 1785873200
     },
     {
+      "txid": "f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281",
+      "fromAddress": "34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ",
+      "fromLabel": "Wave 4 park",
+      "amountBtc": 0.96227191,
+      "destinations": [
+        "334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 961064,
+      "blockTime": 1785873200
+    },
+    {
       "txid": "1e96c88bd83eb0940755b195537e58ac9ebe554dc10a4b2e71f0986bbf91ab3a",
       "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
       "fromLabel": "Hop 1 from P2TR vault",
@@ -1140,6 +1153,110 @@
       "blockTime": 1785856936
     },
     {
+      "txid": "d37d690179337212bba9d8fbcbab98e6ad366aff83fa7ee8d8a7646654bac7b6",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.00061835,
+      "destinations": [
+        "bc1qkg64vxgq8tw8n8jzlzhu0adl68k9099qysxygt"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961030,
+      "blockTime": 1785856550
+    },
+    {
+      "txid": "ee4e4c70d755aaf948b66c797a4f5dc4b56f2af7db8a24a72ffa90ff3b2105f2",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.00282469,
+      "destinations": [
+        "bc1qz9hfzsfyzn7f94xyckuv0x80j5ngm0wxsq97s0"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961030,
+      "blockTime": 1785856550
+    },
+    {
+      "txid": "58932a6de37d28692ef8a7a7ff394efa436c3554a662cec5d98591b8337eb177",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.229641,
+      "destinations": [
+        "bc1q080cwtekks5c3t2txajmxwzl3qpjvpp20uwua8"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961028,
+      "blockTime": 1785855533
+    },
+    {
+      "txid": "d58b2c539fe875a9bf6efdb8e3a776087aea185fe2bdf817f0accb65673d82a4",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.25476269,
+      "destinations": [
+        "bc1qqm625e4jur7569kjxxsnesfdq8ddy085hnefvn"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961028,
+      "blockTime": 1785855533
+    },
+    {
+      "txid": "00987d33bb96152017a152150e6b5ff2dd439f0e10563dd0b4a67336772e738f",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.00231734,
+      "destinations": [
+        "bc1qt6f9v8egrdavas73p3wnjtg4t6szkv2uee8tfz"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961027,
+      "blockTime": 1785855312
+    },
+    {
+      "txid": "204afe349ed71cd0fdacafc2c2324924b1171bd16d325d3db98a71aa07a3203b",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.27432425,
+      "destinations": [
+        "bc1qqm625e4jur7569kjxxsnesfdq8ddy085hnefvn"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961027,
+      "blockTime": 1785855312
+    },
+    {
+      "txid": "8458986a0d531c28257185b99191b687397d2ce50eca12f3e0e49edd36c9d375",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.00022475,
+      "destinations": [
+        "bc1qddn8xfkf7eszxaa5qu5c6q05p9m3f0a23gucc7"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961027,
+      "blockTime": 1785855312
+    },
+    {
+      "txid": "ed2daae8494a0db875ed1b9ae42e0ebc9e95ab340965f2985d081f40ab4e77ff",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.00309258,
+      "destinations": [
+        "bc1q2tj0h09aupvc56zjlx5kq898uyqkakqgyxlj63"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961027,
+      "blockTime": 1785855312
+    },
+    {
       "txid": "1a454301c7f9cb41193b63e82d05c88903fd4e356467b231b9b2e095aac772c2",
       "fromAddress": "bc1p0l0xs2a0ffn2d9pek28k3vm9rjr2p0c5hvdlu03gpdwgzdgpscnq6qlk0h",
       "fromLabel": "P2TR vault",
@@ -1151,6 +1268,45 @@
       "confirmed": true,
       "blockHeight": 961026,
       "blockTime": 1785854355
+    },
+    {
+      "txid": "03d7ba7600d81a2f877d3650bfb00fa2bb9ed49e79e514ed51551be19a5a2320",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.00304252,
+      "destinations": [
+        "bc1qvr9d0e8ersu9jmzgg2esk467t29r0jdc5685ay"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961025,
+      "blockTime": 1785853855
+    },
+    {
+      "txid": "8c8cd80917786245a4ee203ab00ff65d031fa49eed1a72ce204a68249592b614",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.0030229,
+      "destinations": [
+        "bc1q987ra358dwfxse4rkhkwj0dx6vmmh05eayal70"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961025,
+      "blockTime": 1785853855
+    },
+    {
+      "txid": "af2216eaf3478e6a001716936f37661c6be2db925f982c48da7e390b84106397",
+      "fromAddress": "bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr",
+      "fromLabel": "Hop 1 from P2TR vault",
+      "amountBtc": 0.04560948,
+      "destinations": [
+        "bc1q5cyd8vxep9rqf4y93pz6p3txv90hc6wjejjsyq"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961025,
+      "blockTime": 1785853855
     },
     {
       "txid": "064eb61de80cff3e74408a99de840a6e469bca5c79faa4f54dc718e75d7ddd4f",
