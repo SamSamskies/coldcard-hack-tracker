@@ -42,6 +42,7 @@ export const WAVE3_VAULTS = [
     address: 'bc1qtsp50w4uru6t2mhmctvapfdy23g75r08werm7qmgzuedm4jsaztspf73yt',
     label: 'Wave 3 vault 7',
     reportBtc: 4.53878769,
+    note: '[Chainabuse victim](https://chainabuse.com/report/2727f906-bf8f-4540-92e4-ad4fd5b59cbf) · Mk3 drain (park → this vault).',
   },
   {
     address: 'bc1qmqc0vur7v0xcnvq2pzm2kxlmvw6twhlxtsvd8jgudjdwnud6juusx4nlwt',
