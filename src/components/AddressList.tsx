@@ -463,20 +463,23 @@ const P2TR_LATER_CASHOUT = [
   },
 ] as const;
 
+const P2TR_HOP_HUB = 'bc1q2nfxrvvg67nhey0gk0cc8ke2ea4akge8kskyyq';
+const P2TR_BINANCE_DEPOSIT = '13i9ZaXBYJ74qPuK7JrJ6Znws5uTa37vQt';
+
 const P2TR_LATER_BINANCE = [
   {
     amt: '~5.33',
     block: 961034,
-    note: '8 peels from bc1q2nfx… (commingled hub)',
+    note: `8 peels from [bc1q2nfx…](address:${P2TR_HOP_HUB}) (commingled hub)`,
     txid: '0c60a619c66e38bc508832a524415eaedaec88bde9477c9796bc041cce5b6850',
     destLabel: 'Binance deposit',
-    dest: '13i9ZaXBYJ74qPuK7JrJ6Znws5uTa37vQt',
+    dest: P2TR_BINANCE_DEPOSIT,
     arkm: true,
   },
   {
     amt: '~2.43',
     block: 961046,
-    note: 'from bc1q2nfx… change chain',
+    note: `from [bc1q2nfx…](address:${P2TR_HOP_HUB}) change chain`,
     txid: '57a9d5f2764153e9accc8f0207d5e33af68db73356c13e22b1aebd32247c90bc',
     destLabel: 'Binance deposit',
     dest: '14ajEkhPAgEoow6BHw8b42Dj6JjZSWtsxR',
@@ -494,7 +497,7 @@ const P2TR_LATER_BINANCE = [
   {
     amt: '~5.33',
     block: 961043,
-    note: '13i9Za… sweep',
+    note: `[13i9Za…](address:${P2TR_BINANCE_DEPOSIT}) sweep`,
     txid: 'e8c70a9d91edbad984efc690c53c8c0f105b01a97c08e05b44dfda822415ce29',
     destLabel: 'Binance hot',
     dest: 'bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h',
@@ -563,7 +566,13 @@ function P2trLaterVaultCashout() {
             <span>
               {' '}
               · {step.block}
-              {step.note ? ` · ${step.note}` : ''} ·{' '}
+              {step.note ? (
+                <>
+                  {' · '}
+                  <LinkedNote as="span" text={step.note} />
+                </>
+              ) : null}{' '}
+              ·{' '}
               <a
                 className="mono note-link"
                 href={explorerTxUrl(step.txid)}

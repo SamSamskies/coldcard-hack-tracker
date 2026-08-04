@@ -487,7 +487,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 2 vault',
     reportBtc: 45.90251994,
     clusterId: 'galaxy-july31',
-    note: 'Consolidated from 1,216 sweeps (via bc1qsjrf5ze…). [Chainabuse victim](https://chainabuse.com/report/e568bed8-62f8-46b8-aae6-4d271c8d63e0) on that sweep sink.',
+    note: 'Consolidated from 1,216 sweeps (via [bc1qsjrf5ze…](address:bc1qsjrf5ze5tmulz7y2x4pc7qaex2a35sanp3rqlx)). [Chainabuse victim](https://chainabuse.com/report/e568bed8-62f8-46b8-aae6-4d271c8d63e0) on that sweep sink.',
   },
   {
     address: 'bc1qmd5m5ktv7m5ffujxv4248fxv36myvdx79n8jp6',
@@ -534,7 +534,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'P2TR hop vault',
     reportBtc: P2TR_WAVE.hopVaultBtc,
     clusterId: 'p2tr-aug1',
-    note: 'Consolidate from emptied collector bc1ptd5x… (101 inputs @ block 960736).',
+    note: 'Consolidate from emptied collector [bc1ptd5x…](address:bc1ptd5x926gkxdu0p8a2rufr7u8lklrfqapucj8yha7vjqh5z6md9kqf53nap) (101 inputs @ block 960736).',
   },
   {
     address: 'bc1p0l0xs2a0ffn2d9pek28k3vm9rjr2p0c5hvdlu03gpdwgzdgpscnq6qlk0h',
