@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 """
-One-off sibling scan for the Kelbie P2TR wave fingerprint.
+Sibling scan for the Kelbie P2TR wave fingerprint.
 
 Scans 1-vout sweeps in the P2TR fee bands, aggregates by destination (esp. bc1p),
 and does NOT skip known Galaxy/community windows (activity can overlap).
 
+Checkpoints after each block (aggregates + next_height). Re-running the same
+--start/--end resumes by default; use --refetch to redo the window.
+
   python3 scripts/scan-p2tr-siblings.py --start 960624 --end 960760 --host https://mempool.bitaroo.net
   python3 scripts/scan-p2tr-siblings.py --start 960761 --end 960897 --host https://mempool.emzy.de
+  # resume after interrupt (same args):
+  python3 scripts/scan-p2tr-siblings.py --start 960624 --end 960760 --host https://mempool.bitaroo.net
 """
 
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import sys
 import time
 from collections import defaultdict
 from pathlib import Path
-
-import importlib.util
 
 _SPEC = importlib.util.spec_from_file_location(
     "scan_new_waves",
@@ -38,9 +42,98 @@ KNOWN = {
     "bc1p0l0xs2a0ffn2d9pek28k3vm9rjr2p0c5hvdlu03gpdwgzdgpscnq6qlk0h",
 }
 
+FEE_BANDS = [(4.0, 7.0), (20.0, 45.0)]
+
 
 def in_fee_band(rate: float, bands: list[tuple[float, float]]) -> bool:
     return any(lo <= rate <= hi for lo, hi in bands)
+
+
+def checkpoint_path(out: Path, start: int, end: int) -> Path:
+    return out / f"checkpoint-{start}-{end}.json"
+
+
+def empty_addr() -> dict:
+    return {
+        "sats": 0,
+        "n": 0,
+        "heights": set(),
+        "fees": [],
+        "sample_txids": [],
+    }
+
+
+def serialize_addrs(by_addr: dict[str, dict]) -> dict[str, dict]:
+    out: dict[str, dict] = {}
+    for addr, d in by_addr.items():
+        out[addr] = {
+            "sats": int(d["sats"]),
+            "n": int(d["n"]),
+            "heights": sorted(d["heights"]),
+            "fees": list(d["fees"]),
+            "sample_txids": list(d["sample_txids"]),
+        }
+    return out
+
+
+def deserialize_addrs(raw: dict | None) -> dict[str, dict]:
+    by_addr: dict[str, dict] = defaultdict(empty_addr)
+    if not raw:
+        return by_addr
+    for addr, d in raw.items():
+        by_addr[addr] = {
+            "sats": int(d.get("sats") or 0),
+            "n": int(d.get("n") or 0),
+            "heights": set(d.get("heights") or []),
+            "fees": list(d.get("fees") or []),
+            "sample_txids": list(d.get("sample_txids") or []),
+        }
+    return by_addr
+
+
+def atomic_write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(payload, indent=2, sort_keys=True))
+    tmp.replace(path)
+
+
+def load_checkpoint(path: Path) -> dict | None:
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"  warning: bad checkpoint {path}: {e} — starting fresh", flush=True)
+        return None
+
+
+def build_rows(
+    by_addr: dict[str, dict], *, min_btc: float, min_sweeps: int
+) -> list[dict]:
+    rows = []
+    for addr, d in by_addr.items():
+        btc = d["sats"] / 1e8
+        if d["n"] < min_sweeps and btc < min_btc:
+            continue
+        heights = d["heights"]
+        if not heights:
+            continue
+        rows.append(
+            {
+                "address": addr,
+                "btc": btc,
+                "sweeps": d["n"],
+                "block_start": min(heights),
+                "block_end": max(heights),
+                "is_p2tr": addr.startswith("bc1p"),
+                "already_watched": addr in KNOWN,
+                "sample_fees": d["fees"],
+                "sample_txids": d["sample_txids"],
+            }
+        )
+    rows.sort(key=lambda r: (-r["is_p2tr"], -r["btc"], -r["sweeps"]))
+    return rows
 
 
 def main() -> int:
@@ -57,6 +150,11 @@ def main() -> int:
         type=Path,
         default=Path("scripts/wave-scan-out/p2tr-sibling"),
     )
+    p.add_argument(
+        "--refetch",
+        action="store_true",
+        help="Ignore checkpoint and re-scan the whole --start/--end window",
+    )
     args = p.parse_args()
 
     hosts = args.hosts or [
@@ -64,22 +162,57 @@ def main() -> int:
         "https://mempool.emzy.de",
     ]
     api = Esplora(hosts, timeout=args.timeout, min_interval=args.min_interval)
-    # Primary ~5; secondary ~25–40 on later vault.
-    bands = [(4.0, 7.0), (20.0, 45.0)]
+    bands = FEE_BANDS
+    cp_path = checkpoint_path(args.out, args.start, args.end)
 
-    by_addr: dict[str, dict] = defaultdict(
-        lambda: {
-            "sats": 0,
-            "n": 0,
-            "heights": set(),
-            "fees": [],
-            "sample_txids": [],
-        }
-    )
+    by_addr: dict[str, dict] = defaultdict(empty_addr)
     sweeps = 0
+    resume_height = args.start
+    prior_elapsed = 0.0
+
+    if not args.refetch:
+        cp = load_checkpoint(cp_path)
+        if cp:
+            if cp.get("start") != args.start or cp.get("end") != args.end:
+                print(
+                    f"  warning: checkpoint window {cp.get('start')}-{cp.get('end')} "
+                    f"≠ {args.start}-{args.end} — starting fresh",
+                    flush=True,
+                )
+            elif "addresses" not in cp:
+                # Old progress-only checkpoints cannot restore aggregates.
+                print(
+                    f"  warning: {cp_path.name} has no address aggregates "
+                    f"(progress-only). Re-scanning from {args.start} so totals "
+                    f"stay complete. Delete it or pass --refetch to silence this.",
+                    flush=True,
+                )
+            else:
+                next_h = int(cp.get("next_height") or args.start)
+                if next_h > args.end:
+                    print(
+                        f"checkpoint already complete through {args.end} "
+                        f"({cp_path}) — writing final shard from saved aggregates",
+                        flush=True,
+                    )
+                    by_addr = deserialize_addrs(cp.get("addresses"))
+                    sweeps = int(cp.get("sweeps_matched") or 0)
+                    resume_height = args.end + 1
+                    prior_elapsed = float(cp.get("elapsed_s") or 0)
+                elif next_h > args.start:
+                    by_addr = deserialize_addrs(cp.get("addresses"))
+                    sweeps = int(cp.get("sweeps_matched") or 0)
+                    resume_height = next_h
+                    prior_elapsed = float(cp.get("elapsed_s") or 0)
+                    print(
+                        f"resuming at block {resume_height} "
+                        f"({sweeps} sweeps, {len(by_addr)} addrs) from {cp_path}",
+                        flush=True,
+                    )
+
     t0 = time.time()
 
-    for height in range(args.start, args.end + 1):
+    for height in range(resume_height, args.end + 1):
         print(f"block {height} via {api.host}", flush=True)
         for tx in iter_block_txs(api, height):
             fee = tx.get("fee")
@@ -104,45 +237,29 @@ def main() -> int:
             if len(d["sample_txids"]) < 5:
                 d["sample_txids"].append(tx.get("txid") or "")
 
-        # Checkpoint each block so shards can resume / merge mid-run.
-        args.out.mkdir(parents=True, exist_ok=True)
-        cp = args.out / f"checkpoint-{args.start}-{args.end}.json"
-        payload = {
-            "start": args.start,
-            "end": args.end,
-            "next_height": height + 1,
-            "sweeps_matched": sweeps,
-            "elapsed_s": round(time.time() - t0, 1),
-            "host": api.host,
-        }
-        cp.write_text(json.dumps(payload, indent=2))
-
-    rows = []
-    for addr, d in by_addr.items():
-        btc = d["sats"] / 1e8
-        # Keep denser sinks or large single-dest consolidations.
-        if d["n"] < args.min_sweeps and btc < args.min_btc:
-            continue
-        rows.append(
+        elapsed = round(prior_elapsed + (time.time() - t0), 1)
+        atomic_write_json(
+            cp_path,
             {
-                "address": addr,
-                "btc": btc,
-                "sweeps": d["n"],
-                "block_start": min(d["heights"]),
-                "block_end": max(d["heights"]),
-                "is_p2tr": addr.startswith("bc1p"),
-                "already_watched": addr in KNOWN,
-                "sample_fees": d["fees"],
-                "sample_txids": d["sample_txids"],
-            }
+                "start": args.start,
+                "end": args.end,
+                "next_height": height + 1,
+                "sweeps_matched": sweeps,
+                "elapsed_s": elapsed,
+                "host": api.host,
+                "fee_bands": bands,
+                "addresses": serialize_addrs(by_addr),
+                "updated_at_unix": int(time.time()),
+            },
         )
 
-    rows.sort(key=lambda r: (-r["is_p2tr"], -r["btc"], -r["sweeps"]))
+    rows = build_rows(by_addr, min_btc=args.min_btc, min_sweeps=args.min_sweeps)
+    elapsed = round(prior_elapsed + (time.time() - t0), 1)
     out = {
         "window": [args.start, args.end],
         "fee_bands": bands,
         "sweeps_matched": sweeps,
-        "elapsed_s": round(time.time() - t0, 1),
+        "elapsed_s": elapsed,
         "host": api.host,
         "destinations": rows,
         "p2tr_new_ge_min_btc": [
@@ -154,13 +271,12 @@ def main() -> int:
             and r["sweeps"] >= args.min_sweeps
         ],
     }
-    args.out.mkdir(parents=True, exist_ok=True)
     path = args.out / f"shard-{args.start}-{args.end}.json"
-    path.write_text(json.dumps(out, indent=2))
+    atomic_write_json(path, out)
     print(
         f"done: {sweeps} matched sweeps → {len(rows)} dests "
         f"({len(out['p2tr_new_ge_min_btc'])} new P2TR ≥{args.min_btc} BTC) "
-        f"in {out['elapsed_s']}s → {path}",
+        f"in {elapsed}s → {path}",
         flush=True,
     )
     return 0
