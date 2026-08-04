@@ -36,8 +36,9 @@ Do **not** run `scan-new-waves.py` from this skill — tip / new-wave scouting i
 
 ### When blocked
 
-After **one** clear failure (bot wall, unsupported site, 403/429 that retries won’t fix, empty scrape, explorer outage), **ask the user for help** instead of looping. Say what you needed and what failed, then offer a concrete ask, e.g.:
+After **one** clear failure (bot wall, unsupported site, 403/429 that retries won’t fix, empty scrape, explorer outage / SSL / timeouts), **ask the user for help** instead of looping. Say what you needed and what failed, then offer a concrete ask, e.g.:
 
+- **Approve Blockchair** for the on-chain check (balances / tip scout) — state the planned command + ballpark request points; user has said to ask for this when Esplora is blocked or slow
 - Paste the X/Reddit/blog text or a screenshot
 - Open a URL and confirm what it shows
 - Re-auth X MCP (`npx -y @xdevplatform/xurl auth oauth2`) or `firecrawl login` if credits/auth died

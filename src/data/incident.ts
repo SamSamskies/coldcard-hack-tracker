@@ -705,10 +705,20 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   '14ajEkhPAgEoow6BHw8b42Dj6JjZSWtsxR': 'Binance deposit',
   '199JVFuJgimybw4RXBmftLAVufPeyP2GwG': 'Binance deposit',
   /**
+   * Later peel via messenger hop bc1qjwsuc… (blocks 961051–961075, ~0.168 BTC).
+   * Arkham: same Binance deposit cluster 3476.
+   */
+  '12FuyGfaaiGbZTXd7Rk5jLNnPzpczMnwzY': 'Binance deposit',
+  /**
    * Binance hot wallet — custodian consolidate from 13i9Za / 14aj / 199JV peels
    * (block 961043+). Hop follower must stop here.
    */
   bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h: 'Binance hot wallet',
+  /**
+   * Commingled P2TR later-vault hop hub (blocks 961026+). Arkham: OP_RETURN
+   * Messenger (OUT:<hash> peels). Terminal — hub churn is not stolen movement.
+   */
+  bc1q2nfxrvvg67nhey0gk0cc8ke2ea4akge8kskyyq: 'OP_RETURN messenger hub',
   /**
    * Repeated ~0.33 BTC peel target from P2TR hop hub bc1qqa7p9… (blocks 961056+).
    * Arkham: High Transacting + OP_RETURN Messenger (OUT:<hash> memos); feeds Binance.

@@ -144,6 +144,8 @@ Do not invent addresses that contradict existing clusters. Run `npm test` after 
 
 ## When blocked
 
-After one clear failure (429 that persists, dead mirrors, empty scrape), ask the
-user — paste explorer link, approve slower path, or supply a screenshot. Do not
-guess balances or fee rates.
+After one clear failure (429 that persists, dead mirrors, SSL/timeouts, empty
+scrape), ask the user — do **not** thrash more Esplora hosts. Prefer offering
+**Blockchair** (`scripts/blockchair-balances.py` / tip recipes) with the planned
+command + ballpark request points, then wait for OK. Also fine: paste explorer
+link, slower path, or screenshot. Do not guess balances or fee rates.
