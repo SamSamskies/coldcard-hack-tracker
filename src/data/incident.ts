@@ -521,7 +521,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 2 vault',
     reportBtc: 64.90373764,
     clusterId: 'early-aug2',
-    note: 'Emptied Aug 4 (block 961065, ~5 sat/vB): [bc1q0rvn…](address:bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m) → Taproot hop [bc1pynd6…](address:bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92) still holding ~64.90 BTC ([e3274a1b…2b3ddf](txid:e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf)). No exchange label yet.',
+    note: 'Emptied Aug 4 (block 961065, ~5 sat/vB): [bc1q0rvn…](address:bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m) → Taproot hop [bc1pynd6…](address:bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92) ([e3274a1b…2b3ddf](txid:e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf)). Hop emptied same day in Wasabi-style CoinJoin (block 961069, ~2 sat/vB, 324→382, base-3 denoms; likely Wasabi 2 — [f3ee6e61…7b24](txid:f3ee6e61129b90b4746275a2ea17b08ac53769556d61994c94f03db9bcc37b24)): equal ~1.2914 BTC outs ×20 + residual ~54.32 BTC still at [bc1qajcr…](address:bc1qajcrhj3s2x0yfcj54emjukghv93su80svp2d3t). No Arkham entity / exchange label; not added to KNOWN_ADDRESS_LABELS.',
   },
   {
     address: 'bc1pum5zf6efxgt7a8xcyjg79u25jdhz6ex9ff2m390d544v05pg698s8ftmy8',
@@ -709,6 +709,16 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * (block 961043+). Hop follower must stop here.
    */
   bc1qm34lsc65zpw79lxes69zkqmk6ee3ewf0j77s3h: 'Binance hot wallet',
+  /**
+   * Repeated ~0.33 BTC peel target from P2TR hop hub bc1qqa7p9… (blocks 961056+).
+   * Arkham: High Transacting + OP_RETURN Messenger (OUT:<hash> memos); feeds Binance.
+   */
+  bc1qesrvsn8g7ln6rmtru5kmuve4cma37r9gsrd78w: 'OP_RETURN messenger hub',
+  /**
+   * Batch from messenger hub bc1qesrv… (block 961064, ~1.333 BTC).
+   * Arkham: Binance deposit.
+   */
+  '153La7Fb1p9JLeM26UGmwTXZuMdA9fWmav': 'Binance deposit',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
