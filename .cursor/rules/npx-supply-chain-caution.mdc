@@ -1,0 +1,29 @@
+---
+description: Caution with npx/npm installs during active Shai-Hulud-style supply-chain worms
+alwaysApply: true
+---
+
+# npm / npx supply-chain caution
+
+Active Aug 2026 campaign (Shai-Hulud / “ChainDrop”): malicious packages used **`preinstall` → `setup.mjs`** to steal credentials and re-publish. Seed packages (e.g. `keyv@6.0.0` family) were largely yanked, but **second-wave packages may still appear**. Context: [Aikido advisory](https://www.aikido.dev/blog/keyv-and-friends-compromised-in-npm-supply-chain-attack).
+
+## Prefer
+
+- Already-installed CLIs (`xurl`, `firecrawl`, project `node_modules/.bin`, etc.) over `npx -y`
+- Pinned versions when `npx` is unavoidable: `npx -y pkg@x.y.z` (not floating `@latest`)
+- Existing lockfile installs for this repo (`npm ci` / locked deps already reviewed)
+
+## Ask the user before
+
+- `npx -y <package>` for any package that is **not** already a documented project tool
+- Adding or upgrading npm dependencies (especially anything with install scripts)
+- Running `npm install` / `npx` against unfamiliar or newly published packages
+
+## OK without extra approval
+
+- Re-running known project scripts (`npm test`, `npm run snapshot`, …)
+- `npx` of tools already established in project skills/rules (e.g. `@xdevplatform/xurl` for approved non-search ops) when a local binary is unavailable — still prefer local if present
+
+## If compromise is suspected
+
+Stop installing. Look for IOCs `setup.mjs`, `Math_Symbol.js`, `math_init.js`. Treat the machine/CI as potentially credential-compromised and rotate secrets — do not “just delete node_modules and continue.”
