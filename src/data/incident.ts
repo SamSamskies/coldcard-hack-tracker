@@ -106,8 +106,6 @@ export const P2TR_WAVE = {
   laterVaultBtc: 10.44811501,
   emptiedCollector:
     'bc1ptd5x926gkxdu0p8a2rufr7u8lklrfqapucj8yha7vjqh5z6md9kqf53nap',
-  chainabuseReportUrl:
-    'https://chainabuse.com/report/6e9ac9f1-61e5-49c5-947c-062afc70b73b',
 } as const;
 
 /**
@@ -484,7 +482,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'P2TR vault',
     reportBtc: P2TR_WAVE.smallVaultBtc,
     clusterId: 'p2tr-aug1',
-    note: 'Chainabuse victim destination; 62× ~5 sat/vB sweeps (blocks 960737–960750).',
+    note: '[Chainabuse victim](https://chainabuse.com/report/6e9ac9f1-61e5-49c5-947c-062afc70b73b) · 62× ~5 sat/vB sweeps (blocks 960737–960750).',
   },
   {
     address: 'bc1pdl33jtqnausmx2d4r4c6wpnk5are8jz046y3yjkw8fryjel02p7sluu9ce',

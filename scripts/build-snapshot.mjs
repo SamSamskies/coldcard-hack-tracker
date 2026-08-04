@@ -70,10 +70,36 @@ function extractAddresses(filePath) {
   ].map((m) => m[1]);
 }
 
+/** Numeric fields from `export const P2TR_WAVE = { … }` for reportBtc refs. */
+function extractP2trWaveBtc(coreText) {
+  const block = coreText.match(/export const P2TR_WAVE = \{([\s\S]*?)\n\} as const;/);
+  if (!block) throw new Error('Could not find P2TR_WAVE');
+  const vals = {};
+  const re = /(\w+Btc):\s*([0-9.]+)/g;
+  let m;
+  while ((m = re.exec(block[1]))) {
+    vals[m[1]] = Number(m[2]);
+  }
+  for (const key of ['smallVaultBtc', 'hopVaultBtc', 'laterVaultBtc']) {
+    if (!Number.isFinite(vals[key])) {
+      throw new Error(`P2TR_WAVE.${key} missing or not numeric`);
+    }
+  }
+  return vals;
+}
+
+function resolveReportBtc(raw, p2trBtc) {
+  if (/^[0-9.]+$/.test(raw)) return Number(raw);
+  const ref = raw.match(/^P2TR_WAVE\.(\w+)$/);
+  if (ref && Number.isFinite(p2trBtc[ref[1]])) return p2trBtc[ref[1]];
+  throw new Error(`Unhandled reportBtc expression: ${raw}`);
+}
+
 function extractHoldings() {
   const coreFile = join(ROOT, 'src/data/incident.ts');
   const wave3File = join(ROOT, 'src/data/wave3Vaults.ts');
   const coreText = readFileSync(coreFile, 'utf8');
+  const p2trBtc = extractP2trWaveBtc(coreText);
   // Only the CORE_HOLDING_ADDRESSES block — not SOURCE urls etc.
   const coreBlock = coreText.match(
     /const CORE_HOLDING_ADDRESSES[\s\S]*?= \[([\s\S]*?)\];/,
@@ -82,7 +108,7 @@ function extractHoldings() {
 
   const core = [];
   const entryRe = new RegExp(
-    String.raw`\{\s*address:\s*'(${BTC_ADDR_RE})',\s*label:\s*'([^']+)',\s*reportBtc:\s*([0-9.]+)`,
+    String.raw`\{\s*address:\s*'(${BTC_ADDR_RE})',\s*label:\s*'([^']+)',\s*reportBtc:\s*([0-9.]+|P2TR_WAVE\.\w+)`,
     'g',
   );
   let m;
@@ -90,7 +116,7 @@ function extractHoldings() {
     core.push({
       address: m[1],
       label: m[2],
-      reportBtc: Number(m[3]),
+      reportBtc: resolveReportBtc(m[3], p2trBtc),
     });
   }
 
@@ -110,9 +136,19 @@ function extractHoldings() {
 
   const holdings = [...core, ...wave3];
   if (holdings.length === 0) throw new Error('No holdings parsed');
-  // Sanity: wave3Vaults addresses should all appear
-  const fromWave3File = new Set(extractAddresses(wave3File));
-  for (const a of fromWave3File) {
+
+  // Sanity: every `address:` in the CORE block and wave3Vaults must parse.
+  const coreAddrs = [
+    ...coreBlock[1].matchAll(
+      new RegExp(String.raw`address:\s*'(${BTC_ADDR_RE})'`, 'g'),
+    ),
+  ].map((x) => x[1]);
+  for (const a of coreAddrs) {
+    if (!holdings.some((h) => h.address === a)) {
+      throw new Error(`Missing core holding ${a}`);
+    }
+  }
+  for (const a of extractAddresses(wave3File)) {
     if (!holdings.some((h) => h.address === a)) {
       throw new Error(`Missing wave3 address ${a}`);
     }

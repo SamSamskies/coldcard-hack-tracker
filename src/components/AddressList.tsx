@@ -335,16 +335,6 @@ function P2trWaveMeta() {
         <dt>Pattern</dt>
         <dd>
           <span className="meta-primary">1-vout → P2TR</span>
-          <span className="meta-sub">
-            <a
-              href={p.chainabuseReportUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="note-link"
-            >
-              Chainabuse victim
-            </a>
-          </span>
         </dd>
       </div>
     </dl>
