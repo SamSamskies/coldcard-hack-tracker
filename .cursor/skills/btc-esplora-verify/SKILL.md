@@ -10,8 +10,17 @@ description: >-
 
 # BTC Esplora Verify
 
-Public Esplora only. Match this repo’s hop and rate-limit rules so research
-agrees with the dashboard tracker and snapshot cron.
+Prefer public Esplora for hop/fee verification so research agrees with the
+dashboard tracker and snapshot cron.
+
+Optional **Blockchair** (`BLOCKCHAIR_API_KEY` in env/.env) is for **small
+research batches and tip wave-scouts only** — never snapshot cron. See
+[new-wave-scan](../new-wave-scan/SKILL.md) and `scripts/blockchair-balances.py`.
+
+**Cost gate:** before any Blockchair call, tell the user the planned command +
+ballpark request points and wait for OK (unless they already approved spend).
+Mass balances ≈ `1 + 0.001×N`. Tip scouts can be **hundreds** of points on dense
+blocks. Prefer Esplora when unsure. Report actual cost after the run.
 
 For cluster/fingerprint policy, also read
 [coldcard-hack-research](../coldcard-hack-research/SKILL.md).
@@ -23,8 +32,9 @@ For cluster/fingerprint policy, also read
 | **Bulk research** (default) | `https://mempool.bitaroo.net`, then `https://mempool.emzy.de` |
 | **Avoid stampeding** | `mempool.space`, Blockstream |
 | **Browser probe order** (app only) | space → emzy → bitaroo |
+| **Opt-in batch balances** | Blockchair via `scripts/blockchair-balances.py` |
 
-- Pace **≥400ms** between calls to the **same** host.
+- Pace **≥400ms** between calls to the **same** Esplora host.
 - On 429 / 5xx: sleep, switch mirror, retry once; then ask the user.
 - Write dumps under `.firecrawl/` or `/tmp` — do not commit raw explorer JSON.
 
@@ -44,6 +54,12 @@ Copy-paste; replace `$ADDR` / `$TXID` / `$HOST`.
 curl -fsS "$HOST/api/address/$ADDR" | jq '
   ((.chain_stats.funded_txo_sum - .chain_stats.spent_txo_sum)
    + (.mempool_stats.funded_txo_sum - .mempool_stats.spent_txo_sum)) / 1e8'
+```
+
+Optional Blockchair mass check (confirmed sats only; needs key):
+
+```bash
+python3 scripts/blockchair-balances.py "$ADDR"
 ```
 
 Compare to `reportBtc` in data: allow fees / partial moves. Empty live balance +

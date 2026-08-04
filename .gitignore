@@ -34,3 +34,5 @@ scripts/wave-scan-out/
 *.njsproj
 *.sln
 *.sw?
+
+.env

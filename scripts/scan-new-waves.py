@@ -15,6 +15,10 @@ Usage:
 
 Checkpoint: scripts/wave-scan-out/checkpoint.json. Default host: blockstream.info
 (free Esplora), then bitaroo/emzy. Default pace 200ms.
+
+Optional: --blockchair uses BLOCKCHAIR_API_KEY (env/.env) to SQL-filter 1-vout
+txs instead of paging full blocks. Research-only; abort on API failure; soft-max
+12 blocks unless --blockchair-force. Not for snapshot cron.
 """
 
 from __future__ import annotations
@@ -28,6 +32,17 @@ import urllib.request
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
+
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+
+from blockchair_client import (  # noqa: E402
+    Blockchair,
+    BlockchairError,
+    fee_sat_per_vb,
+    get_api_key,
+)
 
 DEFAULT_HOSTS = [
     # Tip scout: free Blockstream Esplora was faster / less 429-prone than
@@ -281,6 +296,83 @@ def collect_sweeps(
     return sweeps
 
 
+def collect_sweeps_blockchair(
+    bc: Blockchair, start: int, end: int, *, sample_every: int
+) -> list[Sweep]:
+    """
+    SQL-filter 1-vout non-coinbase txs, then hydrate recipients via batched
+    dashboards/transactions (≤10 hashes/call). Avoids paging every index-0
+    output in the block (that path burns quota fast).
+    """
+    sweeps: list[Sweep] = []
+    step = max(1, sample_every)
+    heights = list(range(start, end + 1, step))
+    if heights[-1] != end:
+        heights.append(end)
+
+    for height in heights:
+        known = in_known_window(height)
+        tag = f" [skip known:{known}]" if known else ""
+        print(f"  block {height}{tag} [blockchair]", flush=True)
+        if known:
+            continue
+
+        # 1-vout non-coinbase txs in this block (fee + weight + hash).
+        rows: list[dict] = []
+        for row in bc.iter_table(
+            "transactions",
+            q=f"block_id({height}),output_count(1),is_coinbase(false)",
+        ):
+            fee = row.get("fee")
+            weight = row.get("weight")
+            txid = row.get("hash")
+            if not fee or not weight or not txid:
+                continue
+            rows.append(row)
+
+        if not rows:
+            continue
+
+        # Hydrate recipients in batches of 10 (cost ≈ 1 + 0.1*(n-1) each).
+        by_hash: dict[str, dict] = {}
+        for i in range(0, len(rows), 10):
+            chunk = rows[i : i + 10]
+            hashes = [str(r["hash"]) for r in chunk]
+            path = f"/dashboards/transactions/{','.join(hashes)}"
+            body = bc.get(path)
+            data = body.get("data") or {}
+            if not isinstance(data, dict):
+                raise BlockchairError(
+                    "unexpected dashboards/transactions payload", body=body
+                )
+            by_hash.update(data)
+
+        for row in rows:
+            txid = str(row["hash"])
+            dash = by_hash.get(txid) or {}
+            outputs = dash.get("outputs") or []
+            if len(outputs) != 1:
+                # Fall back to table totals if dashboard omitted / mismatched.
+                continue
+            out0 = outputs[0] or {}
+            rate = fee_sat_per_vb(row["fee"], row["weight"])
+            sweeps.append(
+                Sweep(
+                    height=height,
+                    txid=txid,
+                    address=out0.get("recipient"),
+                    sats=int(out0.get("value") or row.get("output_total") or 0),
+                    fee_sat_vb=round(rate, 2),
+                    vin_n=int(row.get("input_count") or 0),
+                )
+            )
+
+    return sweeps
+
+
+BLOCKCHAIR_SOFT_MAX_BLOCKS = 12
+
+
 def cluster_candidates(
     sweeps: list[Sweep],
     *,
@@ -466,10 +558,38 @@ def main() -> int:
         action="store_true",
         help="Do not auto-widen tip window when candidates appear",
     )
+    p.add_argument(
+        "--blockchair",
+        action="store_true",
+        help=(
+            "Fetch 1-vout sweeps via Blockchair SQL tables (needs "
+            "BLOCKCHAIR_API_KEY in env/.env). Abort on API failure — "
+            "does not fall back to Esplora. Not for snapshot cron."
+        ),
+    )
+    p.add_argument(
+        "--blockchair-force",
+        action="store_true",
+        help=(
+            f"Allow Blockchair on windows larger than "
+            f"{BLOCKCHAIR_SOFT_MAX_BLOCKS} blocks (burns quota)"
+        ),
+    )
     args = p.parse_args()
 
     hosts = args.hosts or DEFAULT_HOSTS
     api = Esplora(hosts, timeout=args.timeout, min_interval=args.min_interval)
+    bc: Blockchair | None = None
+    if args.blockchair:
+        key = get_api_key()
+        if not key:
+            print(
+                "error: --blockchair requires BLOCKCHAIR_API_KEY "
+                "(env or repo-root .env)",
+                file=sys.stderr,
+            )
+            return 2
+        bc = Blockchair(key, timeout=args.timeout, min_interval=args.min_interval)
     cp_path = checkpoint_path(args.out)
 
     tip = int(api.get_text("/blocks/tip/height"))
@@ -552,17 +672,60 @@ def main() -> int:
     else:
         sample_every = 2
 
+    backend = "blockchair" if bc else api.host
+    # Visited heights (respecting sample_every) drive Blockchair cost estimate.
+    step = max(1, sample_every)
+    visit_heights = list(range(fetch_start, fetch_end + 1, step))
+    if visit_heights and visit_heights[-1] != fetch_end:
+        visit_heights.append(fetch_end)
+    visit_n = sum(1 for h in visit_heights if not in_known_window(h))
+    # ~transactions pages (≤100 rows, cost ~5+) + dashboards/transactions
+    # batches of 10 (~1.9 each). Rough upper bound for estimate logging.
+    est_bc_cost = visit_n * 10 + 80  # soft estimate; actual logged after run
+
+    if bc and new_block_count > BLOCKCHAIR_SOFT_MAX_BLOCKS and not args.blockchair_force:
+        print(
+            f"error: Blockchair window is {new_block_count} blocks "
+            f"(soft max {BLOCKCHAIR_SOFT_MAX_BLOCKS}, est ~{est_bc_cost} "
+            f"request points). Pass --blockchair-force to proceed.",
+            file=sys.stderr,
+        )
+        return 2
+
     print(
         f"scan-new-waves: tip={tip} mode={mode} "
         f"window={window_start}–{window_end} fetch={fetch_start}–{fetch_end} "
-        f"({new_block_count} blocks) via {api.host}\n"
+        f"({new_block_count} blocks) via {backend}\n"
         f"  sample-every={sample_every}; cached_sweeps={len(cached)}; "
         f"thresholds: ≥{args.min_sweeps} sweeps, ≥{args.min_btc} BTC, "
         f"window~{args.window_blocks} blocks",
         flush=True,
     )
+    if bc:
+        print(
+            f"  blockchair: ~{visit_n} blocks (est. order-of-magnitude "
+            f"~{est_bc_cost} request points; actual logged at end)",
+            flush=True,
+        )
 
-    fresh = collect_sweeps(api, fetch_start, fetch_end, sample_every=sample_every)
+    try:
+        if bc:
+            fresh = collect_sweeps_blockchair(
+                bc, fetch_start, fetch_end, sample_every=sample_every
+            )
+        else:
+            fresh = collect_sweeps(
+                api, fetch_start, fetch_end, sample_every=sample_every
+            )
+    except BlockchairError as e:
+        print(f"error: Blockchair failed — {e}", file=sys.stderr)
+        if bc:
+            print(
+                f"  spent ~{bc.request_cost_total:.2f} request points "
+                f"across {bc.request_count} call(s) before abort",
+                file=sys.stderr,
+            )
+        return 1
     by_txid: dict[str, Sweep] = {s.txid: s for s in cached if s.txid}
     for s in fresh:
         if s.txid:
@@ -599,27 +762,48 @@ def main() -> int:
                 flush=True,
             )
             esc_end = window_start - 1
-            more = collect_sweeps(api, deep_start, esc_end, sample_every=1)
-            escalate_fetched_start = deep_start
-            escalate_fetched_end = esc_end
-            for s in more:
-                if s.txid:
-                    by_txid[s.txid] = s
-                hist[int(s.fee_sat_vb)] += 1
-            fresh.extend(more)
-            window_start = deep_start
-            sweeps = [
-                s for s in by_txid.values() if window_start <= s.height <= window_end
-            ]
-            candidates = cluster_candidates(
-                sweeps,
-                min_sweeps=args.min_sweeps,
-                min_btc=args.min_btc,
-                window_blocks=args.window_blocks,
-                fee_slack=args.fee_slack,
-            )
-            mode = "tip-escalated"
-            escalated = True
+            esc_blocks = esc_end - deep_start + 1
+            if (
+                bc
+                and esc_blocks + (fetch_end - fetch_start + 1)
+                > BLOCKCHAIR_SOFT_MAX_BLOCKS
+                and not args.blockchair_force
+            ):
+                print(
+                    f"  skipping Blockchair escalate ({esc_blocks} more blocks) "
+                    f"— pass --blockchair-force to allow",
+                    flush=True,
+                )
+                more = []
+            elif bc:
+                more = collect_sweeps_blockchair(
+                    bc, deep_start, esc_end, sample_every=1
+                )
+            else:
+                more = collect_sweeps(api, deep_start, esc_end, sample_every=1)
+            if more:
+                escalate_fetched_start = deep_start
+                escalate_fetched_end = esc_end
+                for s in more:
+                    if s.txid:
+                        by_txid[s.txid] = s
+                    hist[int(s.fee_sat_vb)] += 1
+                fresh.extend(more)
+                window_start = deep_start
+                sweeps = [
+                    s
+                    for s in by_txid.values()
+                    if window_start <= s.height <= window_end
+                ]
+                candidates = cluster_candidates(
+                    sweeps,
+                    min_sweeps=args.min_sweeps,
+                    min_btc=args.min_btc,
+                    window_blocks=args.window_blocks,
+                    fee_slack=args.fee_slack,
+                )
+                mode = "tip-escalated"
+                escalated = True
 
     summary = {
         "tip": tip,
@@ -631,7 +815,11 @@ def main() -> int:
         "escalated": escalated,
         "escalate_fetched_start": escalate_fetched_start,
         "escalate_fetched_end": escalate_fetched_end,
-        "host": api.host,
+        "host": backend,
+        "esplora_host": api.host,
+        "blockchair": bool(bc),
+        "blockchair_request_cost": round(bc.request_cost_total, 3) if bc else None,
+        "blockchair_request_count": bc.request_count if bc else None,
         "one_vout_sweeps_fresh": len(fresh),
         "one_vout_sweeps_clustered": len(sweeps),
         "cached_sweeps_used": len(cached),
@@ -699,6 +887,12 @@ def main() -> int:
         )
         for d in c["top_destinations"][:3]:
             print(f"    {d['btc']:.4f} BTC → {d['address']}", flush=True)
+    if bc:
+        print(
+            f"blockchair cost: {bc.request_cost_total:.2f} request points "
+            f"({bc.request_count} calls)",
+            flush=True,
+        )
     print(f"\nWrote {out_path}", flush=True)
     return 0
 

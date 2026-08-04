@@ -9,6 +9,9 @@
  *  - One paced worker per Esplora host (no shared stampede)
  *  - First pass all addresses, then mop-up only failures
  *  - On hard failure, keep prior snapshot balance when available
+ *
+ * Intentionally Esplora-only: do not use BLOCKCHAIR_API_KEY here (limited
+ * research quota; tip scout / scripts/blockchair-balances.py are opt-in).
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';

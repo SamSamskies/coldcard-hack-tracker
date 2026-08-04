@@ -21,7 +21,8 @@ Related: [btc-esplora-verify](../btc-esplora-verify/SKILL.md),
 Unless the user **explicitly** asks for a deep / wider / historical scan:
 
 - Run **only** the last **3** tip blocks.
-- Prefer: `python3 scripts/scan-new-waves.py --no-escalate`
+- Prefer Esplora by default for agents. Use `--blockchair` only after a
+  **cost estimate + user OK** (see below) when `BLOCKCHAIR_API_KEY` is set.
 - Do **not** use `--blocks`, `--escalate-blocks`, `--start`/`--end`, or `--refetch`.
 - Do **not** “fill a tip gap,” catch up a behind checkpoint, or widen after a
   noisy/false-looking candidate on your own.
@@ -31,6 +32,28 @@ Unless the user **explicitly** asks for a deep / wider / historical scan:
 Deep modes (auto-escalate to 12, `--blocks N`, fixed `--start`/`--end`) only
 when the user asks (e.g. “deep scan,” “scan 12 blocks,” “scan blocks X–Y”).
 
+## Blockchair cost gate (required)
+
+Pay-as-you-go quota (~10k points). **Never** call Blockchair until you tell the
+user an estimate and they approve (or they already asked to spend it).
+
+Rough costs (weighted points, not HTTP call counts):
+
+| Action | Ballpark |
+|--------|----------|
+| `blockchair-balances.py` N addrs | ≈ `1 + 0.001×N` |
+| Tip scout 3 blocks `--blockchair` (current path) | **often 100–500+**; dense tip blocks have been ~100 pts for the 1-vout SQL page alone |
+| Historical / >12 blocks | Do not run without explicit `--blockchair-force` + user OK |
+
+Before running:
+
+1. State planned command + block/address count.
+2. Give a ballpark point cost and remaining budget if known.
+3. Wait for OK (unless the user already said to use Blockchair for this run).
+4. Prefer Esplora when the estimate is unclear or the work can wait.
+
+After a Blockchair run, report **actual** `blockchair cost:` / stderr cost lines.
+
 ## When to run
 
 - User: “check for new waves”, “scan tip”, “any new sweeps?”, periodic reminder
@@ -38,8 +61,12 @@ when the user asks (e.g. “deep scan,” “scan 12 blocks,” “scan blocks X
 ## Workflow
 
 ```
-- [ ] Run: python3 scripts/scan-new-waves.py --no-escalate   # 3 tip blocks only
+- [ ] If using Blockchair: estimate points + get user OK first
+- [ ] Run tip scout:
+      python3 scripts/scan-new-waves.py --no-escalate --blockchair   # only after OK
+      python3 scripts/scan-new-waves.py --no-escalate                # default / no key
 - [ ] Read verdict from stdout / scripts/wave-scan-out/latest.json
+- [ ] If Blockchair: report actual request cost from logs
 - [ ] If NO_NEW_CANDIDATES → report clean tip window; stop
 - [ ] If candidates → verify sample txids + dest freshness (still no widen)
 - [ ] Optional community lead check (X MCP timelines / post IDs, else xcancel)
@@ -50,11 +77,15 @@ when the user asks (e.g. “deep scan,” “scan 12 blocks,” “scan blocks X
 ## Run the scout
 
 ```bash
-# Default for agents / research check-ins: last 3 tip blocks, no auto-widen
+# Default for agents (free Esplora) unless user approved Blockchair spend
 python3 scripts/scan-new-waves.py --no-escalate
+
+# After cost estimate + user OK (needs BLOCKCHAIR_API_KEY in env/.env)
+python3 scripts/scan-new-waves.py --no-escalate --blockchair
 
 # Only if user asks for auto-widen on hit (shallow 3 → escalate to 12)
 python3 scripts/scan-new-waves.py
+# With Blockchair, escalate past 12 tip blocks needs --blockchair-force
 
 # Only if user asks for deep / custom depth
 python3 scripts/scan-new-waves.py --blocks 12
@@ -67,6 +98,12 @@ python3 scripts/scan-new-waves.py --refetch
 python3 scripts/scan-new-waves.py --start 960800 --end 960820 --sample-every 1
 ```
 
+**Blockchair:** opt-in via `--blockchair` + `BLOCKCHAIR_API_KEY` **after cost
+gate**. Filters 1-vout txs via SQL, then hydrates recipients with batched
+`dashboards/transactions` (≤10/call). Soft-max **12** blocks unless
+`--blockchair-force`. On API failure the scout **aborts** (no silent Esplora
+fallback). Never use the key in snapshot cron.
+
 **Policy:** tip window only (3 blocks) unless explicitly asked for deeper.
 Never backfill missed history on your own.
 
@@ -75,13 +112,14 @@ Never backfill missed history on your own.
 | `tip` / `tip-delta` | Shallow tip window |
 | `tip-escalated` | Candidates found → widened to `--escalate-blocks` |
 | `uptodate` | Checkpoint already covers tip |
-| `fixed` | Explicit `--start/--end` research range |
+| `fixed` | Explicit `--start`/`--end` research range |
 
-Hosts: **blockstream.info** first, then bitaroo → emzy. Pace default **200ms**.
+Hosts (Esplora default): **blockstream.info** first, then bitaroo → emzy. Pace default **200ms**.
 Output gitignored under `scripts/wave-scan-out/`.
 
-Expect ~1–2 min/block on Blockstream. Clean 3-block checks ~5 min; escalate adds
-~the extra 9 blocks when something looks off.
+Expect ~1–2 min/block on Blockstream Esplora; Blockchair tip checks are usually
+much faster. Clean 3-block Esplora checks ~5 min; escalate adds ~the extra 9
+blocks when something looks off.
 
 ## Interpreting results
 
