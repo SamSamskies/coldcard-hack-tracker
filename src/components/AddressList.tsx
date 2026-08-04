@@ -721,8 +721,8 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
       <div className="panel-head">
         <h2 id="addresses-heading">Watched holdings</h2>
         <p>
-          About {formatBtc(ORIGINAL_STOLEN_BTC)} BTC drained across tracked
-          clusters. Galaxy’s same-operator total is{' '}
+          About {formatBtc(ORIGINAL_STOLEN_BTC)} BTC drained across known
+          waves. Galaxy’s same-operator total is{' '}
           {formatBtc(GALAXY.totalStolenBtc)} BTC across{' '}
           {GALAXY.victimAddresses.toLocaleString()} addresses.{' '}
           {formatBtc(CONSOLIDATED_BTC)} BTC is in watched holdings. The

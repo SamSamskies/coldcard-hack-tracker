@@ -93,12 +93,15 @@ export function StolenTimeline({ usdPrice }: Props) {
             <span className="timeline-total-frac">.{totalFrac}</span>{' '}
             <span className="unit">BTC</span>
           </p>
-          <p className="timeline-total-usd">
-            {usdPrice != null
-              ? formatUsd(ORIGINAL_STOLEN_BTC * usdPrice)
-              : 'Across tracked clusters'}
-          </p>
+          {usdPrice != null ? (
+            <p className="timeline-total-usd">
+              {formatUsd(ORIGINAL_STOLEN_BTC * usdPrice)}
+            </p>
+          ) : null}
           <p className="timeline-total-note">
+            Known waves only · total most likely higher
+          </p>
+          <p className="timeline-total-meta">
             {CLUSTERS.length} waves · {formatDay(steps[0].date)} –{' '}
             {formatDay(lastStep.date)} UTC
           </p>

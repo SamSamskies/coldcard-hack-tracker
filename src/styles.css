@@ -487,6 +487,13 @@ button:focus-visible {
   color: var(--text-muted);
 }
 
+.timeline-total-meta {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
 .timeline-chart-wrap {
   position: relative;
   overflow-x: auto;
