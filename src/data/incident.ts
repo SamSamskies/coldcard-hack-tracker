@@ -356,6 +356,11 @@ export const SOURCES = [
     url: 'https://x.com/intangiblecoins/status/2084584284837322868',
   },
   {
+    label: 'James O\'Beirne · CK tripwire',
+    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h; low-band (11–13 bit) honeypots still live at launch. Defensive research only — do not add honeypot sinks to holdings.',
+    url: 'https://cktripwire.com/',
+  },
+  {
     label: 'Galaxy Research · Wave 3',
     note: 'Aug 1: third wave (~207.73 BTC into 293 P2WSH vaults). Observed total 1,367.05 BTC across 4,585 addresses.',
     url: 'https://x.com/glxyresearch/status/2083623500183421043',

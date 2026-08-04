@@ -47,7 +47,7 @@ Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blo
 
 Do **not** call `search_posts_all` (App-Only + pay-per-use; MCP user OAuth 403s).
 
-1. `get_users_by_username` for: `glxyresearch`, `intangiblecoins`, `KevinKelbie`, `mariusoffchain`, `evands`, `TomerStrolight`, `Rob1Ham`, `nunchuk_io`, `eriklocalhost`
+1. `get_users_by_username` for: `glxyresearch`, `intangiblecoins`, `KevinKelbie`, `mariusoffchain`, `evands`, `TomerStrolight`, `Rob1Ham`, `jamesob`, `nunchuk_io`, `eriklocalhost`
 2. `get_users_posts` with `start_time` / `exclude=replies` on the accounts above
 3. `get_posts_by_id(s)` for thread replies and quoted posts
 4. **Keyword search only after user approval** — CLI recent search: `npx -y @xdevplatform/xurl search 'QUERY' -n 20` (≈ $0.005 × results). Ask with query + N + rough cost first; see rule `x-api-search-approval`.
@@ -74,6 +74,13 @@ Do **not** call `search_posts_all` (App-Only + pay-per-use; MCP user OAuth 403s)
 - Marius Offchain (early Aug 2): `https://x.com/mariusoffchain/status/2083814011859030252`
 - Erik (early Aug 2 Mk3 victim): `https://x.com/eriklocalhost/status/2083875886458171626`
 - Alex Thorn (likely Wave 4): `https://x.com/intangiblecoins/status/2084079706320646300`
+- James O'Beirne (CK tripwire launch): `https://x.com/jamesob/status/2084769501661331589`
+
+**Attacker capability frontier (honeypots — not stolen holdings)**
+
+- Scoreboard: `https://cktripwire.com/`
+- Methodology: `https://cktripwire.com/methodology`
+- Re-scrape on research passes; if a new difficulty band is swept, refresh `SOURCES` / RiskChecklist notes. Never add honeypot sinks to holdings.
 
 **Advisories / root cause**
 
