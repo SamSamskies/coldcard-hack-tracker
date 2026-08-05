@@ -458,7 +458,32 @@ export type HoldingAddress = {
   reportBtc: number;
   clusterId: ClusterId;
   note?: string;
+  /**
+   * When false, skip Esplora polls and treat live balance as 0 (emptied).
+   * Default true. Still shown on the dashboard; KPIs use synth 0.
+   */
+  pollBalance?: boolean;
 };
+
+/** Whether live/snapshot should fetch this holding from Esplora. */
+export function shouldPollBalance(h: HoldingAddress): boolean {
+  return h.pollBalance !== false;
+}
+
+/**
+ * Confirmed-empty core holdings (0 sats) — skip Esplora polls.
+ * Do not add dust leftovers here; synth 0 must match on-chain for KPIs.
+ */
+export const NO_POLL_BALANCE_ADDRESSES = [
+  'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf', // Evening vault
+  'bc1qayw8nrec0vsa5vj4xee4dqhfgztx2gqq7w2u0s', // Aug 1 hop vault
+  'bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m', // Aug 2 vault
+  '1N8knQCfjqUeJQwjkZZavbboXXL6WVqfDo', // Wave 4 park
+  '35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH', // Wave 4 park
+  '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz', // Wave 4 park
+  '36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G', // Wave 4 park
+  '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ', // Wave 4 park
+] as const;
 
 /** Wave 1/2 + community vaults — live-polled in the browser. */
 export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
@@ -506,6 +531,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Evening vault',
     reportBtc: 0.50980268,
     clusterId: 'evening-july31',
+    pollBalance: false,
     note: 'Jul 31 consolidation (~0.51 BTC). Emptied Aug 2–3 (ETH + BTC rails above). [Chainabuse victim](https://chainabuse.com/report/6e9fa34a-6128-4b9b-9ef9-8cc4159b1935).',
   },
   {
@@ -513,6 +539,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 1 hop vault',
     reportBtc: 0.69135523,
     clusterId: 'evening-july31',
+    pollBalance: false,
     note: '0.4998 + 0.1915 BTC stack. Emptied Aug 2 (BTC rail above). Ocean peel also met at the hub (not in report balance).',
   },
   {
@@ -526,6 +553,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Aug 2 vault',
     reportBtc: 64.90373764,
     clusterId: 'early-aug2',
+    pollBalance: false,
     note: 'Emptied Aug 4 (block 961065, ~5 sat/vB): [bc1q0rvn…](address:bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m) → Taproot hop [bc1pynd6…](address:bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92) ([e3274a1b…2b3ddf](txid:e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf)). Hop emptied same day in Wasabi-style CoinJoin (block 961069, ~2 sat/vB, 324→382; [f3ee6e61…7b24](txid:f3ee6e61129b90b4746275a2ea17b08ac53769556d61994c94f03db9bcc37b24)): equal ~1.2914 BTC outs ×20 + residual ~54.32 BTC at [bc1qajcr…](address:bc1qajcrhj3s2x0yfcj54emjukghv93su80svp2d3t). Residual re-entered a second CJ (mempool, ~2 sat/vB, 320→374; [3bdac8ed…cdf935](txid:3bdac8ed822fc4cb123bc78689da3179ea8321d6daa5034c2170100399cdf935)): equal denoms (1 / 0.3355 / 0.2 / …) + new residual ~47.12 BTC at [bc1qq6s7…](address:bc1qq6s7wsmf6an78xyjkst707x32nyakj3u4jy2fr). No exchange exit yet.',
   },
   {
@@ -566,6 +594,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 5.61303754,
     clusterId: 'wave4-aug3',
+    pollBalance: false,
     note: 'Thorn’s unique dual-sweep destination (2 victims → this park).',
   },
   {
@@ -573,6 +602,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 2.17767618,
     clusterId: 'wave4-aug3',
+    pollBalance: false,
     note: 'Emptied Aug 4 (block 961064, ~2 sat/vB): 14-input P2SH consolidate with sibling parks → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) still holding ~136.41 BTC ([f02164a9…50db281](txid:f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281)). Same tx as [342L6n3b…](address:342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz) + [36XfMDAYu…](address:36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G) + [34nHYNnc…](address:34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ). Mix includes parks funded outside Wave 4 window.',
   },
   {
@@ -580,6 +610,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 2.02374869,
     clusterId: 'wave4-aug3',
+    pollBalance: false,
     note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
   },
   {
@@ -593,6 +624,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 1.09429601,
     clusterId: 'wave4-aug3',
+    pollBalance: false,
     note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
   },
   {
@@ -612,6 +644,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 0.96227191,
     clusterId: 'wave4-aug3',
+    pollBalance: false,
     note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
   },
 ];

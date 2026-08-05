@@ -116,10 +116,13 @@ function extractHoldings() {
   );
   let m;
   while ((m = entryRe.exec(coreBlock[1]))) {
+    // Object body until the next top-level `},` — enough to see pollBalance.
+    const objBody = coreBlock[1].slice(m.index).split(/\n\s*\},/)[0] ?? '';
     core.push({
       address: m[1],
       label: m[2],
       reportBtc: resolveReportBtc(m[3], p2trBtc),
+      pollBalance: !/\bpollBalance:\s*false\b/.test(objBody),
     });
   }
 
@@ -134,6 +137,7 @@ function extractHoldings() {
       address: m[1],
       label: m[2],
       reportBtc: Number(m[3]),
+      pollBalance: true,
     });
   }
 
@@ -159,23 +163,36 @@ function extractHoldings() {
   return holdings;
 }
 
-function loadPriorBalances() {
-  if (!existsSync(OUT)) return new Map();
+function loadPriorSnapshot() {
+  if (!existsSync(OUT)) return { balances: new Map(), movements: [] };
   try {
     const prev = JSON.parse(readFileSync(OUT, 'utf8'));
-    const map = new Map();
+    const balances = new Map();
     for (const a of prev.addresses ?? []) {
       if (a?.address != null && a.balanceSats != null) {
-        map.set(a.address, {
+        balances.set(a.address, {
           balanceSats: a.balanceSats,
           utxoCount: a.utxoCount ?? 0,
         });
       }
     }
-    return map;
+    const movements = Array.isArray(prev.movements) ? prev.movements : [];
+    return { balances, movements };
   } catch {
-    return new Map();
+    return { balances: new Map(), movements: [] };
   }
+}
+
+function movementDedupeKey(m) {
+  return `${m.txid}:${m.fromAddress}`;
+}
+
+function dedupeMovements(items) {
+  const byKey = new Map();
+  for (const m of items) {
+    byKey.set(movementDedupeKey(m), m);
+  }
+  return sortMovements([...byKey.values()]);
 }
 
 function sleep(ms) {
@@ -666,13 +683,20 @@ async function fetchAddressSummaries(pool, holdings) {
 
 async function main() {
   const holdings = extractHoldings();
-  const prior = loadPriorBalances();
+  const prior = loadPriorSnapshot();
+  const noPollAddrs = new Set(
+    holdings.filter((h) => !h.pollBalance).map((h) => h.address),
+  );
+  const toFetch = holdings.filter((h) => h.pollBalance);
+  console.log(
+    `Holdings: ${holdings.length} (${toFetch.length} to poll, ${noPollAddrs.size} pollBalance:false)`,
+  );
   console.log('Probing Esplora hosts…');
   const liveHosts = await selectLiveHosts(HOSTS);
   console.log(`Using: ${liveHosts.join(', ')}`);
   const pool = new HostPool(liveHosts);
 
-  const summaries = await fetchAddressSummaries(pool, holdings);
+  const summaries = await fetchAddressSummaries(pool, toFetch);
 
   let usdPrice = null;
   try {
@@ -687,8 +711,20 @@ async function main() {
   let liveOk = 0;
   let priorOk = 0;
   let reportFallback = 0;
+  let synthEmpty = 0;
 
   for (const h of holdings) {
+    if (!h.pollBalance) {
+      synthEmpty++;
+      addresses.push({
+        address: h.address,
+        balanceSats: 0,
+        utxoCount: 0,
+        ok: true,
+      });
+      continue;
+    }
+
     const addr = summaries.get(h.address);
     if (addr) {
       liveOk++;
@@ -711,7 +747,7 @@ async function main() {
       continue;
     }
 
-    const prev = prior.get(h.address);
+    const prev = prior.balances.get(h.address);
     if (prev) {
       priorOk++;
       addresses.push({
@@ -789,6 +825,15 @@ async function main() {
     }
   }
 
+  const preservedFromNoPoll = prior.movements.filter(
+    (m) =>
+      m &&
+      typeof m.txid === 'string' &&
+      typeof m.fromAddress === 'string' &&
+      noPollAddrs.has(m.fromAddress) &&
+      !isKnownExitAddress(m.fromAddress),
+  );
+
   if (liveOk === 0 && priorOk === 0) {
     throw new Error('No address balances fetched');
   }
@@ -803,15 +848,16 @@ async function main() {
       balanceSats,
       utxoCount,
     })),
-    movements: sortMovements(
-      allMovements.filter((m) => !isKnownExitAddress(m.fromAddress)),
-    ),
+    movements: dedupeMovements([
+      ...allMovements.filter((m) => !isKnownExitAddress(m.fromAddress)),
+      ...preservedFromNoPoll,
+    ]),
   };
 
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, `${JSON.stringify(snapshot, null, 2)}\n`);
   console.log(
-    `Wrote ${OUT} (live=${liveOk} prior=${priorOk} reportFallback=${reportFallback}/${holdings.length}, ${snapshot.movements.length} movements)`,
+    `Wrote ${OUT} (live=${liveOk} prior=${priorOk} synthEmpty=${synthEmpty} reportFallback=${reportFallback}/${holdings.length}, ${snapshot.movements.length} movements)`,
   );
   console.log(`Hosts: ${pool.stats()}`);
 }

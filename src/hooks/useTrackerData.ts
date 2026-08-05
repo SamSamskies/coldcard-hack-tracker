@@ -9,6 +9,7 @@ import {
   REFRESH_INTERVAL_MS,
   SATS_PER_BTC,
   SNAPSHOT_REFRESH_INTERVAL_MS,
+  shouldPollBalance,
   type HoldingAddress,
 } from '../data/incident';
 import {
@@ -190,8 +191,10 @@ export function useTrackerData(): TrackerData {
       addressesRef.current.map((a) => [a.address, a]),
     );
 
+    const pollCores = CORE_HOLDING_ADDRESSES.filter(shouldPollBalance);
+
     const [summaryResults, price] = await Promise.all([
-      mapPool(CORE_HOLDING_ADDRESSES, ADDRESS_FETCH_CONCURRENCY, async (h) => {
+      mapPool(pollCores, ADDRESS_FETCH_CONCURRENCY, async (h) => {
         try {
           return await fetchAddress(h.address);
         } catch {
@@ -202,14 +205,12 @@ export function useTrackerData(): TrackerData {
     ]);
 
     const summaryByAddr = new Map<string, AddressResponse>();
-    CORE_HOLDING_ADDRESSES.forEach((h, i) => {
+    pollCores.forEach((h, i) => {
       const summary = summaryResults[i];
       if (summary) summaryByAddr.set(h.address, summary);
     });
 
-    const coreOk = CORE_HOLDING_ADDRESSES.some((h) =>
-      summaryByAddr.has(h.address),
-    );
+    const coreOk = pollCores.some((h) => summaryByAddr.has(h.address));
     if (!coreOk) {
       throw new Error(
         'Could not load core holding balances from any explorer',
@@ -219,6 +220,14 @@ export function useTrackerData(): TrackerData {
     const live: LiveAddress[] = HOLDING_ADDRESSES.map((h) => {
       if (h.clusterId === 'galaxy-wave3') {
         return reportAsLive(h, prevByAddr.get(h.address));
+      }
+
+      if (!shouldPollBalance(h)) {
+        const prev = prevBalances.current.get(h.address);
+        const row = liveFromSats(h, 0, 0, prev);
+        prevBalances.current.set(h.address, 0);
+        if (row.flash) scheduleFlashClear(h.address);
+        return row;
       }
 
       const summary = summaryByAddr.get(h.address);
@@ -241,7 +250,7 @@ export function useTrackerData(): TrackerData {
 
     const activeSeeds: WatchTarget[] = [];
     const activeAddrs: string[] = [];
-    for (const h of CORE_HOLDING_ADDRESSES) {
+    for (const h of pollCores) {
       const summary = summaryByAddr.get(h.address);
       if (!summary) continue;
       const balanceBtc = satsToBtc(addressBalanceSats(summary));

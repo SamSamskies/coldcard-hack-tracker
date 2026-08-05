@@ -3,6 +3,7 @@ import {
   CLUSTERS,
   CLUSTER_BY_ID,
   CONSOLIDATED_BTC,
+  CORE_HOLDING_ADDRESSES,
   EARLY_AUG2_WAVE,
   EVENING_WAVE,
   FOOTPRINT_O,
@@ -10,13 +11,16 @@ import {
   HOLDING_ADDRESSES,
   INCIDENT,
   MORNING_WAVE,
+  NO_POLL_BALANCE_ADDRESSES,
   ORIGINAL_STOLEN_BTC,
   P2TR_WAVE,
   WAVE2_FINGERPRINT,
   WAVE3_FINGERPRINT,
   WAVE4_WAVE,
+  shouldPollBalance,
   type ClusterId,
 } from '../data/incident';
+import { heldStats, statusFor } from '../lib/tracker';
 import { WAVE3_VAULT_COUNT } from './wave3Vaults';
 
 describe('incident data invariants', () => {
@@ -171,5 +175,46 @@ describe('incident data invariants', () => {
     );
     expect(WAVE3_FINGERPRINT.matchedVaults).toBeLessThan(WAVE3_FINGERPRINT.galaxyVaults);
     expect(WAVE3_FINGERPRINT.matchedHeldBtc).toBeLessThan(WAVE3_FINGERPRINT.galaxyHeldBtc);
+  });
+
+  it('skips Esplora polls only for the documented empty cores', () => {
+    const noPoll = CORE_HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h));
+    expect(noPoll.map((h) => h.address).sort()).toEqual(
+      [...NO_POLL_BALANCE_ADDRESSES].sort(),
+    );
+    expect(HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h))).toHaveLength(
+      NO_POLL_BALANCE_ADDRESSES.length,
+    );
+    // Still listed with original report stacks — never removed or zeroed.
+    for (const addr of NO_POLL_BALANCE_ADDRESSES) {
+      const h = CORE_HOLDING_ADDRESSES.find((x) => x.address === addr);
+      expect(h).toBeDefined();
+      expect(h!.pollBalance).toBe(false);
+      expect(h!.reportBtc).toBeGreaterThan(0);
+      expect(statusFor(0, h!.reportBtc)).toBe('emptied');
+    }
+  });
+
+  it('keeps KPIs identical when synth-0 replaces a fetched-0 for no-poll holdings', () => {
+    // Simulate balances: polled cores + wave3 at report (held); no-poll at 0.
+    const fetchedZeroHeldBtc = HOLDING_ADDRESSES.reduce((sum, h) => {
+      if (!shouldPollBalance(h)) return sum + 0;
+      return sum + h.reportBtc;
+    }, 0);
+    const synthZeroHeldBtc = HOLDING_ADDRESSES.reduce((sum, h) => {
+      if (!shouldPollBalance(h)) return sum + 0; // synth path
+      return sum + h.reportBtc;
+    }, 0);
+    expect(synthZeroHeldBtc).toBe(fetchedZeroHeldBtc);
+    expect(heldStats(synthZeroHeldBtc, CONSOLIDATED_BTC)).toEqual(
+      heldStats(fetchedZeroHeldBtc, CONSOLIDATED_BTC),
+    );
+    // No-poll stacks still count toward consolidated (moved), not held.
+    const noPollReport = CORE_HOLDING_ADDRESSES.filter(
+      (h) => !shouldPollBalance(h),
+    ).reduce((s, h) => s + h.reportBtc, 0);
+    expect(noPollReport).toBeGreaterThan(0);
+    const { movedBtc } = heldStats(synthZeroHeldBtc, CONSOLIDATED_BTC);
+    expect(movedBtc).toBeGreaterThanOrEqual(noPollReport - 1e-8);
   });
 });
