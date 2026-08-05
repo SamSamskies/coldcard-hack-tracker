@@ -639,6 +639,175 @@ function Wave4DualSweepPeels() {
   );
 }
 
+const AUG2_VAULT = 'bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m';
+const AUG2_TAPROOT_HOP =
+  'bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92';
+const AUG2_CJ1_RESIDUAL = 'bc1qajcrhj3s2x0yfcj54emjukghv93su80svp2d3t';
+const AUG2_CJ2_RESIDUAL = 'bc1qq6s7wsmf6an78xyjkst707x32nyakj3u4jy2fr';
+const AUG2_CJ3_LIVE = [
+  'bc1qf35ycfp32ra49n3j8hp9gk7r8z52vhvgpuad8k',
+  'bc1qs3lj4x5whcfyz2akafaay4fs9xskd68wy9v9ze',
+] as const;
+
+function EarlyAug2CoinJoinTrail() {
+  return (
+    <div className="cashout-flow">
+      <p className="cashout-flow-label">Aug 4–5 mix · Wasabi-style cascade</p>
+      <dl className="cashout-rails">
+        <div className="cashout-rail">
+          <dt>1 · Empty</dt>
+          <dd>
+            <a
+              className="note-link"
+              href={explorerAddressUrl(AUG2_VAULT)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Aug 2 vault
+            </a>
+            <span className="cashout-arrow" aria-hidden="true">
+              →
+            </span>
+            <a
+              className="note-link"
+              href={explorerAddressUrl(AUG2_TAPROOT_HOP)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Taproot hop
+            </a>
+            <span className="cashout-note">
+              {' '}
+              · ~64.90 BTC · blk 961065 · ~5 sat/vB ·{' '}
+              <a
+                className="mono note-link"
+                href={explorerTxUrl(
+                  'e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf',
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {truncateTxid(
+                  'e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf',
+                )}
+              </a>
+            </span>
+          </dd>
+        </div>
+        <div className="cashout-rail">
+          <dt>2 · CJ1</dt>
+          <dd>
+            residual ~54.32 @{' '}
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(AUG2_CJ1_RESIDUAL)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {truncateAddress(AUG2_CJ1_RESIDUAL)}
+            </a>
+            <span className="cashout-note">
+              {' '}
+              · plus 20× ~1.2914 · blk 961069 · ~2 sat/vB · 324→382 ·{' '}
+              <a
+                className="mono note-link"
+                href={explorerTxUrl(
+                  'f3ee6e61129b90b4746275a2ea17b08ac53769556d61994c94f03db9bcc37b24',
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {truncateTxid(
+                  'f3ee6e61129b90b4746275a2ea17b08ac53769556d61994c94f03db9bcc37b24',
+                )}
+              </a>
+            </span>
+          </dd>
+        </div>
+        <div className="cashout-rail">
+          <dt>3 · CJ2</dt>
+          <dd>
+            residual ~47.12 @{' '}
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(AUG2_CJ2_RESIDUAL)}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {truncateAddress(AUG2_CJ2_RESIDUAL)}
+            </a>
+            <span className="cashout-note">
+              {' '}
+              · equal denoms · blk 961082 · ~2 sat/vB · 320→374 ·{' '}
+              <a
+                className="mono note-link"
+                href={explorerTxUrl(
+                  '3bdac8ed822fc4cb123bc78689da3179ea8321d6daa5034c2170100399cdf935',
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {truncateTxid(
+                  '3bdac8ed822fc4cb123bc78689da3179ea8321d6daa5034c2170100399cdf935',
+                )}
+              </a>
+            </span>
+          </dd>
+        </div>
+        <div className="cashout-rail">
+          <dt>4 · CJ3</dt>
+          <dd>
+            residual ends · 7× ~7.7484 (anonymity set) · 2 still live:{' '}
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(AUG2_CJ3_LIVE[0])}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {truncateAddress(AUG2_CJ3_LIVE[0])}
+            </a>
+            {', '}
+            <a
+              className="mono note-link"
+              href={explorerAddressUrl(AUG2_CJ3_LIVE[1])}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {truncateAddress(AUG2_CJ3_LIVE[1])}
+            </a>
+            <span className="cashout-note">
+              {' '}
+              · also 2× ~3.8742 · blk 961093 · ~1 sat/vB · 454→502 ·{' '}
+              <a
+                className="mono note-link"
+                href={explorerTxUrl(
+                  '80f11c778a2f486ffc55b4e8665a94971ae9c350ac53969e9efcbf90478cbf90',
+                )}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {truncateTxid(
+                  '80f11c778a2f486ffc55b4e8665a94971ae9c350ac53969e9efcbf90478cbf90',
+                )}
+              </a>
+            </span>
+          </dd>
+        </div>
+        <div className="cashout-rail">
+          <dt>5 · Remix</dt>
+          <dd>
+            other large outs remixed in further CJs (blks 961102–961160)
+            <span className="cashout-note">
+              {' '}
+              · no labeled exchange/bridge on the residual path
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 function EveningCashoutFlow() {
   return (
     <div className="cashout-flow">
@@ -974,7 +1143,12 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
                   </>
                 ) : null}
                 {clusterId === 'morning-aug1' ? <MorningWaveMeta /> : null}
-                {clusterId === 'early-aug2' ? <EarlyAug2Meta /> : null}
+                {clusterId === 'early-aug2' ? (
+                  <>
+                    <EarlyAug2Meta />
+                    <EarlyAug2CoinJoinTrail />
+                  </>
+                ) : null}
                 {clusterId === 'p2tr-aug1' ? <P2trWaveMeta /> : null}
                 {clusterId === 'wave4-aug3' ? <Wave4Meta /> : null}
               </header>
