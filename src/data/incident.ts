@@ -717,6 +717,11 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   /** Wave 4 hop (block 960797): multi-park consolidate → this high-volume P2WPKH hub. */
   bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh: 'P2WPKH service hub',
   /**
+   * Wave 4 hop peel target from bc1q40y6… (stolen exit block 960794; later surplus
+   * peels e.g. 961114). ~1.5M txs / ~75 BTC; Arkham High Transacting only.
+   */
+  bc1qrqlamjhy2qp0xj5mxv4sx7ra9qfmfxllf93l26: 'P2WPKH service hub',
+  /**
    * Wave 4 hop (block 960818): multi-park + 352zz/35uR cluster consolidate.
    * Arkham: Coinbase Prime Custody.
    */
