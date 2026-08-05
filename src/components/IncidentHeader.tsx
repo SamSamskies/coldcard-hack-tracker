@@ -48,7 +48,7 @@ export function IncidentHeader({
         </div>
 
         {alertsSupported ? (
-          <label
+          <div
             className={`alerts-toggle${alertsDisabled ? ' is-disabled' : ''}`}
             title={alertsTitle}
           >
@@ -67,7 +67,7 @@ export function IncidentHeader({
             >
               <span className="alerts-switch-thumb" aria-hidden="true" />
             </button>
-          </label>
+          </div>
         ) : null}
       </div>
 

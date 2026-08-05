@@ -20,7 +20,10 @@ export type MovementAlerts = {
   preference: boolean;
   permission: AlertPermission;
   supported: boolean;
+  /** Set briefly after a successful arm so the UI can confirm delivery. */
+  armNotice: string | null;
   toggle: () => Promise<void>;
+  dismissArmNotice: () => void;
 };
 
 function readPreference(): boolean {
@@ -39,8 +42,8 @@ function writePreference(enabled: boolean) {
   }
 }
 
-function showNotification(title: string, body: string, tag: string) {
-  if (Notification.permission !== 'granted') return;
+function showNotification(title: string, body: string, tag: string): boolean {
+  if (Notification.permission !== 'granted') return false;
   try {
     const n = new Notification(title, {
       body,
@@ -50,8 +53,9 @@ function showNotification(title: string, body: string, tag: string) {
       window.focus();
       n.close();
     };
+    return true;
   } catch {
-    // Some browsers throw if permission flipped mid-session.
+    return false;
   }
 }
 
@@ -61,11 +65,11 @@ function notifyMovement(m: Movement) {
   showNotification(APP_NAME, body, movementKey(m));
 }
 
-function notifyAlertsArmed() {
-  showNotification(
+function notifyAlertsArmed(): boolean {
+  return showNotification(
     APP_NAME,
     'Movement alerts on — you will be notified when holdings or hops spend.',
-    'alerts-armed',
+    `alerts-armed-${Date.now()}`,
   );
 }
 
@@ -91,16 +95,46 @@ export function useMovementAlerts(
   const [permission, setPermission] = useState<AlertPermission>(() =>
     supported ? Notification.permission : 'unsupported',
   );
+  const [armNotice, setArmNotice] = useState<string | null>(null);
 
   const watchRef = useRef<AlertWatchState>(createAlertWatchState());
+  const armNoticeTimer = useRef<number | null>(null);
 
   const enabled =
     preference && supported && permission === 'granted';
+
+  const dismissArmNotice = useCallback(() => {
+    if (armNoticeTimer.current != null) {
+      window.clearTimeout(armNoticeTimer.current);
+      armNoticeTimer.current = null;
+    }
+    setArmNotice(null);
+  }, []);
+
+  const showArmNotice = useCallback(
+    (message: string) => {
+      dismissArmNotice();
+      setArmNotice(message);
+      armNoticeTimer.current = window.setTimeout(() => {
+        setArmNotice(null);
+        armNoticeTimer.current = null;
+      }, 12_000);
+    },
+    [dismissArmNotice],
+  );
 
   useEffect(() => {
     if (!supported) return;
     setPermission(Notification.permission);
   }, [supported]);
+
+  useEffect(() => {
+    return () => {
+      if (armNoticeTimer.current != null) {
+        window.clearTimeout(armNoticeTimer.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!supported) return;
@@ -123,6 +157,7 @@ export function useMovementAlerts(
       writePreference(false);
       setPreference(false);
       watchRef.current = createAlertWatchState();
+      dismissArmNotice();
       return;
     }
 
@@ -137,20 +172,32 @@ export function useMovementAlerts(
       writePreference(false);
       setPreference(false);
       watchRef.current = createAlertWatchState();
+      showArmNotice(
+        next === 'denied'
+          ? 'Notifications are blocked for this site in browser settings.'
+          : 'Notification permission was not granted.',
+      );
       return;
     }
 
     writePreference(true);
     watchRef.current = createAlertWatchState();
     setPreference(true);
-    notifyAlertsArmed();
-  }, [preference, permission, supported]);
+    const delivered = notifyAlertsArmed();
+    showArmNotice(
+      delivered
+        ? 'Alerts on. If no system banner appeared, enable Google Chrome Helper (Alerts) in macOS System Settings → Notifications (Chrome needs both entries).'
+        : 'Alerts on, but the browser could not create a system notification. Check site and OS notification permissions.',
+    );
+  }, [preference, permission, supported, dismissArmNotice, showArmNotice]);
 
   return {
     enabled,
     preference,
     permission: supported ? permission : 'unsupported',
     supported,
+    armNotice,
     toggle,
+    dismissArmNotice,
   };
 }

@@ -3,6 +3,7 @@ import type { Movement } from './tracker';
 import {
   advanceAlertWatch,
   createAlertWatchState,
+  isAlertableMovement,
   movementKey,
 } from './movementAlerts';
 
@@ -29,10 +30,57 @@ describe('movementKey', () => {
   });
 });
 
+describe('isAlertableMovement', () => {
+  const primedAt = 1_700_000_000;
+
+  it('allows unconfirmed spends', () => {
+    expect(
+      isAlertableMovement({ confirmed: false }, primedAt, primedAt + 60),
+    ).toBe(true);
+  });
+
+  it('allows confirmed spends at or after prime time', () => {
+    expect(
+      isAlertableMovement(
+        { confirmed: true, blockTime: primedAt + 30 },
+        primedAt,
+        primedAt + 60,
+      ),
+    ).toBe(true);
+  });
+
+  it('allows slightly older blocks within the grace window', () => {
+    expect(
+      isAlertableMovement(
+        { confirmed: true, blockTime: primedAt - 5 * 60 },
+        primedAt,
+        primedAt + 60,
+      ),
+    ).toBe(true);
+  });
+
+  it('rejects historical confirmed spends without a recent block time', () => {
+    expect(
+      isAlertableMovement(
+        { confirmed: true, blockTime: primedAt - 86_400 },
+        primedAt,
+        primedAt + 60,
+      ),
+    ).toBe(false);
+  });
+
+  it('rejects confirmed spends missing block time', () => {
+    expect(
+      isAlertableMovement({ confirmed: true }, primedAt, primedAt + 60),
+    ).toBe(false);
+  });
+});
+
 describe('advanceAlertWatch', () => {
   it('does nothing while alerts are disabled without wiping priming', () => {
     const primed = {
       primed: true,
+      primedAtSec: 1_700_000_000,
       seen: new Set([movementKey(movement('old'))]),
     };
     const result = advanceAlertWatch(primed, [movement('new')], {
@@ -45,29 +93,36 @@ describe('advanceAlertWatch', () => {
 
   it('waits for the first ready poll before priming', () => {
     let state = createAlertWatchState();
+    const nowSec = 1_700_000_000;
 
-    // Preference on, but first poll has not finished — do not baseline yet.
     let result = advanceAlertWatch(state, [], {
       enabled: true,
       ready: false,
+      nowSec,
     });
     expect(result.state.primed).toBe(false);
     expect(result.toNotify).toEqual([]);
 
-    // First successful poll already includes a spend — baseline, no notify.
     result = advanceAlertWatch(result.state, [movement('tx-pass')], {
       enabled: true,
       ready: true,
+      nowSec,
     });
     expect(result.state.primed).toBe(true);
+    expect(result.state.primedAtSec).toBe(nowSec);
     expect(result.state.seen.has(movementKey(movement('tx-pass')))).toBe(true);
     expect(result.toNotify).toEqual([]);
 
-    // Later poll with a new spend — notify.
-    result = advanceAlertWatch(result.state, [
-      movement('tx-pass'),
-      movement('tx-new'),
-    ], { enabled: true, ready: true });
+    result = advanceAlertWatch(
+      result.state,
+      [
+        movement('tx-pass'),
+        movement('tx-new', 'bc1qvault', {
+          confirmed: false,
+        }),
+      ],
+      { enabled: true, ready: true, nowSec: nowSec + 60 },
+    );
     expect(result.toNotify.map((m) => m.txid)).toEqual(['tx-new']);
   });
 
@@ -76,41 +131,85 @@ describe('advanceAlertWatch', () => {
     const result = advanceAlertWatch(createAlertWatchState(), existing, {
       enabled: true,
       ready: true,
+      nowSec: 1_700_000_000,
     });
     expect(result.toNotify).toEqual([]);
     expect(result.state.seen.size).toBe(2);
   });
 
-  it('notifies only unseen spends after priming', () => {
+  it('notifies only unseen recent spends after priming', () => {
+    const nowSec = 1_700_000_000;
     const first = advanceAlertWatch(createAlertWatchState(), [], {
       enabled: true,
       ready: true,
+      nowSec,
     });
     const second = advanceAlertWatch(
       first.state,
-      [movement('a'), movement('b')],
-      { enabled: true, ready: true },
+      [
+        movement('a', 'bc1qvault', { confirmed: false }),
+        movement('b', 'bc1qvault', {
+          confirmed: true,
+          blockTime: nowSec + 10,
+        }),
+      ],
+      { enabled: true, ready: true, nowSec: nowSec + 60 },
     );
     expect(second.toNotify.map((m) => m.txid)).toEqual(['a', 'b']);
 
     const third = advanceAlertWatch(
       second.state,
-      [movement('a'), movement('b'), movement('c')],
-      { enabled: true, ready: true },
+      [
+        movement('a', 'bc1qvault', { confirmed: false }),
+        movement('b', 'bc1qvault', {
+          confirmed: true,
+          blockTime: nowSec + 10,
+        }),
+        movement('c', 'bc1qvault', { confirmed: false }),
+      ],
+      { enabled: true, ready: true, nowSec: nowSec + 120 },
     );
     expect(third.toNotify.map((m) => m.txid)).toEqual(['c']);
   });
 
+  it('marks rediscovered historical hops seen without notifying', () => {
+    const nowSec = 1_700_000_000;
+    const primed = advanceAlertWatch(createAlertWatchState(), [], {
+      enabled: true,
+      ready: true,
+      nowSec,
+    });
+    const next = advanceAlertWatch(
+      primed.state,
+      [
+        movement('old-hop', 'bc1qhop', {
+          hop: 2,
+          confirmed: true,
+          blockTime: nowSec - 86_400,
+        }),
+      ],
+      { enabled: true, ready: true, nowSec: nowSec + 60 },
+    );
+    expect(next.toNotify).toEqual([]);
+    expect(next.state.seen.has(movementKey(movement('old-hop', 'bc1qhop')))).toBe(
+      true,
+    );
+  });
+
   it('treats the same txid from a different address as fresh', () => {
+    const nowSec = 1_700_000_000;
     const primed = advanceAlertWatch(
       createAlertWatchState(),
-      [movement('same', 'bc1qfrom')],
-      { enabled: true, ready: true },
+      [movement('same', 'bc1qfrom', { confirmed: false })],
+      { enabled: true, ready: true, nowSec },
     );
     const next = advanceAlertWatch(
       primed.state,
-      [movement('same', 'bc1qfrom'), movement('same', 'bc1qother')],
-      { enabled: true, ready: true },
+      [
+        movement('same', 'bc1qfrom', { confirmed: false }),
+        movement('same', 'bc1qother', { confirmed: false }),
+      ],
+      { enabled: true, ready: true, nowSec: nowSec + 60 },
     );
     expect(next.toNotify).toHaveLength(1);
     expect(next.toNotify[0]?.fromAddress).toBe('bc1qother');

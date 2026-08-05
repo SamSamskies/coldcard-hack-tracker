@@ -27,6 +27,19 @@ export default function App() {
           usdPrice={data.usdPrice}
         />
 
+        {alerts.armNotice ? (
+          <div className="info-banner" role="status">
+            <p>{alerts.armNotice}</p>
+            <button
+              type="button"
+              className="refresh-btn"
+              onClick={alerts.dismissArmNotice}
+            >
+              Dismiss
+            </button>
+          </div>
+        ) : null}
+
         {data.error ? (
           <div className="error-banner" role="alert">
             <div>
