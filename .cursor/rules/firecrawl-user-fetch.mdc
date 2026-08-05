@@ -1,0 +1,32 @@
+---
+description: Prefer asking the user to curl known URLs before spending Firecrawl credits
+alwaysApply: true
+---
+
+# Firecrawl — ask user to fetch when it helps
+
+Firecrawl credits are limited (free plan ~1k/cycle). Prefer not burning them when a plain HTTP fetch would do.
+
+## When to ask the user first
+
+Before `firecrawl scrape` / `search --scrape` / crawl on a **known URL** that is likely static HTML (blog, advisory, docs, explorer page, GitHub raw, pastebin, etc.):
+
+1. **Stop and ask** the user to fetch it locally and save under `.firecrawl/` (gitignored), e.g.:
+
+   ```bash
+   curl -fsSL -A "Mozilla/5.0" "URL" -o .firecrawl/descriptive-name.html
+   ```
+
+2. Or ask them to paste the relevant HTML/markdown from the browser.
+
+3. Then read that file — do not re-scrape with Firecrawl unless the local fetch failed.
+
+## Still use Firecrawl (or say why)
+
+- Need **web search** / discover URLs (not a known link)
+- Page is JS-rendered, login-gated, or bot-walled (`curl` returns empty shell / challenge)
+- User already said to use Firecrawl / credits are fine for this fetch
+
+## Prefer over Firecrawl when available
+
+- X MCP for tweets; Esplora/`btc_cache` for on-chain; existing `.firecrawl/` dumps
