@@ -47,10 +47,22 @@ Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blo
 
 Do **not** call `search_posts_all` (App-Only + pay-per-use; MCP user OAuth 403s).
 
-1. `get_users_by_username` for: `glxyresearch`, `intangiblecoins`, `KevinKelbie`, `mariusoffchain`, `evands`, `TomerStrolight`, `Rob1Ham`, `jamesob`, `nunchuk_io`, `eriklocalhost`
-2. `get_users_posts` with `start_time` / `exclude=replies` on the accounts above
-3. `get_posts_by_id(s)` for thread replies and quoted posts
-4. **Keyword search only after user approval** — CLI recent search: `npx -y @xdevplatform/xurl search 'QUERY' -n 20` (≈ $0.005 × results). Ask with query + N + rough cost first; see rule `x-api-search-approval`.
+**Local cache (credits):** `.firecrawl/x-cache.sqlite` via `scripts/x_cache.py`.
+
+```bash
+python3 scripts/x_cache.py has POST_ID          # hit → skip MCP
+python3 scripts/x_cache.py get POST_ID
+python3 scripts/x_cache.py list-user mariusoffchain --since 2026-08-04T00:00:00Z
+# after MCP get_users_posts / get_posts_by_id:
+python3 scripts/x_cache.py put-posts --username mariusoffchain --start-time 2026-08-04T00:00:00Z < response.json
+python3 scripts/x_cache.py stats
+```
+
+1. Cache-check known post ids / `list-user` before MCP
+2. `get_users_by_username` for: `glxyresearch`, `intangiblecoins`, `KevinKelbie`, `mariusoffchain`, `evands`, `TomerStrolight`, `Rob1Ham`, `jamesob`, `nunchuk_io`, `eriklocalhost`
+3. `get_users_posts` with `start_time` / `exclude=replies` on the accounts above → **`put-posts`**
+4. `get_posts_by_id(s)` for thread replies and quoted posts → **`put-posts`**
+5. **Keyword search only after user approval** — CLI recent search: `npx -y @xdevplatform/xurl search 'QUERY' -n 20` (≈ $0.005 × results). Ask with query + N + rough cost first; see rule `x-api-search-approval`.
 
 ## Primary sources (encoded)
 
@@ -128,6 +140,7 @@ Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md). Arkham
 - `bc1qqa7p9qj89f6vg3yhuejhylty8l6626emj736pr` — OP_RETURN messenger hub (P2TR later-vault hop; Arkham OP_RETURN Messenger; stop hop-follow)
 - `bc1qesrvsn8g7ln6rmtru5kmuve4cma37r9gsrd78w` — OP_RETURN messenger hub (peels from bc1qqa7p9…; Arkham High Transacting + OP_RETURN Messenger)
 - `153La7Fb1p9JLeM26UGmwTXZuMdA9fWmav` — Binance deposit (batch from bc1qesrv…, block 961064; Arkham)
+- `bc1pdwu79dady576y3fupmm82m3g7p2p9f6hgyeqy0tdg7ztxg7xrayqlkl8j9` — Hyperunit hub (Arkham; Early Aug 2 CJ remix equal-denom peels — anonymity set, not proven same operator; stop hop-follow)
 
 ## Wave 3 pipeline
 

@@ -799,7 +799,18 @@ function EarlyAug2CoinJoinTrail() {
             other large outs remixed in further CJs (blks 961102–961160)
             <span className="cashout-note">
               {' '}
-              · no labeled exchange/bridge on the residual path
+              · some equal-denom peels (anonymity set — not proven same
+              operator) hit{' '}
+              <a
+                className="note-link"
+                href="https://arkm.com/explorer/address/bc1pdwu79dady576y3fupmm82m3g7p2p9f6hgyeqy0tdg7ztxg7xrayqlkl8j9"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Hyperunit
+              </a>
+              ; no labeled CEX on the unique-residual path. Still watching 2×
+              ~7.75 + unique ~3.40 residual
             </span>
           </dd>
         </div>

@@ -773,6 +773,13 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * Arkham: Binance deposit.
    */
   '153La7Fb1p9JLeM26UGmwTXZuMdA9fWmav': 'Binance deposit',
+  /**
+   * Hyperunit bridge hub — Arkham entity hyperunit. Appears as consolidate
+   * target from Hyperunit Deposit peels in Early Aug 2 Wasabi remix anonymity
+   * sets (not proven same operator as the 64 BTC residual). Stop hop-follow.
+   */
+  bc1pdwu79dady576y3fupmm82m3g7p2p9f6hgyeqy0tdg7ztxg7xrayqlkl8j9:
+    'Hyperunit hub',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
