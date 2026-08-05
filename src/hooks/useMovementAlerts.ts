@@ -68,7 +68,7 @@ function notifyMovement(m: Movement) {
 function notifyAlertsArmed(): boolean {
   return showNotification(
     APP_NAME,
-    'Movement alerts on — you will be notified when holdings or hops spend.',
+    'Movement alerts on — holdings and hop-1 spends only (not terminal hop remixes).',
     `alerts-armed-${Date.now()}`,
   );
 }

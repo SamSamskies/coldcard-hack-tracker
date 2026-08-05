@@ -29,10 +29,10 @@ export function IncidentHeader({
     alertsPermission === 'denied'
       ? 'Notifications are blocked in browser settings'
       : alertsEnabled
-        ? 'Browser notification when holdings or followed hops spend. Toggle off and on to send a test notification.'
+        ? 'Browser notification when holdings or hop-1 destinations spend (not terminal hop remixes). Toggle off and on to send a test notification.'
         : awaitingPermission
           ? 'Click to grant browser permission for movement alerts'
-          : 'Click to allow notifications when holdings or hops spend (sends a test notification)';
+          : 'Click to allow notifications when holdings or hop-1 destinations spend (sends a test notification)';
   const alertsStatus =
     alertsPermission === 'denied'
       ? 'Blocked'

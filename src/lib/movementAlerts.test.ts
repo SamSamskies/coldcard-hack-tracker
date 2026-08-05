@@ -35,14 +35,18 @@ describe('isAlertableMovement', () => {
 
   it('allows unconfirmed spends', () => {
     expect(
-      isAlertableMovement({ confirmed: false }, primedAt, primedAt + 60),
+      isAlertableMovement(
+        { confirmed: false, hop: 0 },
+        primedAt,
+        primedAt + 60,
+      ),
     ).toBe(true);
   });
 
   it('allows confirmed spends at or after prime time', () => {
     expect(
       isAlertableMovement(
-        { confirmed: true, blockTime: primedAt + 30 },
+        { confirmed: true, blockTime: primedAt + 30, hop: 1 },
         primedAt,
         primedAt + 60,
       ),
@@ -52,7 +56,7 @@ describe('isAlertableMovement', () => {
   it('allows slightly older blocks within the grace window', () => {
     expect(
       isAlertableMovement(
-        { confirmed: true, blockTime: primedAt - 5 * 60 },
+        { confirmed: true, blockTime: primedAt - 5 * 60, hop: 0 },
         primedAt,
         primedAt + 60,
       ),
@@ -62,7 +66,7 @@ describe('isAlertableMovement', () => {
   it('rejects historical confirmed spends without a recent block time', () => {
     expect(
       isAlertableMovement(
-        { confirmed: true, blockTime: primedAt - 86_400 },
+        { confirmed: true, blockTime: primedAt - 86_400, hop: 0 },
         primedAt,
         primedAt + 60,
       ),
@@ -71,7 +75,17 @@ describe('isAlertableMovement', () => {
 
   it('rejects confirmed spends missing block time', () => {
     expect(
-      isAlertableMovement({ confirmed: true }, primedAt, primedAt + 60),
+      isAlertableMovement({ confirmed: true, hop: 0 }, primedAt, primedAt + 60),
+    ).toBe(false);
+  });
+
+  it('rejects terminal hop spends even when unconfirmed', () => {
+    expect(
+      isAlertableMovement(
+        { confirmed: false, hop: 2 },
+        primedAt,
+        primedAt + 60,
+      ),
     ).toBe(false);
   });
 });
@@ -194,6 +208,33 @@ describe('advanceAlertWatch', () => {
     expect(next.state.seen.has(movementKey(movement('old-hop', 'bc1qhop')))).toBe(
       true,
     );
+  });
+
+  it('marks terminal hop spends seen without notifying', () => {
+    const nowSec = 1_700_000_000;
+    const primed = advanceAlertWatch(createAlertWatchState(), [], {
+      enabled: true,
+      ready: true,
+      nowSec,
+    });
+    const next = advanceAlertWatch(
+      primed.state,
+      [
+        movement('cj-remix', 'bc1qhop2', {
+          hop: 2,
+          confirmed: false,
+        }),
+        movement('vault-out', 'bc1qvault', {
+          hop: 0,
+          confirmed: false,
+        }),
+      ],
+      { enabled: true, ready: true, nowSec: nowSec + 60 },
+    );
+    expect(next.toNotify.map((m) => m.txid)).toEqual(['vault-out']);
+    expect(
+      next.state.seen.has(movementKey(movement('cj-remix', 'bc1qhop2'))),
+    ).toBe(true);
   });
 
   it('treats the same txid from a different address as fresh', () => {

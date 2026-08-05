@@ -1,3 +1,4 @@
+import { MAX_HOP_DEPTH } from '../data/incident';
 import type { Movement } from './tracker';
 
 export function movementKey(m: Pick<Movement, 'txid' | 'fromAddress'>): string {
@@ -20,12 +21,16 @@ export function createAlertWatchState(): AlertWatchState {
  * Only alert for spends that look new relative to when alerts were primed.
  * Unconfirmed always qualifies. Confirmed needs a block time at/after prime
  * (small grace for clock / block-timestamp skew).
+ *
+ * Terminal hop spends (`hop >= MAX_HOP_DEPTH`) are never alerted — same cutoff
+ * as hop follow / freeze (CoinJoin remix fan-outs are feed noise, not exits).
  */
 export function isAlertableMovement(
-  m: Pick<Movement, 'confirmed' | 'blockTime'>,
+  m: Pick<Movement, 'confirmed' | 'blockTime' | 'hop'>,
   primedAtSec: number,
   nowSec: number = Math.floor(Date.now() / 1000),
 ): boolean {
+  if (m.hop >= MAX_HOP_DEPTH) return false;
   if (!m.confirmed) return true;
   if (m.blockTime == null) return false;
   // 10-minute grace: a block mined just before priming can still be "new".
