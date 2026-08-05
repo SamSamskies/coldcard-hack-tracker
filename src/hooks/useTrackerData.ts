@@ -26,6 +26,7 @@ import { fetchSnapshot, type Snapshot } from '../lib/snapshot';
 import {
   dedupeMovements,
   discoverNextHops,
+  frozenTerminalHopAddresses,
   heldStats,
   movementsFromWatch,
   omitKnownExitChurn,
@@ -273,6 +274,12 @@ export function useTrackerData(): TrackerData {
     const known = new Set(HOLDING_ADDRESSES.map((h) => h.address));
     const allMovements = movementsFromWatch(activeSeeds, activeSeedTxLists);
 
+    const frozenHops = frozenTerminalHopAddresses([
+      ...snapshotMovementsRef.current,
+      ...liveMovementsRef.current,
+    ]);
+    for (const addr of frozenHops) known.add(addr);
+
     hopWatchRef.current.clear();
     const freshHops = discoverNextHops(
       activeSeeds,
@@ -281,12 +288,18 @@ export function useTrackerData(): TrackerData {
       MAX_HOP_WATCH_ADDRESSES,
     );
     for (const hop of freshHops) {
+      if (frozenHops.has(hop.address)) continue;
       hopWatchRef.current.set(hop.address, hop);
       known.add(hop.address);
     }
 
     let hopWatches = [...hopWatchRef.current.values()]
-      .filter((w) => w.hop >= 1 && w.hop <= MAX_HOP_DEPTH)
+      .filter(
+        (w) =>
+          w.hop >= 1 &&
+          w.hop <= MAX_HOP_DEPTH &&
+          !frozenHops.has(w.address),
+      )
       .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
       .slice(0, MAX_HOP_WATCH_ADDRESSES);
 
@@ -299,21 +312,29 @@ export function useTrackerData(): TrackerData {
         (w) => fetchAddressTxs(w.address).catch(() => [] as Tx[]),
       );
       allMovements.push(...movementsFromWatch(hopWatches, hopTxLists));
+      for (const m of allMovements) {
+        if (m.hop >= MAX_HOP_DEPTH) {
+          frozenHops.add(m.fromAddress);
+          known.add(m.fromAddress);
+        }
+      }
 
       const slotsLeft = MAX_HOP_WATCH_ADDRESSES - hopWatchRef.current.size;
       const next = discoverNextHops(hopWatches, hopTxLists, known, slotsLeft);
       if (next.length === 0) break;
 
       for (const hop of next) {
+        if (frozenHops.has(hop.address)) continue;
         hopWatchRef.current.set(hop.address, hop);
         known.add(hop.address);
       }
 
-      hopWatches = next;
+      hopWatches = next.filter((w) => !frozenHops.has(w.address));
     }
 
     const keep = new Set(
       [...hopWatchRef.current.values()]
+        .filter((w) => !frozenHops.has(w.address))
         .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
         .slice(0, MAX_HOP_WATCH_ADDRESSES)
         .map((w) => w.address),

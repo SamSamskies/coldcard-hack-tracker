@@ -4,6 +4,7 @@ import type { Tx } from './mempool';
 import {
   dedupeMovements,
   discoverNextHops,
+  frozenTerminalHopAddresses,
   heldStats,
   isKnownExitAddress,
   isPostWatch,
@@ -17,7 +18,7 @@ import {
   type Movement,
   type WatchTarget,
 } from './tracker';
-
+import { MAX_HOP_DEPTH } from '../data/incident';
 function makeTx(partial: {
   txid?: string;
   vin: Tx['vin'];
@@ -302,6 +303,35 @@ describe('discoverNextHops', () => {
 
     const next = discoverNextHops([watch], [[tx]], new Set([vault]), 8);
     expect(next.map((w) => w.address)).toEqual([big]);
+  });
+
+  it('skips rediscovery when terminal hop is already in known (frozen)', () => {
+    const tx = makeTx({
+      vin: [{ prevout: { scriptpubkey_address: vault, value: 41_000_000 } }],
+      vout: [{ scriptpubkey_address: big, value: 40_900_000 }],
+      blockHeight: WATCH_AFTER_BLOCK + 5,
+    });
+    const frozen = frozenTerminalHopAddresses([
+      {
+        fromAddress: big,
+        hop: MAX_HOP_DEPTH,
+      },
+    ]);
+    const known = new Set([vault, ...frozen]);
+    expect(discoverNextHops([watch], [[tx]], known, 8)).toEqual([]);
+  });
+});
+
+describe('frozenTerminalHopAddresses', () => {
+  it('collects only max-depth fromAddresses', () => {
+    const moves: Pick<Movement, 'fromAddress' | 'hop'>[] = [
+      { fromAddress: 'a', hop: 0 },
+      { fromAddress: 'b', hop: 1 },
+      { fromAddress: 'c', hop: 2 },
+      { fromAddress: 'd', hop: 2 },
+      { fromAddress: 'c', hop: 2 },
+    ];
+    expect([...frozenTerminalHopAddresses(moves)].sort()).toEqual(['c', 'd']);
   });
 });
 

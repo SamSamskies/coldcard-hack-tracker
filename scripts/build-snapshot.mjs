@@ -781,6 +781,18 @@ async function main() {
   const allMovements = [];
   const known = new Set(holdings.map((h) => h.address));
   const hopWatch = new Map();
+  const fetchedTxAddrs = new Set();
+
+  const frozenHops = new Set();
+  for (const m of prior.movements) {
+    if (m && typeof m.fromAddress === 'string' && (m.hop ?? 0) >= MAX_HOP_DEPTH) {
+      frozenHops.add(m.fromAddress);
+      known.add(m.fromAddress);
+    }
+  }
+  if (frozenHops.size > 0) {
+    console.log(`Skipping ${frozenHops.size} frozen terminal hop(s)…`);
+  }
 
   if (activeSeeds.length > 0) {
     console.log(`Fetching txs for ${activeSeeds.length} moved seeds…`);
@@ -789,6 +801,7 @@ async function main() {
       (w) => `/api/address/${w.address}/txs`,
     );
     const seedTxLists = seedBatch.map((r) => r.data ?? []);
+    for (const w of activeSeeds) fetchedTxAddrs.add(w.address);
     allMovements.push(...movementsFromWatch(activeSeeds, seedTxLists));
 
     const fresh = discoverNextHops(
@@ -798,12 +811,18 @@ async function main() {
       MAX_HOP_WATCH_ADDRESSES,
     );
     for (const hop of fresh) {
+      if (frozenHops.has(hop.address)) continue;
       hopWatch.set(hop.address, hop);
       known.add(hop.address);
     }
 
     let hopWatches = [...hopWatch.values()]
-      .filter((w) => w.hop >= 1 && w.hop <= MAX_HOP_DEPTH)
+      .filter(
+        (w) =>
+          w.hop >= 1 &&
+          w.hop <= MAX_HOP_DEPTH &&
+          !frozenHops.has(w.address),
+      )
       .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
       .slice(0, MAX_HOP_WATCH_ADDRESSES);
 
@@ -813,24 +832,35 @@ async function main() {
         (w) => `/api/address/${w.address}/txs`,
       );
       const hopTxLists = hopBatch.map((r) => r.data ?? []);
+      for (const w of hopWatches) fetchedTxAddrs.add(w.address);
       allMovements.push(...movementsFromWatch(hopWatches, hopTxLists));
+      // Newly emitted terminal hops freeze for the rest of this run's discovery.
+      for (const m of allMovements) {
+        if ((m.hop ?? 0) >= MAX_HOP_DEPTH) {
+          frozenHops.add(m.fromAddress);
+          known.add(m.fromAddress);
+        }
+      }
       const slotsLeft = MAX_HOP_WATCH_ADDRESSES - hopWatch.size;
       const next = discoverNextHops(hopWatches, hopTxLists, known, slotsLeft);
       if (next.length === 0) break;
       for (const hop of next) {
+        if (frozenHops.has(hop.address)) continue;
         hopWatch.set(hop.address, hop);
         known.add(hop.address);
       }
-      hopWatches = next;
+      hopWatches = next.filter((w) => !frozenHops.has(w.address));
     }
   }
 
-  const preservedFromNoPoll = prior.movements.filter(
+  // Keep prior rows for addresses we did not re-fetch (no-poll seeds, frozen
+  // terminal hops, and hop trails that were not rediscovered this run).
+  const preservedUnwatched = prior.movements.filter(
     (m) =>
       m &&
       typeof m.txid === 'string' &&
       typeof m.fromAddress === 'string' &&
-      noPollAddrs.has(m.fromAddress) &&
+      !fetchedTxAddrs.has(m.fromAddress) &&
       !isKnownExitAddress(m.fromAddress),
   );
 
@@ -850,7 +880,7 @@ async function main() {
     })),
     movements: dedupeMovements([
       ...allMovements.filter((m) => !isKnownExitAddress(m.fromAddress)),
-      ...preservedFromNoPoll,
+      ...preservedUnwatched,
     ]),
   };
 

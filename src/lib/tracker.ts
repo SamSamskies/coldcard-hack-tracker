@@ -318,6 +318,22 @@ export function dedupeMovements(items: Movement[]): Movement[] {
   return sortMovements([...byKey.values()]);
 }
 
+/**
+ * Terminal hop addresses that already have a recorded outbound at max depth.
+ * Skip rediscovery /txs for these — further hops are not followed, and
+ * re-polling usually only reprints CoinJoin fan-outs.
+ */
+export function frozenTerminalHopAddresses(
+  movements: readonly Pick<Movement, 'fromAddress' | 'hop'>[],
+  maxHop: number = MAX_HOP_DEPTH,
+): Set<string> {
+  const out = new Set<string>();
+  for (const m of movements) {
+    if (m.hop >= maxHop) out.add(m.fromAddress);
+  }
+  return out;
+}
+
 export function heldStats(
   heldBtc: number,
   consolidatedBtc: number,
