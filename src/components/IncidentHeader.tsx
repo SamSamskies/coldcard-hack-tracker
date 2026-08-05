@@ -6,7 +6,9 @@ type Props = {
   alertsPreference: boolean;
   alertsSupported: boolean;
   alertsPermission: string;
+  armNotice: string | null;
   onToggleAlerts: () => void;
+  onDismissArmNotice: () => void;
   usdPrice: number | null;
 };
 
@@ -15,7 +17,9 @@ export function IncidentHeader({
   alertsPreference,
   alertsSupported,
   alertsPermission,
+  armNotice,
   onToggleAlerts,
+  onDismissArmNotice,
   usdPrice,
 }: Props) {
   const alertsDisabled = alertsPermission === 'denied';
@@ -48,25 +52,39 @@ export function IncidentHeader({
         </div>
 
         {alertsSupported ? (
-          <div
-            className={`alerts-toggle${alertsDisabled ? ' is-disabled' : ''}`}
-            title={alertsTitle}
-          >
-            <span className="alerts-toggle-text">
-              Alerts
-              <span className="alerts-toggle-state">{alertsStatus}</span>
-            </span>
-            <button
-              type="button"
-              className="alerts-switch"
-              role="switch"
-              aria-checked={alertsEnabled}
-              aria-label="Movement alerts"
-              disabled={alertsDisabled}
-              onClick={onToggleAlerts}
+          <div className="alerts-controls">
+            <div
+              className={`alerts-toggle${alertsDisabled ? ' is-disabled' : ''}`}
+              title={alertsTitle}
             >
-              <span className="alerts-switch-thumb" aria-hidden="true" />
-            </button>
+              <span className="alerts-toggle-text">
+                Alerts
+                <span className="alerts-toggle-state">{alertsStatus}</span>
+              </span>
+              <button
+                type="button"
+                className="alerts-switch"
+                role="switch"
+                aria-checked={alertsEnabled}
+                aria-label="Movement alerts"
+                disabled={alertsDisabled}
+                onClick={onToggleAlerts}
+              >
+                <span className="alerts-switch-thumb" aria-hidden="true" />
+              </button>
+            </div>
+            {armNotice ? (
+              <div className="alerts-arm-notice" role="status">
+                <p>{armNotice}</p>
+                <button
+                  type="button"
+                  className="alerts-arm-dismiss"
+                  onClick={onDismissArmNotice}
+                >
+                  Dismiss
+                </button>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

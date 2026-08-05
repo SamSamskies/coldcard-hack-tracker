@@ -190,6 +190,52 @@ button:focus-visible {
   user-select: none;
 }
 
+.alerts-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+  max-width: min(22rem, 100%);
+  flex-shrink: 0;
+}
+
+.alerts-arm-notice {
+  display: grid;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--bg-elevated);
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.alerts-arm-notice p {
+  margin: 0;
+}
+
+.alerts-arm-dismiss {
+  appearance: none;
+  justify-self: end;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.alerts-arm-dismiss:hover {
+  color: var(--text-muted);
+}
+
 .alerts-toggle.is-disabled {
   opacity: 0.55;
   cursor: not-allowed;
@@ -263,26 +309,6 @@ button:focus-visible {
   background: var(--alert-bg);
   border-radius: var(--radius);
   font-size: 0.92rem;
-}
-
-.info-banner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.75rem 1rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--line);
-  background: var(--bg-elevated);
-  border-radius: var(--radius);
-  font-size: 0.92rem;
-}
-
-.info-banner p {
-  margin: 0;
-  flex: 1;
-  min-width: 12rem;
-  line-height: 1.45;
 }
 
 .error-detail {

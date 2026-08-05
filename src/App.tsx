@@ -21,24 +21,13 @@ export default function App() {
           alertsPreference={alerts.preference}
           alertsSupported={alerts.supported}
           alertsPermission={alerts.permission}
+          armNotice={alerts.armNotice}
           onToggleAlerts={() => {
             void alerts.toggle();
           }}
+          onDismissArmNotice={alerts.dismissArmNotice}
           usdPrice={data.usdPrice}
         />
-
-        {alerts.armNotice ? (
-          <div className="info-banner" role="status">
-            <p>{alerts.armNotice}</p>
-            <button
-              type="button"
-              className="refresh-btn"
-              onClick={alerts.dismissArmNotice}
-            >
-              Dismiss
-            </button>
-          </div>
-        ) : null}
 
         {data.error ? (
           <div className="error-banner" role="alert">

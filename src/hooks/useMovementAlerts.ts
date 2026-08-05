@@ -186,8 +186,8 @@ export function useMovementAlerts(
     const delivered = notifyAlertsArmed();
     showArmNotice(
       delivered
-        ? 'Alerts on. If no system banner appeared, enable Google Chrome Helper (Alerts) in macOS System Settings → Notifications (Chrome needs both entries).'
-        : 'Alerts on, but the browser could not create a system notification. Check site and OS notification permissions.',
+        ? 'Alerts on. No system banner? Enable Chrome in macOS Settings → Notifications.'
+        : 'Alerts on, but the browser could not create a system notification. Check site and OS permissions.',
     );
   }, [preference, permission, supported, dismissArmNotice, showArmNotice]);
 
