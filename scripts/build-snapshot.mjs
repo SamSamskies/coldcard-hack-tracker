@@ -713,7 +713,7 @@ async function main() {
   let reportFallback = 0;
   let synthEmpty = 0;
 
-  for (const h of holdings) {
+    for (const h of holdings) {
     if (!h.pollBalance) {
       synthEmpty++;
       addresses.push({
@@ -721,6 +721,14 @@ async function main() {
         balanceSats: 0,
         utxoCount: 0,
         ok: true,
+      });
+      // Still walk /txs so hop trails stay in the movement feed.
+      // Must match shouldWatchSeedMovements(h, 0) in src/lib/tracker.ts.
+      activeSeeds.push({
+        address: h.address,
+        label: h.label,
+        hop: 0,
+        reportBtc: h.reportBtc,
       });
       continue;
     }
@@ -736,6 +744,7 @@ async function main() {
         utxoCount: Math.max(0, utxoEstimate(addr)),
         ok: true,
       });
+      // statusFor !== 'held' — same as shouldWatchSeedMovements for polled holdings
       if (statusFor(balanceBtc, h.reportBtc) !== 'held') {
         activeSeeds.push({
           address: h.address,

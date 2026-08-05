@@ -58,6 +58,21 @@ export function shouldTrackSeedOutbounds(
   return statusFor(balanceBtc, reportBtc) !== 'held';
 }
 
+/**
+ * Whether a holding should get `/txs` walks for the movement feed.
+ *
+ * `pollBalance: false` only skips *balance* polls (synth 0). Those emptied
+ * vaults must still be movement seeds — otherwise hop trails disappear from
+ * the feed on the next snapshot/live refresh.
+ */
+export function shouldWatchSeedMovements(
+  h: { pollBalance?: boolean; reportBtc: number },
+  balanceBtc: number,
+): boolean {
+  if (h.pollBalance === false) return true;
+  return shouldTrackSeedOutbounds(balanceBtc, h.reportBtc);
+}
+
 export function isPostWatch(tx: Tx): boolean {
   const height = tx.status.block_height;
   return (

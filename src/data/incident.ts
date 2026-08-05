@@ -459,19 +459,20 @@ export type HoldingAddress = {
   clusterId: ClusterId;
   note?: string;
   /**
-   * When false, skip Esplora polls and treat live balance as 0 (emptied).
-   * Default true. Still shown on the dashboard; KPIs use synth 0.
+   * When false, skip Esplora *balance* polls and treat live balance as 0 (emptied).
+   * Default true. Still shown on the dashboard; movement-feed `/txs` walks continue
+   * so hop trails are not dropped. Terminal hop-2 watches freeze separately.
    */
   pollBalance?: boolean;
 };
 
-/** Whether live/snapshot should fetch this holding from Esplora. */
+/** Whether live/snapshot should fetch this holding's balance from Esplora. */
 export function shouldPollBalance(h: HoldingAddress): boolean {
   return h.pollBalance !== false;
 }
 
 /**
- * Confirmed-empty core holdings (0 sats) — skip Esplora polls.
+ * Confirmed-empty core holdings (0 sats) — skip Esplora balance polls.
  * Do not add dust leftovers here; synth 0 must match on-chain for KPIs.
  */
 export const NO_POLL_BALANCE_ADDRESSES = [

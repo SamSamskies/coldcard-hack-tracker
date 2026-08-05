@@ -30,7 +30,7 @@ import {
   heldStats,
   movementsFromWatch,
   omitKnownExitChurn,
-  shouldTrackSeedOutbounds,
+  shouldWatchSeedMovements,
   statusFor,
   type AddressStatus,
   type Movement,
@@ -251,11 +251,16 @@ export function useTrackerData(): TrackerData {
 
     const activeSeeds: WatchTarget[] = [];
     const activeAddrs: string[] = [];
-    for (const h of pollCores) {
-      const summary = summaryByAddr.get(h.address);
-      if (!summary) continue;
-      const balanceBtc = satsToBtc(addressBalanceSats(summary));
-      if (!shouldTrackSeedOutbounds(balanceBtc, h.reportBtc)) continue;
+    for (const h of CORE_HOLDING_ADDRESSES) {
+      const balanceBtc = shouldPollBalance(h)
+        ? (() => {
+            const summary = summaryByAddr.get(h.address);
+            if (!summary) return null;
+            return satsToBtc(addressBalanceSats(summary));
+          })()
+        : 0;
+      if (balanceBtc == null) continue;
+      if (!shouldWatchSeedMovements(h, balanceBtc)) continue;
       activeSeeds.push({
         address: h.address,
         label: h.label,

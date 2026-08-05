@@ -20,7 +20,7 @@ import {
   shouldPollBalance,
   type ClusterId,
 } from '../data/incident';
-import { heldStats, statusFor } from '../lib/tracker';
+import { heldStats, shouldWatchSeedMovements, statusFor } from '../lib/tracker';
 import { WAVE3_VAULT_COUNT } from './wave3Vaults';
 
 describe('incident data invariants', () => {
@@ -177,7 +177,7 @@ describe('incident data invariants', () => {
     expect(WAVE3_FINGERPRINT.matchedHeldBtc).toBeLessThan(WAVE3_FINGERPRINT.galaxyHeldBtc);
   });
 
-  it('skips Esplora polls only for the documented empty cores', () => {
+  it('skips Esplora balance polls only for the documented empty cores', () => {
     const noPoll = CORE_HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h));
     expect(noPoll.map((h) => h.address).sort()).toEqual(
       [...NO_POLL_BALANCE_ADDRESSES].sort(),
@@ -193,6 +193,22 @@ describe('incident data invariants', () => {
       expect(h!.reportBtc).toBeGreaterThan(0);
       expect(statusFor(0, h!.reportBtc)).toBe('emptied');
     }
+  });
+
+  it('still seeds movement-feed tx walks for every pollBalance:false holding', () => {
+    // Regression: treating pollBalance:false like "stop all Esplora" dropped
+    // hop 1/2 rows from the movement feed on the next snapshot rebuild.
+    const movementSeeds = CORE_HOLDING_ADDRESSES.filter((h) =>
+      shouldWatchSeedMovements(h, shouldPollBalance(h) ? h.reportBtc : 0),
+    );
+    for (const addr of NO_POLL_BALANCE_ADDRESSES) {
+      expect(movementSeeds.some((h) => h.address === addr)).toBe(true);
+    }
+    expect(
+      CORE_HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h)).every((h) =>
+        shouldWatchSeedMovements(h, 0),
+      ),
+    ).toBe(true);
   });
 
   it('keeps KPIs identical when synth-0 replaces a fetched-0 for no-poll holdings', () => {

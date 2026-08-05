@@ -13,6 +13,7 @@ import {
   omitKnownExitChurn,
   orderTxsForBalance,
   shouldTrackSeedOutbounds,
+  shouldWatchSeedMovements,
   sortMovements,
   statusFor,
   type Movement,
@@ -61,6 +62,27 @@ describe('shouldTrackSeedOutbounds (surplus pass-through)', () => {
   it('tracks outbounds once the reported stack is touched', () => {
     expect(shouldTrackSeedOutbounds(reportBtc * 0.5, reportBtc)).toBe(true);
     expect(shouldTrackSeedOutbounds(0, reportBtc)).toBe(true);
+  });
+});
+
+describe('shouldWatchSeedMovements', () => {
+  it('always watches txs for pollBalance:false even though balance polls stop', () => {
+    // Regression: skipping /txs for no-poll empties dropped all hop rows from
+    // the movement feed after the next snapshot.
+    const emptied = { pollBalance: false as const, reportBtc: 64.9 };
+    expect(shouldWatchSeedMovements(emptied, 0)).toBe(true);
+  });
+
+  it('does not watch held polled vaults', () => {
+    const held = { reportBtc: 10 };
+    expect(shouldWatchSeedMovements(held, 10)).toBe(false);
+    expect(shouldWatchSeedMovements(held, 10.001)).toBe(false);
+  });
+
+  it('watches polled vaults once emptied or partial', () => {
+    const vault = { reportBtc: 10 };
+    expect(shouldWatchSeedMovements(vault, 0)).toBe(true);
+    expect(shouldWatchSeedMovements(vault, 5)).toBe(true);
   });
 });
 
