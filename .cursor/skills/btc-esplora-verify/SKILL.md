@@ -37,6 +37,12 @@ For cluster/fingerprint policy, also read
 - Pace **≥400ms** between calls to the **same** Esplora host.
 - On 429 / 5xx: sleep, switch mirror, retry once; then ask the user.
 - Write dumps under `.firecrawl/` or `/tmp` — do not commit raw explorer JSON.
+- **Confirmed-tx research cache** (optional): `.firecrawl/chain-cache.sqlite` via
+  `scripts/btc_cache.py`. Before re-fetching a known txid, `has-tx` / `get-tx`
+  with `--tip $(curl …/tip/height)` so tip-adjacent txs miss (default ≥6
+  confirmations; shallow reorgs). After Esplora pull, `put-tx` /
+  `put-address-txs`. Separate from the X tweet cache. **Do not** cache
+  tip/mempool/live balance; do not use for snapshot cron or the movement feed.
 
 ```bash
 HOST=https://mempool.bitaroo.net

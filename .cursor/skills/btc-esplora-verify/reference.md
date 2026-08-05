@@ -27,6 +27,22 @@ Fee sat/vB (same as Wave 3 scanner):
 fee / (weight / 4)
 ```
 
+## Local confirmed-tx cache
+
+`.firecrawl/chain-cache.sqlite` via `scripts/btc_cache.py` (not the X tweet DB).
+
+```bash
+TIP=$(curl -fsS "$HOST/api/blocks/tip/height")
+python3 scripts/btc_cache.py has-tx TXID --tip "$TIP"
+python3 scripts/btc_cache.py get-tx TXID --tip "$TIP"
+python3 scripts/btc_cache.py put-tx < tx.json
+python3 scripts/btc_cache.py put-address-txs "$ADDR" < txs.json
+python3 scripts/btc_cache.py stats
+```
+
+Pass `--tip` on reads so txs with &lt; 6 confirmations miss (reorg window).
+Refresh address pages after new spends. Not for snapshot/UI.
+
 ## Outbound from an address
 
 A tx is outbound if some `vin[].prevout.scriptpubkey_address === $ADDR`.
