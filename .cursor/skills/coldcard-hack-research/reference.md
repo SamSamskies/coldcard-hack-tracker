@@ -127,7 +127,7 @@ Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md). Arkham
 - `324H9uyTV9bPgAVgmdJNxPKKKZmowk5CYq` — Bullish.com hot wallet (custodian sweep after 3CTp; stop hop-follow)
 - `3CdVzfAe6Aw9K4oSPYXC7BR1xLxCPkxAUs` — Bullish.com (feeds 324H9; Arkham)
 - `bc1qactqjuk4kghfgaqqt454hzzzs5lsaysunf80gh` — P2WPKH service hub (Wave 4 hop, block 960797)
-- `bc1qrqlamjhy2qp0xj5mxv4sx7ra9qfmfxllf93l26` — P2WPKH service hub (Wave 4 peel from bc1q40y6… @960794; Arkham High Transacting; ~1.5M txs)
+- `bc1qrqlamjhy2qp0xj5mxv4sx7ra9qfmfxllf93l26` — P2WPKH service hub (Wave 4 peel from bc1q40y6… @960794; surplus peels e.g. 961114, 961194; Arkham High Transacting; ~1.5M txs)
 - `bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms` — Coinbase Prime Custody (Wave 4 hop, block 960818; Arkham)
 - `1KbDEg1tDz2ErYgaDbaDhhawnLrSQFaFx5` — Wintermute (Bullish hot-wallet peel target; Arkham)
 - `328GxewqTzMxLPvLemaKS7Q5Wi1io8EEYD` — KuCoin deposit (evening sibling peel, block 960802; Arkham cluster 27fe)
