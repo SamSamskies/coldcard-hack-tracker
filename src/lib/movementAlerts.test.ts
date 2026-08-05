@@ -30,7 +30,7 @@ describe('movementKey', () => {
 });
 
 describe('advanceAlertWatch', () => {
-  it('does nothing while alerts are disabled', () => {
+  it('does nothing while alerts are disabled without wiping priming', () => {
     const primed = {
       primed: true,
       seen: new Set([movementKey(movement('old'))]),
@@ -40,7 +40,7 @@ describe('advanceAlertWatch', () => {
       ready: true,
     });
     expect(result.toNotify).toEqual([]);
-    expect(result.state).toEqual(createAlertWatchState());
+    expect(result.state).toEqual(primed);
   });
 
   it('waits for the first ready poll before priming', () => {

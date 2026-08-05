@@ -283,14 +283,27 @@ export function useTrackerData(): TrackerData {
       ...snapshotMovementsRef.current,
       ...liveMovementsRef.current,
     ]);
-    for (const addr of frozenHops) known.add(addr);
+    for (const addr of frozenHops) {
+      known.add(addr);
+      hopWatchRef.current.delete(addr);
+    }
 
-    hopWatchRef.current.clear();
+    // Keep hop watches across polls. Clearing every refresh made hops drop out
+    // whenever a /txs fetch failed, then "pop back" into the feed already marked
+    // seen — so movement alerts never fired for those rows.
+    for (const w of hopWatchRef.current.values()) {
+      if (w.hop >= 1 && w.hop <= MAX_HOP_DEPTH) known.add(w.address);
+    }
+
+    const openSlots = Math.max(
+      0,
+      MAX_HOP_WATCH_ADDRESSES - hopWatchRef.current.size,
+    );
     const freshHops = discoverNextHops(
       activeSeeds,
       activeSeedTxLists,
       known,
-      MAX_HOP_WATCH_ADDRESSES,
+      openSlots,
     );
     for (const hop of freshHops) {
       if (frozenHops.has(hop.address)) continue;

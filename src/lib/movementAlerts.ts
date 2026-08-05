@@ -27,7 +27,10 @@ export function advanceAlertWatch(
   options: { enabled: boolean; ready: boolean },
 ): { state: AlertWatchState; toNotify: Movement[] } {
   if (!options.enabled) {
-    return { state: createAlertWatchState(), toNotify: [] };
+    // Keep priming state. Resetting here on every disabled pass made a brief
+    // enabled=false frame (e.g. preference hydration) wipe the watch and
+    // re-baseline real spends as "already seen".
+    return { state, toNotify: [] };
   }
 
   if (!options.ready) {

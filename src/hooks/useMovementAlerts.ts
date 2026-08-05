@@ -39,13 +39,12 @@ function writePreference(enabled: boolean) {
   }
 }
 
-function notifyMovement(m: Movement) {
-  const hop = m.hop > 0 ? ` (hop ${m.hop})` : '';
-  const body = `${formatBtc(m.amountBtc)} BTC left ${m.fromLabel}${hop}`;
+function showNotification(title: string, body: string, tag: string) {
+  if (Notification.permission !== 'granted') return;
   try {
-    const n = new Notification(APP_NAME, {
+    const n = new Notification(title, {
       body,
-      tag: movementKey(m),
+      tag,
     });
     n.onclick = () => {
       window.focus();
@@ -54,6 +53,20 @@ function notifyMovement(m: Movement) {
   } catch {
     // Some browsers throw if permission flipped mid-session.
   }
+}
+
+function notifyMovement(m: Movement) {
+  const hop = m.hop > 0 ? ` (hop ${m.hop})` : '';
+  const body = `${formatBtc(m.amountBtc)} BTC left ${m.fromLabel}${hop}`;
+  showNotification(APP_NAME, body, movementKey(m));
+}
+
+function notifyAlertsArmed() {
+  showNotification(
+    APP_NAME,
+    'Movement alerts on — you will be notified when holdings or hops spend.',
+    'alerts-armed',
+  );
 }
 
 /**
@@ -70,7 +83,11 @@ export function useMovementAlerts(
   const supported =
     typeof window !== 'undefined' && 'Notification' in window;
 
-  const [preference, setPreference] = useState(false);
+  // Read preference synchronously so the first watch pass is not run with
+  // enabled=false (which resets priming and can swallow the next real spend).
+  const [preference, setPreference] = useState(() =>
+    supported ? readPreference() : false,
+  );
   const [permission, setPermission] = useState<AlertPermission>(() =>
     supported ? Notification.permission : 'unsupported',
   );
@@ -82,7 +99,6 @@ export function useMovementAlerts(
 
   useEffect(() => {
     if (!supported) return;
-    setPreference(readPreference());
     setPermission(Notification.permission);
   }, [supported]);
 
@@ -127,6 +143,7 @@ export function useMovementAlerts(
     writePreference(true);
     watchRef.current = createAlertWatchState();
     setPreference(true);
+    notifyAlertsArmed();
   }, [preference, permission, supported]);
 
   return {
