@@ -593,7 +593,7 @@ function P2trLaterVaultCashout() {
           target="_blank"
           rel="noreferrer"
         >
-          VAL
+          @osint_based
         </a>
         ) · Aug 4 — BTC→THOR hop soft
       </p>

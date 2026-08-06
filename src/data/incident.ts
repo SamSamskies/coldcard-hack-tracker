@@ -386,7 +386,7 @@ export const SOURCES = [
     url: 'https://x.com/KevinKelbie/status/2084294469126361372',
   },
   {
-    label: 'VAL · P2TR later-vault ETH rail',
+    label: '@osint_based · P2TR later-vault ETH rail',
     note: 'Aug 5: later P2TR vault cash-out — ~205 ETH via THORChain into 0x41B752… → 200 ETH Tornado Cash (2×100). Same Kelbie later vault (bc1p0l0…), not a new cluster; BTC→THOR amount/path soft through commingled hubs. ~4.44 BTC still parked on bc1prjnv….',
     url: 'https://x.com/osint_based/status/2084913457921429800',
   },
@@ -581,7 +581,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'P2TR vault',
     reportBtc: P2TR_WAVE.laterVaultBtc,
     clusterId: 'p2tr-aug1',
-    note: 'Later sibling; fees mostly ~5 sat/vB with 25/40 bands (blocks 960773–960897). Emptied Aug 4 — trail below. ETH side ([VAL](https://x.com/osint_based/status/2084913457921429800)): ~205 ETH via THORChain into [0x41B752…](https://etherscan.io/address/0x41B7529a411EeA979a8d468bdEBd36b0ad703268) → 200 ETH Tornado (2×100); BTC→THOR hop soft (commingled hubs). ~4.44 BTC still on Taproot park [bc1prjnv…](address:bc1prjnvz77lhd3t6kdxt34x4yzgwu4qfdgyges8h6qhwldj60z5mcqs7pprpr).',
+    note: 'Later sibling; fees mostly ~5 sat/vB with 25/40 bands (blocks 960773–960897). Emptied Aug 4 — trail below. ETH side ([@osint_based](https://x.com/osint_based/status/2084913457921429800)): ~205 ETH via THORChain into [0x41B752…](https://etherscan.io/address/0x41B7529a411EeA979a8d468bdEBd36b0ad703268) → 200 ETH Tornado (2×100); BTC→THOR hop soft (commingled hubs). ~4.44 BTC still on Taproot park [bc1prjnv…](address:bc1prjnvz77lhd3t6kdxt34x4yzgwu4qfdgyges8h6qhwldj60z5mcqs7pprpr).',
   },
   {
     address: 'bc1q05g20l8k0tqjks9sq73mqgqx48pmw2cknju0ml',
