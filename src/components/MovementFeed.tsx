@@ -26,8 +26,9 @@ export function MovementFeed({ movements, loading }: Props) {
           Outbound spends of the reported consolidation from watched holdings,
           then followed destinations (up to hop {MAX_HOP_DEPTH}). Stops at known
           exchange, bridge, and service-hub exits — later custodian churn is not
-          listed. Later surplus that passes through a vault while its reported
-          balance remains is ignored.
+          listed. Surplus through a vault that still holds its reported balance,
+          and later peels through a hop after it already cashed out to a known
+          exit, are ignored.
         </p>
       </div>
 

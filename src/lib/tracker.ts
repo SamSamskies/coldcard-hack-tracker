@@ -182,6 +182,29 @@ export function isSurplusPassThrough(
   return false;
 }
 
+/**
+ * True when an earlier outbound from this address already hit a labeled exit
+ * (exchange / bridge / service hub). Later receive→peel cycles on hop parks
+ * are pass-through reuse, not stolen-stack movement.
+ */
+export function isPostKnownExitPassThrough(
+  address: string,
+  txs: readonly Tx[],
+  txid: string,
+): boolean {
+  const ordered = orderTxsForBalance(txs);
+  let sawKnownExit = false;
+
+  for (const tx of ordered) {
+    if (tx.txid === txid) return sawKnownExit;
+
+    const { amountSats, destinations } = outboundFromAddress(tx, address);
+    if (amountSats <= 0) continue;
+    if (destinations.some(isKnownExitAddress)) sawKnownExit = true;
+  }
+  return false;
+}
+
 function shouldEmitOutbound(
   watch: WatchTarget,
   txs: readonly Tx[],
@@ -193,6 +216,9 @@ function shouldEmitOutbound(
     watch.reportBtc != null &&
     isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
   ) {
+    return false;
+  }
+  if (isPostKnownExitPassThrough(watch.address, txs, tx.txid)) {
     return false;
   }
   return true;

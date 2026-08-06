@@ -537,6 +537,22 @@ function isSurplusPassThrough(address, reportBtc, txs, txid) {
   return false;
 }
 
+/**
+ * Earlier outbound already hit a labeled exit — later hop peels are pass-through.
+ * Mirrors src/lib/tracker.ts isPostKnownExitPassThrough.
+ */
+function isPostKnownExitPassThrough(address, txs, txid) {
+  const ordered = orderTxsForBalance(txs);
+  let sawKnownExit = false;
+  for (const tx of ordered) {
+    if (tx.txid === txid) return sawKnownExit;
+    const { amountSats, destinations } = outboundFromAddress(tx, address);
+    if (amountSats <= 0) continue;
+    if (destinations.some(isKnownExitAddress)) sawKnownExit = true;
+  }
+  return false;
+}
+
 function shouldEmitOutbound(watch, txs, tx) {
   if (!isPostWatch(tx)) return false;
   if (outboundFromAddress(tx, watch.address).amountSats <= 0) return false;
@@ -544,6 +560,9 @@ function shouldEmitOutbound(watch, txs, tx) {
     watch.reportBtc != null &&
     isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
   ) {
+    return false;
+  }
+  if (isPostKnownExitPassThrough(watch.address, txs, tx.txid)) {
     return false;
   }
   return true;

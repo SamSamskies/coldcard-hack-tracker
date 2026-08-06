@@ -7,6 +7,7 @@ import {
   frozenTerminalHopAddresses,
   heldStats,
   isKnownExitAddress,
+  isPostKnownExitPassThrough,
   isPostWatch,
   isSurplusPassThrough,
   movementsFromWatch,
@@ -220,6 +221,64 @@ describe('movementsFromWatch', () => {
 
     const moves = movementsFromWatch([seed], [txs]);
     expect(moves.map((m) => m.txid)).toEqual(['empty-stack']);
+  });
+
+  it('keeps the first hop peel to a known exit, drops later pass-throughs', () => {
+    // Wave 4-style hop park: stolen cash-out to a service hub, then the same
+    // address keeps receiving unrelated sats and peeling them to the hub.
+    // Hop watches have no reportBtc, so the seed surplus filter cannot help.
+    const exitAddr = Object.keys(KNOWN_ADDRESS_LABELS)[0]!;
+    const park = hop;
+    const stolenSats = 1_123_566;
+    const surplusSats = 401_567;
+
+    const fundStolen = makeTx({
+      txid: 'fund-stolen',
+      vin: [{ prevout: { scriptpubkey_address: vault, value: stolenSats } }],
+      vout: [{ scriptpubkey_address: park, value: stolenSats }],
+      blockHeight: WATCH_AFTER_BLOCK + 10,
+    });
+    const cashOut = makeTx({
+      txid: 'cash-out',
+      vin: [
+        {
+          txid: 'fund-stolen',
+          prevout: { scriptpubkey_address: park, value: stolenSats },
+        },
+      ],
+      vout: [{ scriptpubkey_address: exitAddr, value: stolenSats - 264 }],
+      blockHeight: WATCH_AFTER_BLOCK + 11,
+    });
+    const fundSurplus = makeTx({
+      txid: 'fund-surplus',
+      vin: [{ prevout: { scriptpubkey_address: vault, value: surplusSats } }],
+      vout: [{ scriptpubkey_address: park, value: surplusSats }],
+      blockHeight: WATCH_AFTER_BLOCK + 50,
+    });
+    const surplusPeel = makeTx({
+      txid: 'surplus-peel',
+      vin: [
+        {
+          txid: 'fund-surplus',
+          prevout: { scriptpubkey_address: park, value: surplusSats },
+        },
+      ],
+      vout: [{ scriptpubkey_address: exitAddr, value: surplusSats - 132 }],
+      blockHeight: WATCH_AFTER_BLOCK + 51,
+    });
+
+    const txs = [surplusPeel, fundSurplus, cashOut, fundStolen]; // newest-first
+    const hopWatch: WatchTarget = {
+      address: park,
+      label: 'Hop 1 · bc1qho…xxxx',
+      hop: 1,
+    };
+
+    expect(isPostKnownExitPassThrough(park, txs, 'cash-out')).toBe(false);
+    expect(isPostKnownExitPassThrough(park, txs, 'surplus-peel')).toBe(true);
+
+    const moves = movementsFromWatch([hopWatch], [txs]);
+    expect(moves.map((m) => m.txid)).toEqual(['cash-out']);
   });
 });
 
