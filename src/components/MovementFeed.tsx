@@ -27,8 +27,8 @@ export function MovementFeed({ movements, loading }: Props) {
           then followed destinations (up to hop {MAX_HOP_DEPTH}). Stops at known
           exchange, bridge, and service-hub exits — later custodian churn is not
           listed. Surplus through a vault that still holds its reported balance,
-          and later peels through a hop after it already cashed out to a known
-          exit, are ignored.
+          later peels through a hop after it already cashed out to a known exit,
+          and CoinJoin-scale fan-outs are ignored.
         </p>
       </div>
 

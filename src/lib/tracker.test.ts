@@ -6,12 +6,15 @@ import {
   discoverNextHops,
   frozenTerminalHopAddresses,
   heldStats,
+  isHighFanoutSpend,
   isKnownExitAddress,
   isPostKnownExitPassThrough,
   isPostWatch,
   isSurplusPassThrough,
   movementsFromWatch,
+  omitHighFanoutMovements,
   omitKnownExitChurn,
+  omitPostKnownExitPassThroughMovements,
   orderTxsForBalance,
   shouldTrackSeedOutbounds,
   shouldWatchSeedMovements,
@@ -20,7 +23,7 @@ import {
   type Movement,
   type WatchTarget,
 } from './tracker';
-import { MAX_HOP_DEPTH } from '../data/incident';
+import { MAX_HOP_DEPTH, MAX_MOVEMENT_DESTINATIONS } from '../data/incident';
 function makeTx(partial: {
   txid?: string;
   vin: Tx['vin'];
@@ -280,6 +283,72 @@ describe('movementsFromWatch', () => {
     const moves = movementsFromWatch([hopWatch], [txs]);
     expect(moves.map((m) => m.txid)).toEqual(['cash-out']);
   });
+
+  it('does not let a surplus peel to a known exit freeze the later empty', () => {
+    const exitAddr = Object.keys(KNOWN_ADDRESS_LABELS)[0]!;
+    const reportSats = 50_000_000;
+    const minerSats = 6_000_000;
+    const fundReport = makeTx({
+      txid: 'fund-report',
+      vin: [{ prevout: { scriptpubkey_address: hop, value: reportSats } }],
+      vout: [{ scriptpubkey_address: vault, value: reportSats }],
+      blockHeight: WATCH_AFTER_BLOCK + 1,
+    });
+    const fundMiner = makeTx({
+      txid: 'fund-miner',
+      vin: [{ prevout: { scriptpubkey_address: hop, value: minerSats } }],
+      vout: [{ scriptpubkey_address: vault, value: minerSats }],
+      blockHeight: WATCH_AFTER_BLOCK + 2,
+    });
+    const oceanPeel = makeTx({
+      txid: 'ocean-peel',
+      vin: [{ prevout: { scriptpubkey_address: vault, value: minerSats } }],
+      vout: [{ scriptpubkey_address: exitAddr, value: minerSats - 1_000 }],
+      blockHeight: WATCH_AFTER_BLOCK + 3,
+    });
+    const empty = makeTx({
+      txid: 'empty-stack',
+      vin: [{ prevout: { scriptpubkey_address: vault, value: reportSats } }],
+      vout: [{ scriptpubkey_address: hop, value: reportSats - 1_000 }],
+      blockHeight: WATCH_AFTER_BLOCK + 4,
+    });
+    const txs = [empty, oceanPeel, fundMiner, fundReport];
+    const seed: WatchTarget = {
+      address: vault,
+      label: 'Aug 1 hop vault',
+      hop: 0,
+      reportBtc: reportSats / 100_000_000,
+    };
+
+    expect(
+      isPostKnownExitPassThrough(vault, txs, 'empty-stack', seed.reportBtc),
+    ).toBe(false);
+    expect(movementsFromWatch([seed], [txs]).map((m) => m.txid)).toEqual([
+      'empty-stack',
+    ]);
+  });
+
+  it('skips CoinJoin-scale fan-out spends', () => {
+    const outs = Array.from({ length: MAX_MOVEMENT_DESTINATIONS + 1 }, (_, i) => ({
+      scriptpubkey_address: `bc1qcj${String(i).padStart(37, 'x')}`,
+      value: 1_000_000,
+    }));
+    const tx = makeTx({
+      txid: 'cj-remix',
+      vin: [
+        {
+          prevout: {
+            scriptpubkey_address: vault,
+            value: outs.reduce((s, o) => s + o.value, 0) + 500,
+          },
+        },
+      ],
+      vout: outs,
+      blockHeight: WATCH_AFTER_BLOCK + 5,
+    });
+    expect(isHighFanoutSpend(outs.length)).toBe(true);
+    expect(movementsFromWatch([watch], [[tx]])).toEqual([]);
+  });
 });
 
 describe('discoverNextHops', () => {
@@ -386,6 +455,26 @@ describe('discoverNextHops', () => {
     expect(next.map((w) => w.address)).toEqual([big]);
   });
 
+  it('does not follow CoinJoin-scale fan-out spends', () => {
+    const outs = Array.from({ length: MAX_MOVEMENT_DESTINATIONS + 1 }, (_, i) => ({
+      scriptpubkey_address: i === 0 ? big : `bc1qcj${String(i).padStart(37, 'x')}`,
+      value: 1_000_000,
+    }));
+    const tx = makeTx({
+      vin: [
+        {
+          prevout: {
+            scriptpubkey_address: vault,
+            value: outs.reduce((s, o) => s + o.value, 0),
+          },
+        },
+      ],
+      vout: outs,
+      blockHeight: WATCH_AFTER_BLOCK + 5,
+    });
+    expect(discoverNextHops([watch], [[tx]], new Set([vault]), 8)).toEqual([]);
+  });
+
   it('skips rediscovery when terminal hop is already in known (frozen)', () => {
     const tx = makeTx({
       vin: [{ prevout: { scriptpubkey_address: vault, value: 41_000_000 } }],
@@ -454,6 +543,46 @@ describe('known exit churn filter', () => {
       fromAddress: exitAddr,
     };
     expect(omitKnownExitChurn([kept, dropped])).toEqual([kept]);
+  });
+
+  it('omitHighFanoutMovements drops CJ-scale destination lists', () => {
+    const dests = Array.from(
+      { length: MAX_MOVEMENT_DESTINATIONS + 1 },
+      (_, i) => `bc1qcj${String(i).padStart(37, 'x')}`,
+    );
+    const kept: Movement = {
+      txid: 'keep',
+      fromAddress: 'bc1qvaultxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+      fromLabel: 'Vault',
+      amountBtc: 1,
+      destinations: [further],
+      hop: 1,
+      confirmed: true,
+      blockHeight: WATCH_AFTER_BLOCK + 1,
+    };
+    const dropped: Movement = {
+      ...kept,
+      txid: 'cj',
+      destinations: dests,
+    };
+    expect(omitHighFanoutMovements([kept, dropped])).toEqual([kept]);
+  });
+
+  it('omitPostKnownExitPassThroughMovements keeps first exit cash-in only', () => {
+    const park = 'bc1qparkxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+    const base: Omit<Movement, 'txid' | 'blockHeight'> = {
+      fromAddress: park,
+      fromLabel: 'Hop',
+      amountBtc: 0.01,
+      destinations: [exitAddr],
+      hop: 1,
+      confirmed: true,
+    };
+    const first: Movement = { ...base, txid: 'first', blockHeight: 100 };
+    const later: Movement = { ...base, txid: 'later', blockHeight: 200 };
+    expect(omitPostKnownExitPassThroughMovements([later, first])).toEqual([
+      first,
+    ]);
   });
 });
 

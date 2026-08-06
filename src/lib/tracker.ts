@@ -2,6 +2,7 @@ import {
   KNOWN_ADDRESS_LABELS,
   MAX_DESTINATIONS_PER_SPEND,
   MAX_HOP_DEPTH,
+  MAX_MOVEMENT_DESTINATIONS,
   MIN_HOP_FOLLOW_SATS,
   SATS_PER_BTC,
   WATCH_AFTER_BLOCK,
@@ -11,6 +12,11 @@ import { outboundFromAddress, satsToBtc, type Tx } from './mempool';
 /** Exchange / bridge / service hub — show the cash-in, do not chase custodian churn. */
 export function isKnownExitAddress(address: string): boolean {
   return Object.hasOwn(KNOWN_ADDRESS_LABELS, address);
+}
+
+/** CoinJoin / mixer fan-out — not a trackable stolen-stack peel. */
+export function isHighFanoutSpend(destinationCount: number): boolean {
+  return destinationCount > MAX_MOVEMENT_DESTINATIONS;
 }
 
 export type AddressStatus = 'held' | 'partial' | 'emptied';
@@ -183,14 +189,18 @@ export function isSurplusPassThrough(
 }
 
 /**
- * True when an earlier outbound from this address already hit a labeled exit
- * (exchange / bridge / service hub). Later receive→peel cycles on hop parks
- * are pass-through reuse, not stolen-stack movement.
+ * True when an earlier *stolen-stack* outbound from this address already hit a
+ * labeled exit (exchange / bridge / service hub). Later receive→peel cycles on
+ * hop parks are pass-through reuse, not stolen-stack movement.
+ *
+ * Surplus peels (seed `reportBtc` still intact) do not count — an Ocean peel
+ * into a shared hub must not freeze the later empty of the reported stack.
  */
 export function isPostKnownExitPassThrough(
   address: string,
   txs: readonly Tx[],
   txid: string,
+  reportBtc?: number,
 ): boolean {
   const ordered = orderTxsForBalance(txs);
   let sawKnownExit = false;
@@ -200,6 +210,12 @@ export function isPostKnownExitPassThrough(
 
     const { amountSats, destinations } = outboundFromAddress(tx, address);
     if (amountSats <= 0) continue;
+    if (
+      reportBtc != null &&
+      isSurplusPassThrough(address, reportBtc, txs, tx.txid)
+    ) {
+      continue;
+    }
     if (destinations.some(isKnownExitAddress)) sawKnownExit = true;
   }
   return false;
@@ -211,14 +227,23 @@ function shouldEmitOutbound(
   tx: Tx,
 ): boolean {
   if (!isPostWatch(tx)) return false;
-  if (outboundFromAddress(tx, watch.address).amountSats <= 0) return false;
+  const { amountSats, destinations } = outboundFromAddress(tx, watch.address);
+  if (amountSats <= 0) return false;
+  if (isHighFanoutSpend(destinations.length)) return false;
   if (
     watch.reportBtc != null &&
     isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
   ) {
     return false;
   }
-  if (isPostKnownExitPassThrough(watch.address, txs, tx.txid)) {
+  if (
+    isPostKnownExitPassThrough(
+      watch.address,
+      txs,
+      tx.txid,
+      watch.reportBtc,
+    )
+  ) {
     return false;
   }
   return true;
@@ -260,6 +285,48 @@ export function movementsFromWatch(
 /** Drop stale snapshot rows that are peels from labeled exit venues. */
 export function omitKnownExitChurn(items: readonly Movement[]): Movement[] {
   return items.filter((m) => !isKnownExitAddress(m.fromAddress));
+}
+
+/** Drop CoinJoin / mixer fan-out rows (incl. stale snapshot). */
+export function omitHighFanoutMovements(
+  items: readonly Movement[],
+): Movement[] {
+  return items.filter((m) => !isHighFanoutSpend(m.destinations.length));
+}
+
+/**
+ * Drop later peels from an address after it already cashed out to a known exit
+ * (list-level; covers stale snapshot rows without re-walking txs).
+ */
+export function omitPostKnownExitPassThroughMovements(
+  items: readonly Movement[],
+): Movement[] {
+  const chronological = [...items].sort((a, b) => {
+    const ka = a.confirmed
+      ? (a.blockHeight ?? a.blockTime ?? 0)
+      : Number.MAX_SAFE_INTEGER;
+    const kb = b.confirmed
+      ? (b.blockHeight ?? b.blockTime ?? 0)
+      : Number.MAX_SAFE_INTEGER;
+    if (ka !== kb) return ka - kb;
+    return a.txid.localeCompare(b.txid);
+  });
+
+  const cashedOut = new Set<string>();
+  const drop = new Set<string>();
+
+  for (const m of chronological) {
+    const key = `${m.txid}:${m.fromAddress}`;
+    if (cashedOut.has(m.fromAddress)) {
+      drop.add(key);
+      continue;
+    }
+    if (m.destinations.some(isKnownExitAddress)) {
+      cashedOut.add(m.fromAddress);
+    }
+  }
+
+  return items.filter((m) => !drop.has(`${m.txid}:${m.fromAddress}`));
 }
 
 function hopLabel(address: string, hop: number): string {

@@ -797,6 +797,12 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
 export const MAX_HOP_DEPTH = 2;
 /** Cap fan-out per spend so public mempool polling stays cheap. */
 export const MAX_DESTINATIONS_PER_SPEND = 3;
+/**
+ * Spends with more destination addresses than this are treated as CoinJoin /
+ * mixer fan-out (Wasabi remixes are hundreds of outs). Wave 4 multi-park peels
+ * stay under this. Do not emit or hop-follow those spends.
+ */
+export const MAX_MOVEMENT_DESTINATIONS = 50;
 /** Ignore dust-sized hop destinations. */
 export const MIN_HOP_FOLLOW_SATS = 1_000_000; // 0.01 BTC
 /** Hard cap on extra addresses watched beyond the seed holdings. */

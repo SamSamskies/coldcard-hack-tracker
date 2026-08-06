@@ -29,7 +29,9 @@ import {
   frozenTerminalHopAddresses,
   heldStats,
   movementsFromWatch,
+  omitHighFanoutMovements,
   omitKnownExitChurn,
+  omitPostKnownExitPassThroughMovements,
   shouldWatchSeedMovements,
   statusFor,
   type AddressStatus,
@@ -127,10 +129,14 @@ export function useTrackerData(): TrackerData {
   const publishMovements = useCallback(() => {
     setMovements(
       dedupeMovements(
-        omitKnownExitChurn([
-          ...snapshotMovementsRef.current,
-          ...liveMovementsRef.current,
-        ]),
+        omitPostKnownExitPassThroughMovements(
+          omitHighFanoutMovements(
+            omitKnownExitChurn([
+              ...snapshotMovementsRef.current,
+              ...liveMovementsRef.current,
+            ]),
+          ),
+        ),
       ),
     );
   }, []);

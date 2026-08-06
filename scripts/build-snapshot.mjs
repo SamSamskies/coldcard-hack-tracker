@@ -28,6 +28,7 @@ const MAX_ATTEMPTS = 4;
 const MOP_UP_ROUNDS = 2;
 const WATCH_AFTER_BLOCK = 960_400;
 const MAX_DESTINATIONS_PER_SPEND = 3;
+const MAX_MOVEMENT_DESTINATIONS = 50;
 const MIN_HOP_FOLLOW_SATS = 1_000_000;
 const MAX_HOP_DEPTH = 2;
 const MAX_HOP_WATCH_ADDRESSES = 16;
@@ -539,15 +540,21 @@ function isSurplusPassThrough(address, reportBtc, txs, txid) {
 
 /**
  * Earlier outbound already hit a labeled exit — later hop peels are pass-through.
- * Mirrors src/lib/tracker.ts isPostKnownExitPassThrough.
+ * Surplus peels (reportBtc intact) do not count. Mirrors src/lib/tracker.ts.
  */
-function isPostKnownExitPassThrough(address, txs, txid) {
+function isPostKnownExitPassThrough(address, txs, txid, reportBtc) {
   const ordered = orderTxsForBalance(txs);
   let sawKnownExit = false;
   for (const tx of ordered) {
     if (tx.txid === txid) return sawKnownExit;
     const { amountSats, destinations } = outboundFromAddress(tx, address);
     if (amountSats <= 0) continue;
+    if (
+      reportBtc != null &&
+      isSurplusPassThrough(address, reportBtc, txs, tx.txid)
+    ) {
+      continue;
+    }
     if (destinations.some(isKnownExitAddress)) sawKnownExit = true;
   }
   return false;
@@ -555,14 +562,23 @@ function isPostKnownExitPassThrough(address, txs, txid) {
 
 function shouldEmitOutbound(watch, txs, tx) {
   if (!isPostWatch(tx)) return false;
-  if (outboundFromAddress(tx, watch.address).amountSats <= 0) return false;
+  const { amountSats, destinations } = outboundFromAddress(tx, watch.address);
+  if (amountSats <= 0) return false;
+  if (destinations.length > MAX_MOVEMENT_DESTINATIONS) return false;
   if (
     watch.reportBtc != null &&
     isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
   ) {
     return false;
   }
-  if (isPostKnownExitPassThrough(watch.address, txs, tx.txid)) {
+  if (
+    isPostKnownExitPassThrough(
+      watch.address,
+      txs,
+      tx.txid,
+      watch.reportBtc,
+    )
+  ) {
     return false;
   }
   return true;
@@ -590,6 +606,48 @@ function movementsFromWatch(watches, txLists) {
     }
   });
   return items;
+}
+
+function omitHighFanoutMovements(items) {
+  return items.filter(
+    (m) => !(m.destinations?.length > MAX_MOVEMENT_DESTINATIONS),
+  );
+}
+
+function omitPostKnownExitPassThroughMovements(items) {
+  const chronological = [...items].sort((a, b) => {
+    const ka = a.confirmed
+      ? (a.blockHeight ?? a.blockTime ?? 0)
+      : Number.MAX_SAFE_INTEGER;
+    const kb = b.confirmed
+      ? (b.blockHeight ?? b.blockTime ?? 0)
+      : Number.MAX_SAFE_INTEGER;
+    if (ka !== kb) return ka - kb;
+    return String(a.txid).localeCompare(String(b.txid));
+  });
+  const cashedOut = new Set();
+  const drop = new Set();
+  for (const m of chronological) {
+    const key = `${m.txid}:${m.fromAddress}`;
+    if (cashedOut.has(m.fromAddress)) {
+      drop.add(key);
+      continue;
+    }
+    if ((m.destinations || []).some(isKnownExitAddress)) {
+      cashedOut.add(m.fromAddress);
+    }
+  }
+  return items.filter((m) => !drop.has(`${m.txid}:${m.fromAddress}`));
+}
+
+function finalizeMovements(items) {
+  return dedupeMovements(
+    omitPostKnownExitPassThroughMovements(
+      omitHighFanoutMovements(
+        items.filter((m) => !isKnownExitAddress(m.fromAddress)),
+      ),
+    ),
+  );
 }
 
 function discoverNextHops(watches, txLists, known, slotsLeft) {
@@ -906,8 +964,8 @@ async function main() {
       balanceSats,
       utxoCount,
     })),
-    movements: dedupeMovements([
-      ...allMovements.filter((m) => !isKnownExitAddress(m.fromAddress)),
+    movements: finalizeMovements([
+      ...allMovements,
       ...preservedUnwatched,
     ]),
   };
