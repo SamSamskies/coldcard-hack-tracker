@@ -22,7 +22,7 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
 - [ ] Follow hops (depth ≤2, ≥0.01 BTC, ≤3 dests/spend, block > 960400)
 - [ ] Skip surplus pass-through / Ocean peels
 - [ ] Identify destination role (see table)
-- [ ] Label with evidence (Arkham / primary report) — or leave unlabeled
+- [ ] Label with evidence (Arkham / OKLink / primary report) — or leave unlabeled
 - [ ] Edit data + optional UI rail; npm test; snapshot if holdings changed
 ```
 
@@ -46,10 +46,19 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
 2. **Arkham** (primary label source used in this repo):
    `https://arkm.com/explorer/address/{ADDR}`
    Firecrawl/scrape the page; if blocked, ask user for the entity name / screenshot.
-3. Cross-check community X (X MCP `get_users_posts` on known reporters /
+3. **OKLink** (secondary entity-tag cross-check):
+   `https://www.oklink.com/btc/address/{ADDR}`
+   Useful when Arkham is blocked or ambiguous — exchange tags often match
+   (e.g. KuCoin, Bullish, Coinbase cold wallets). Prefer WebFetch / ask the
+   user to open the page; plain `curl` and Firecrawl frequently **403**. Do
+   **not** use OKLink for balances, fee fingerprints, hop follow, or snapshot
+   cron — Esplora stays canonical. Explorer REST APIs were suspended (~May
+   2025); there is no free Esplora-style API to wire in. Unlabeled high-volume
+   hubs may stay blank on OKLink even when Arkham has a soft tag.
+4. Cross-check community X (X MCP `get_users_posts` on known reporters /
    `get_posts_by_id`; **not** `search_posts_all`; xcancel fallback) only as
-   leads — prefer Arkham or explorer entity tags with a cited block height.
-4. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
+   leads — prefer Arkham / OKLink entity tags with a cited block height.
+5. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
    `Bullish.com deposit`, `THORChain BTC vault`, `P2SH service hub`). Prefer
    “deposit” / “hub” / “vault” so empty balances read correctly.
 
@@ -71,7 +80,7 @@ Never “fix” emptied vaults by zeroing `reportBtc`.
 ### Always (known exit)
 
 Add to `KNOWN_ADDRESS_LABELS` in `src/data/incident.ts` with a short comment:
-cluster/wave, block height, evidence (Arkham / reporter).
+cluster/wave, block height, evidence (Arkham / OKLink / reporter).
 
 Also mirror the address in `coldcard-hack-research/reference.md` → Known exit labels.
 
@@ -79,7 +88,8 @@ Also mirror the address in `coldcard-hack-research/reference.md` → Known exit 
 
 Update `AddressList` cash-out rails / peels only when the path is user-facing and
 stable (evening three rails, Wave 4 peels). Link Arkham with
-`https://arkm.com/explorer/address/{addr}` or explorer via `explorerAddressUrl`.
+`https://arkm.com/explorer/address/{addr}`, OKLink with
+`https://www.oklink.com/btc/address/{addr}`, or explorer via `explorerAddressUrl`.
 
 ### Never without primary evidence
 
