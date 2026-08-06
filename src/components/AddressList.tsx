@@ -585,6 +585,49 @@ function P2trLaterVaultCashout() {
           </li>
         ))}
       </ul>
+      <p className="cashout-flow-sublabel">
+        Parallel ETH rail (
+        <a
+          className="note-link"
+          href="https://x.com/osint_based/status/2084913457921429800"
+          target="_blank"
+          rel="noreferrer"
+        >
+          VAL
+        </a>
+        ) · Aug 4 — BTC→THOR hop soft
+      </p>
+      <ul className="addr-peels">
+        <li>
+          <span className="addr-peel-amt">~205 ETH</span>
+          <span className="cashout-arrow" aria-hidden="true">
+            →
+          </span>
+          <a
+            className="note-link"
+            href="https://etherscan.io/address/0x41B7529a411EeA979a8d468bdEBd36b0ad703268"
+            target="_blank"
+            rel="noreferrer"
+          >
+            0x41B752… (via THORChain)
+          </a>
+        </li>
+        <li>
+          <span className="addr-peel-amt">200 ETH</span>
+          <span className="cashout-arrow" aria-hidden="true">
+            →
+          </span>
+          <a
+            className="note-link"
+            href="https://etherscan.io/address/0xd90e2f925DA726b50C4Ed8D0Fb90Ad053324F31b"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Tornado.Cash Router
+          </a>
+          <span> · 2×100</span>
+        </li>
+      </ul>
     </div>
   );
 }

@@ -81,6 +81,7 @@ python3 scripts/x_cache.py stats
 - Rob Hamilton (early): `https://x.com/Rob1Ham/status/2082896614218203616`
 - Kevin Kelbie (W2 vault): `https://x.com/KevinKelbie/status/2083368025864990857`
 - Kevin Kelbie (P2TR wave): `https://x.com/KevinKelbie/status/2084294469126361372`
+- VAL (P2TR later-vault THOR→Tornado ETH rail): `https://x.com/osint_based/status/2084913457921429800`
 - Evan Schoenberg (evening): `https://x.com/evands/status/2083505832587587945`
 - Tomer Strolight (morning): `https://x.com/TomerStrolight/status/2083578868191957292`
 - Marius Offchain (early Aug 2): `https://x.com/mariusoffchain/status/2083814011859030252`
