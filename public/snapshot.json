@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-07T03:24:56.965Z",
+  "updatedAt": "2026-08-07T05:11:20.532Z",
   "source": "mempool.space",
-  "usdPrice": 64264,
+  "usdPrice": 64195,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
-      "balanceSats": 56202129099,
-      "utxoCount": 49
+      "balanceSats": 56202129421,
+      "utxoCount": 50
     },
     {
       "address": "bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3",
@@ -520,7 +520,9 @@
         "bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n"
       ],
       "hop": 0,
-      "confirmed": false
+      "confirmed": true,
+      "blockHeight": 961368,
+      "blockTime": 1786073712
     },
     {
       "txid": "24ee02cf811911764953ac7fd96e1b75db9356de55443b49339cbd5caa7d11f2",
