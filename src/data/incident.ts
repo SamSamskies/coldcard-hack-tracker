@@ -259,7 +259,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 2 · July 31',
     stolenBtc: 76.16,
     date: '2026-07-31',
-    note: 'Two fee bands into a watched vault plus an unmoved collector.',
+    note: 'Two fee bands into a watched vault plus a collector; collector emptied Aug 7 into a hop still holding ~30.18 BTC.',
     sourceUrl: 'https://x.com/glxyresearch/status/2083560940469981591',
   },
   {
@@ -347,7 +347,7 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 export const SOURCES = [
   {
     label: 'Galaxy Research · $100M update',
-    note: 'Aug 3: high-confidence 1,596 BTC / ~7,300 addresses across Waves 1–3 + 14 owner-confirmed footprints; candidate Wave 4 would bring ~2,055 BTC. Multiple independent attackers. Waves 1–3 coins still unmoved.',
+    note: 'Aug 3: high-confidence 1,596 BTC / ~7,300 addresses across Waves 1–3 + 14 owner-confirmed footprints; candidate Wave 4 would bring ~2,055 BTC. Multiple independent attackers. Waves 1–3 coins then still unmoved (Wave 2 collector later emptied Aug 7).',
     url: 'https://x.com/glxyresearch/status/2084411904924045370',
   },
   {
@@ -530,7 +530,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 2 collector',
     reportBtc: 30.18476329,
     clusterId: 'galaxy-july31',
-    note: 'Unmoved collector from 93 sweeps at ~10 sat/vB. [Chainabuse victim](https://chainabuse.com/report/d4c95fab-ed8e-4749-ae81-9d42bfdab1cb).',
+    note: 'Collector from 93 sweeps at ~10 sat/vB. Emptied Aug 7 (block 961368, ~2.4 sat/vB): 93-input consolidate → [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) still holding ~30.18 BTC ([93df0d26…abd4](txid:93df0d26e08ce950643f8cd03fd845c3d5697ba6021ec18874ee8e531f4eabd4)). Dust leftover (~0.00002 BTC). [Chainabuse victim](https://chainabuse.com/report/d4c95fab-ed8e-4749-ae81-9d42bfdab1cb).',
   },
   {
     address: 'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
