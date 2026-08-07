@@ -52,17 +52,25 @@ Do **not** call `search_posts_all` (App-Only + pay-per-use; MCP user OAuth 403s)
 ```bash
 python3 scripts/x_cache.py has POST_ID          # hit → skip MCP
 python3 scripts/x_cache.py get POST_ID
-python3 scripts/x_cache.py list-user mariusoffchain --since 2026-08-04T00:00:00Z
+python3 scripts/x_cache.py list-user glxyresearch --since 2026-08-05T00:00:00Z
 # after MCP get_users_posts / get_posts_by_id:
-python3 scripts/x_cache.py put-posts --username mariusoffchain --start-time 2026-08-04T00:00:00Z < response.json
+python3 scripts/x_cache.py put-posts --username glxyresearch --start-time 2026-08-05T00:00:00Z < response.json
 python3 scripts/x_cache.py stats
 ```
 
 1. Cache-check known post ids / `list-user` before MCP
-2. `get_users_by_username` for: `glxyresearch`, `intangiblecoins`, `KevinKelbie`, `mariusoffchain`, `evands`, `TomerStrolight`, `Rob1Ham`, `jamesob`, `nunchuk_io`, `eriklocalhost`
-3. `get_users_posts` with `start_time` / `exclude=replies` on the accounts above → **`put-posts`**
-4. `get_posts_by_id(s)` for thread replies and quoted posts → **`put-posts`**
-5. **Keyword search only after user approval** — CLI recent search: `npx -y @xdevplatform/xurl search 'QUERY' -n 20` (≈ $0.005 × results). Ask with query + N + rough cost first; see rule `x-api-search-approval`.
+2. **Default poll** (every research pass) — `get_users_by_username` → `get_users_posts` with `start_time` / `exclude=replies` → **`put-posts`**:
+   - `glxyresearch` — Galaxy headlines / footprints
+   - `intangiblecoins` — Wave 4 + victim-report pipeline
+   - `KevinKelbie` — fee-band / P2TR wave finds
+3. **Situational** — only when the task needs them (same fetch → cache pattern):
+   - `jamesob` — CK tripwire scoreboard / honeypot frontier moved
+   - `mariusoffchain` — cash-out / mixing / hop exits
+   - `osint_based` — ETH rail / Tornado-style peels when tracing those exits
+4. **Do not routine-poll** — one-shot primary sources; use known `sourceUrl` + `get_posts_by_id(s)` only:
+   - `evands`, `TomerStrolight`, `Rob1Ham`, `eriklocalhost`, `nunchuk_io`
+5. `get_posts_by_id(s)` for thread replies and quoted posts → **`put-posts`**
+6. **Keyword search only after user approval** — CLI recent search: `npx -y @xdevplatform/xurl search 'QUERY' -n 20` (≈ $0.005 × results). Ask with query + N + rough cost first; see rule `x-api-search-approval`.
 
 ## Primary sources (encoded)
 
