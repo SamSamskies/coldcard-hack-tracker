@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-07T18:41:34.004Z",
+  "updatedAt": "2026-08-07T19:45:11.703Z",
   "source": "mempool.space",
-  "usdPrice": 64709,
+  "usdPrice": 64952,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
-      "balanceSats": 56202130980,
-      "utxoCount": 51
+      "balanceSats": 56202132518,
+      "utxoCount": 52
     },
     {
       "address": "bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3",
@@ -21,8 +21,8 @@
     },
     {
       "address": "bc1qnk4zh9qcnap2mycp56qjrgza3cc8ylrh8fecp0",
-      "balanceSats": 3245058754,
-      "utxoCount": 163
+      "balanceSats": 3245060313,
+      "utxoCount": 164
     },
     {
       "address": "bc1qtfrwa4j6rmj9rsgspv6a0yjumkg39js2numu75",
@@ -601,19 +601,6 @@
       "confirmed": true,
       "blockHeight": 961076,
       "blockTime": 1785880446
-    },
-    {
-      "txid": "e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf",
-      "fromAddress": "bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m",
-      "fromLabel": "Aug 2 vault",
-      "amountBtc": 64.90373764,
-      "destinations": [
-        "bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 961065,
-      "blockTime": 1785873400
     },
     {
       "txid": "f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281",
