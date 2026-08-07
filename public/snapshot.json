@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-07T00:21:52.667Z",
+  "updatedAt": "2026-08-07T03:24:56.965Z",
   "source": "mempool.space",
-  "usdPrice": 64227,
+  "usdPrice": 64264,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
-      "balanceSats": 56202127439,
-      "utxoCount": 46
+      "balanceSats": 56202129099,
+      "utxoCount": 49
     },
     {
       "address": "bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3",
@@ -31,8 +31,8 @@
     },
     {
       "address": "bc1qmd5m5ktv7m5ffujxv4248fxv36myvdx79n8jp6",
-      "balanceSats": 3018478329,
-      "utxoCount": 95
+      "balanceSats": 2000,
+      "utxoCount": 2
     },
     {
       "address": "bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf",
@@ -511,6 +511,17 @@
     }
   ],
   "movements": [
+    {
+      "txid": "93df0d26e08ce950643f8cd03fd845c3d5697ba6021ec18874ee8e531f4eabd4",
+      "fromAddress": "bc1qmd5m5ktv7m5ffujxv4248fxv36myvdx79n8jp6",
+      "fromLabel": "Wave 2 collector",
+      "amountBtc": 30.18476329,
+      "destinations": [
+        "bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n"
+      ],
+      "hop": 0,
+      "confirmed": false
+    },
     {
       "txid": "24ee02cf811911764953ac7fd96e1b75db9356de55443b49339cbd5caa7d11f2",
       "fromAddress": "bc1q72k76q3f4e068u63cja578nnvk87xc90wlaamt",
