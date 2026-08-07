@@ -48,13 +48,15 @@ describe('incident data invariants', () => {
     expect(sum).toBeCloseTo(GALAXY.totalStolenBtc, 2);
   });
 
-  it('keeps Galaxy Aug 3 headline tiers ordered', () => {
+  it('keeps Galaxy Aug 7 headline tiers ordered', () => {
+    expect(GALAXY.highConfidenceBtc).toBe(1719);
+    expect(GALAXY.highConfidenceVictimAddresses).toBe(8092);
     expect(GALAXY.highConfidenceBtc).toBeGreaterThan(GALAXY.totalStolenBtc);
     expect(GALAXY.withCandidateWave4Btc).toBeGreaterThan(GALAXY.highConfidenceBtc);
-    // Chart labels round to whole BTC (1,591 / 2,055).
+    // Chart established losses (1,719.19); tweet headline rounds to 1,719.
     expect(
       GALAXY.totalStolenBtc + GALAXY.footprintsConfirmedBtc,
-    ).toBeCloseTo(1591, 0);
+    ).toBeCloseTo(1719.19, 2);
     expect(
       GALAXY.totalStolenBtc +
         GALAXY.footprintsConfirmedBtc +
@@ -64,6 +66,7 @@ describe('incident data invariants', () => {
     expect(GALAXY.footprintsStillHeldBtc).toBeLessThanOrEqual(
       GALAXY.footprintsConfirmedBtc,
     );
+    expect(GALAXY.aug7UpdateUrl).toContain('2085748513015488758');
   });
 
   it('documents Footprint O without adding a watched cluster', () => {
