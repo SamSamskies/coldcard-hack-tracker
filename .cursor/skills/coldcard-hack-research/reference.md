@@ -72,9 +72,11 @@ python3 scripts/x_cache.py stats
 - Wave 2: `https://x.com/glxyresearch/status/2083560940469981591`
 - Wave 3 / headline: `https://x.com/glxyresearch/status/2083623500183421043`
 - Aug 3 $100M / footprints: `https://x.com/glxyresearch/status/2084411904924045370`
-  - High-confidence ~1,596 BTC / ~7,300 addrs (W1–3 + footprints A–N)
-  - Chart: footprints A–N 223.85 BTC; pattern-matched 15.27; +W4 → ~2,055
-  - Footprint O (Aug 4, Thorn): `https://x.com/intangiblecoins/status/2084584284837322868` (~12 BTC / 126 addrs)
+  - Then: high-confidence ~1,596 BTC / ~7,300 addrs; chart footprints A–N 223.85; +W4 → ~2,055
+- Aug 7 $111M / footprints: `https://x.com/glxyresearch/status/2085748513015488758`
+  - High-confidence 1,719 BTC / 8,092 addrs (chart 1,719.19 = 1,367.05 + 352.14 footprints)
+  - Candidates → 2,300+ BTC; 25+ attack patterns; 250+ victim reports via @intangiblecoins
+  - Footprint O (Aug 4, Thorn): `https://x.com/intangiblecoins/status/2084584284837322868` (~12 BTC / 126 addrs; later in Aug 7 confirmed set)
 
 **Community**
 
