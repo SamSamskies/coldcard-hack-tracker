@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-08T06:35:55.245Z",
+  "updatedAt": "2026-08-08T07:41:27.091Z",
   "source": "mempool.space",
-  "usdPrice": 64944,
+  "usdPrice": 64973,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
-      "balanceSats": 56202133018,
-      "utxoCount": 53
+      "balanceSats": 56202136018,
+      "utxoCount": 54
     },
     {
       "address": "bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3",
@@ -511,6 +511,19 @@
     }
   ],
   "movements": [
+    {
+      "txid": "18f7ec31beef7c154196f0687566f59b2f2f807e50d2d3ddb4218557f89d561f",
+      "fromAddress": "bc1q72k76q3f4e068u63cja578nnvk87xc90wlaamt",
+      "fromLabel": "Hop 1 from Wave 4 park",
+      "amountBtc": 0.00462205,
+      "destinations": [
+        "bc1q55llqtd8ewaml59xs3z7ttr2vr8xa32futg4q2"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 961543,
+      "blockTime": 1786172851
+    },
     {
       "txid": "a2378c07752a7a4cfcdd3497e50a92553ad27766c7eee697b1596e2e4b1b842f",
       "fromAddress": "bc1q72k76q3f4e068u63cja578nnvk87xc90wlaamt",
