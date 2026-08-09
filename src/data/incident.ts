@@ -377,7 +377,7 @@ export const SOURCES = [
   },
   {
     label: 'James O\'Beirne · CK tripwire',
-    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h; low-band (11–13 bit) honeypots still live at launch. Defensive research only — do not add honeypot sinks to holdings.',
+    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)); frontier still ~5 bits with mid/high passphrase bands live. Defensive research only — do not add honeypot sinks to holdings.',
     url: 'https://cktripwire.com/',
   },
   {
@@ -811,6 +811,11 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    */
   bc1pdwu79dady576y3fupmm82m3g7p2p9f6hgyeqy0tdg7ztxg7xrayqlkl8j9:
     'Hyperunit hub',
+  /**
+   * Wave 4 hop-1 peel (block 961731): emptied bc1q72k76… → this address (~0.0077 BTC).
+   * Arkham: Bybit (OKLink: Exchange Bybit).
+   */
+  '17fqFGPGPTmoWRqSnoSUp4VMDExDofFcFL': 'Bybit deposit',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */

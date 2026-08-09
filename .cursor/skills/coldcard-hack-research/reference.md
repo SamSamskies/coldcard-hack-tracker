@@ -154,6 +154,7 @@ only — not balances/hops): `https://www.oklink.com/btc/address/{addr}`.
 - `bc1qesrvsn8g7ln6rmtru5kmuve4cma37r9gsrd78w` — OP_RETURN messenger hub (peels from bc1qqa7p9…; Arkham High Transacting + OP_RETURN Messenger)
 - `153La7Fb1p9JLeM26UGmwTXZuMdA9fWmav` — Binance deposit (batch from bc1qesrv…, block 961064; Arkham)
 - `bc1pdwu79dady576y3fupmm82m3g7p2p9f6hgyeqy0tdg7ztxg7xrayqlkl8j9` — Hyperunit hub (Arkham; Early Aug 2 CJ remix equal-denom peels — anonymity set, not proven same operator; stop hop-follow)
+- `17fqFGPGPTmoWRqSnoSUp4VMDExDofFcFL` — Bybit deposit (Wave 4 hop-1 peel from bc1q72k76… @961731; Arkham Bybit; OKLink Exchange: Bybit)
 
 ## Wave 3 pipeline
 
