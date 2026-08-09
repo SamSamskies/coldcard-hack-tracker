@@ -1,16 +1,27 @@
+import { useEffect, useState } from 'react';
 import { AddressList } from './components/AddressList';
 import { IncidentHeader } from './components/IncidentHeader';
 import { KpiRow } from './components/KpiRow';
 import { MovementFeed } from './components/MovementFeed';
 import { RiskChecklist } from './components/RiskChecklist';
 import { SourcesStrip } from './components/SourcesStrip';
-import { useMovementAlerts } from './hooks/useMovementAlerts';
+import {
+  alertsCurrentlyArmed,
+  useMovementAlerts,
+} from './hooks/useMovementAlerts';
 import { useTrackerData } from './hooks/useTrackerData';
 
 export default function App() {
-  const data = useTrackerData();
+  const [allowBackgroundPoll, setAllowBackgroundPoll] = useState(
+    alertsCurrentlyArmed,
+  );
+  const data = useTrackerData(allowBackgroundPoll);
   const hasData = data.addresses.length > 0;
   const alerts = useMovementAlerts(data.movements, hasData);
+
+  useEffect(() => {
+    setAllowBackgroundPoll(alerts.enabled);
+  }, [alerts.enabled]);
 
   return (
     <div className="app-shell">
