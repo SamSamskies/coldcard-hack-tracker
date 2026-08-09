@@ -824,8 +824,9 @@ export const MAX_HOP_DEPTH = 2;
 export const MAX_DESTINATIONS_PER_SPEND = 3;
 /**
  * Spends with more destination addresses than this are treated as CoinJoin /
- * mixer fan-out (Wasabi remixes are hundreds of outs). Wave 4 multi-park peels
- * stay under this. Do not emit or hop-follow those spends.
+ * mixer fan-out for **seed** (hop 0) emission. Hop trails use the tighter
+ * `MAX_DESTINATIONS_PER_SPEND` so batch peels do not spray the feed. Do not
+ * emit or hop-follow spends over the hop-appropriate cap.
  */
 export const MAX_MOVEMENT_DESTINATIONS = 50;
 /** Ignore dust-sized hop destinations. */

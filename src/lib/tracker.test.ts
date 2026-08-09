@@ -23,7 +23,11 @@ import {
   type Movement,
   type WatchTarget,
 } from './tracker';
-import { MAX_HOP_DEPTH, MAX_MOVEMENT_DESTINATIONS } from '../data/incident';
+import {
+  MAX_DESTINATIONS_PER_SPEND,
+  MAX_HOP_DEPTH,
+  MAX_MOVEMENT_DESTINATIONS,
+} from '../data/incident';
 function makeTx(partial: {
   txid?: string;
   vin: Tx['vin'];
@@ -346,8 +350,63 @@ describe('movementsFromWatch', () => {
       vout: outs,
       blockHeight: WATCH_AFTER_BLOCK + 5,
     });
-    expect(isHighFanoutSpend(outs.length)).toBe(true);
+    expect(isHighFanoutSpend(outs.length, 0)).toBe(true);
     expect(movementsFromWatch([watch], [[tx]])).toEqual([]);
+  });
+
+  it('keeps multi-out peels from seed holdings (hop 0)', () => {
+    // Wave 4-style park peel: more outs than hop-follow cap, under CJ ceiling.
+    const n = MAX_DESTINATIONS_PER_SPEND + 5;
+    const outs = Array.from({ length: n }, (_, i) => ({
+      scriptpubkey_address: `bc1qpk${String(i).padStart(37, 'x')}`,
+      value: 2_000_000,
+    }));
+    const tx = makeTx({
+      txid: 'park-peel',
+      vin: [
+        {
+          prevout: {
+            scriptpubkey_address: vault,
+            value: outs.reduce((s, o) => s + o.value, 0) + 500,
+          },
+        },
+      ],
+      vout: outs,
+      blockHeight: WATCH_AFTER_BLOCK + 5,
+    });
+    expect(isHighFanoutSpend(n, 0)).toBe(false);
+    expect(movementsFromWatch([watch], [[tx]]).map((m) => m.txid)).toEqual([
+      'park-peel',
+    ]);
+  });
+
+  it('skips hop-trail peels wider than hop-follow fan-out', () => {
+    const hopWatch: WatchTarget = {
+      address: vault,
+      label: 'Hop 1 from Wave 4 park',
+      hop: 1,
+    };
+    const n = MAX_DESTINATIONS_PER_SPEND + 1;
+    const outs = Array.from({ length: n }, (_, i) => ({
+      scriptpubkey_address: `bc1qhz${String(i).padStart(37, 'x')}`,
+      value: 2_000_000,
+    }));
+    const tx = makeTx({
+      txid: 'hop-fanout',
+      vin: [
+        {
+          prevout: {
+            scriptpubkey_address: vault,
+            value: outs.reduce((s, o) => s + o.value, 0) + 500,
+          },
+        },
+      ],
+      vout: outs,
+      blockHeight: WATCH_AFTER_BLOCK + 5,
+    });
+    expect(isHighFanoutSpend(n, 1)).toBe(true);
+    expect(isHighFanoutSpend(MAX_DESTINATIONS_PER_SPEND, 1)).toBe(false);
+    expect(movementsFromWatch([hopWatch], [[tx]])).toEqual([]);
   });
 });
 
@@ -566,6 +625,30 @@ describe('known exit churn filter', () => {
       destinations: dests,
     };
     expect(omitHighFanoutMovements([kept, dropped])).toEqual([kept]);
+  });
+
+  it('omitHighFanoutMovements drops wide hop-trail peels but keeps wide seed peels', () => {
+    const midFanout = Array.from(
+      { length: MAX_DESTINATIONS_PER_SPEND + 5 },
+      (_, i) => `bc1qmd${String(i).padStart(37, 'x')}`,
+    );
+    const seedPeel: Movement = {
+      txid: 'seed',
+      fromAddress: 'bc1qvaultxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+      fromLabel: 'Wave 4 park',
+      amountBtc: 2,
+      destinations: midFanout,
+      hop: 0,
+      confirmed: true,
+      blockHeight: WATCH_AFTER_BLOCK + 1,
+    };
+    const hopPeel: Movement = {
+      ...seedPeel,
+      txid: 'hop',
+      fromLabel: 'Hop 1 from Wave 4 park',
+      hop: 1,
+    };
+    expect(omitHighFanoutMovements([seedPeel, hopPeel])).toEqual([seedPeel]);
   });
 
   it('omitPostKnownExitPassThroughMovements keeps first exit cash-in only', () => {

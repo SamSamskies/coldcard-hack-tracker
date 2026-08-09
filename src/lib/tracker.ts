@@ -14,9 +14,15 @@ export function isKnownExitAddress(address: string): boolean {
   return Object.hasOwn(KNOWN_ADDRESS_LABELS, address);
 }
 
-/** CoinJoin / mixer fan-out — not a trackable stolen-stack peel. */
-export function isHighFanoutSpend(destinationCount: number): boolean {
-  return destinationCount > MAX_MOVEMENT_DESTINATIONS;
+/** CoinJoin / wide batch fan-out — not a trackable stolen-stack peel. */
+export function isHighFanoutSpend(
+  destinationCount: number,
+  hop: number = 0,
+): boolean {
+  // Seed holdings may peel to many parks in one tx; keep those visible.
+  // Hop trails wider than we follow are mixer / payment-batch noise.
+  const cap = hop >= 1 ? MAX_DESTINATIONS_PER_SPEND : MAX_MOVEMENT_DESTINATIONS;
+  return destinationCount > cap;
 }
 
 export type AddressStatus = 'held' | 'partial' | 'emptied';
@@ -229,7 +235,7 @@ function shouldEmitOutbound(
   if (!isPostWatch(tx)) return false;
   const { amountSats, destinations } = outboundFromAddress(tx, watch.address);
   if (amountSats <= 0) return false;
-  if (isHighFanoutSpend(destinations.length)) return false;
+  if (isHighFanoutSpend(destinations.length, watch.hop)) return false;
   if (
     watch.reportBtc != null &&
     isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
@@ -291,7 +297,7 @@ export function omitKnownExitChurn(items: readonly Movement[]): Movement[] {
 export function omitHighFanoutMovements(
   items: readonly Movement[],
 ): Movement[] {
-  return items.filter((m) => !isHighFanoutSpend(m.destinations.length));
+  return items.filter((m) => !isHighFanoutSpend(m.destinations.length, m.hop));
 }
 
 /**

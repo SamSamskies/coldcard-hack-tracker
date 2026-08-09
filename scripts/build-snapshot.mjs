@@ -560,11 +560,16 @@ function isPostKnownExitPassThrough(address, txs, txid, reportBtc) {
   return false;
 }
 
+function isHighFanoutSpend(destinationCount, hop = 0) {
+  const cap = hop >= 1 ? MAX_DESTINATIONS_PER_SPEND : MAX_MOVEMENT_DESTINATIONS;
+  return destinationCount > cap;
+}
+
 function shouldEmitOutbound(watch, txs, tx) {
   if (!isPostWatch(tx)) return false;
   const { amountSats, destinations } = outboundFromAddress(tx, watch.address);
   if (amountSats <= 0) return false;
-  if (destinations.length > MAX_MOVEMENT_DESTINATIONS) return false;
+  if (isHighFanoutSpend(destinations.length, watch.hop ?? 0)) return false;
   if (
     watch.reportBtc != null &&
     isSurplusPassThrough(watch.address, watch.reportBtc, txs, tx.txid)
@@ -610,7 +615,7 @@ function movementsFromWatch(watches, txLists) {
 
 function omitHighFanoutMovements(items) {
   return items.filter(
-    (m) => !(m.destinations?.length > MAX_MOVEMENT_DESTINATIONS),
+    (m) => !isHighFanoutSpend(m.destinations?.length ?? 0, m.hop ?? 0),
   );
 }
 
