@@ -100,7 +100,12 @@ function liveFromSats(
   };
 }
 
-export function useTrackerData(): TrackerData {
+/**
+ * @param allowBackgroundPoll - When true (movement alerts armed), keep
+ *   polling while the tab is hidden so notifications can still fire.
+ *   When false, pause intervals in background tabs and catch up on focus.
+ */
+export function useTrackerData(allowBackgroundPoll = false): TrackerData {
   const [addresses, setAddresses] = useState<LiveAddress[]>([]);
   const [usdPrice, setUsdPrice] = useState<number | null>(null);
   const [movements, setMovements] = useState<Movement[]>([]);
@@ -393,23 +398,56 @@ export function useTrackerData(): TrackerData {
   useEffect(() => {
     const timers = flashTimers.current;
     void refresh();
-    const liveId = window.setInterval(
-      () => {
+    return () => {
+      for (const t of timers.values()) window.clearTimeout(t);
+    };
+  }, [refresh]);
+
+  useEffect(() => {
+    let liveId: number | undefined;
+    let snapId: number | undefined;
+
+    const clearTimers = () => {
+      if (liveId != null) window.clearInterval(liveId);
+      if (snapId != null) window.clearInterval(snapId);
+      liveId = undefined;
+      snapId = undefined;
+    };
+
+    const startTimers = () => {
+      if (liveId != null) return;
+      liveId = window.setInterval(() => {
         void refreshLive().catch(() => {
           /* keep last good core data */
         });
-      },
-      REFRESH_INTERVAL_MS,
-    );
-    const snapId = window.setInterval(() => {
-      void refreshSnapshot();
-    }, SNAPSHOT_REFRESH_INTERVAL_MS);
-    return () => {
-      window.clearInterval(liveId);
-      window.clearInterval(snapId);
-      for (const t of timers.values()) window.clearTimeout(t);
+      }, REFRESH_INTERVAL_MS);
+      snapId = window.setInterval(() => {
+        void refreshSnapshot();
+      }, SNAPSHOT_REFRESH_INTERVAL_MS);
     };
-  }, [refresh, refreshLive, refreshSnapshot]);
+
+    const syncPolling = () => {
+      if (allowBackgroundPoll || !document.hidden) startTimers();
+      else clearTimers();
+    };
+
+    const onVisibility = () => {
+      if (!document.hidden) {
+        void refreshLive().catch(() => {
+          /* keep last good core data */
+        });
+        void refreshSnapshot();
+      }
+      syncPolling();
+    };
+
+    syncPolling();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      clearTimers();
+    };
+  }, [allowBackgroundPoll, refreshLive, refreshSnapshot]);
 
   const heldBtc = addresses.reduce((s, a) => s + a.balanceBtc, 0);
   const { movedBtc, heldPct } = heldStats(heldBtc, CONSOLIDATED_BTC);

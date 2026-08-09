@@ -55,9 +55,12 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
    cron — Esplora stays canonical. Explorer REST APIs were suspended (~May
    2025); there is no free Esplora-style API to wire in. Unlabeled high-volume
    hubs may stay blank on OKLink even when Arkham has a soft tag.
-4. Cross-check community X (X MCP `get_users_posts` on known reporters /
-   `get_posts_by_id`; **not** `search_posts_all`; xcancel fallback) only as
-   leads — prefer Arkham / OKLink entity tags with a cited block height.
+4. Cross-check community X only as leads — prefer situational
+   `mariusoffchain` / `osint_based` (or known post ids) via X MCP
+   `get_users_posts` / `get_posts_by_id`; **not** `search_posts_all`;
+   xcancel fallback. Prefer Arkham / OKLink entity tags with a cited block
+   height. See coldcard-hack-research [reference.md](../coldcard-hack-research/reference.md)
+   for default vs situational X polls.
 5. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
    `Bullish.com deposit`, `THORChain BTC vault`, `P2SH service hub`). Prefer
    “deposit” / “hub” / “vault” so empty balances read correctly.

@@ -34,6 +34,12 @@ function readPreference(): boolean {
   }
 }
 
+/** True when alerts are opted-in and notification permission is granted. */
+export function alertsCurrentlyArmed(): boolean {
+  if (typeof window === 'undefined' || !('Notification' in window)) return false;
+  return readPreference() && Notification.permission === 'granted';
+}
+
 function writePreference(enabled: boolean) {
   try {
     window.localStorage.setItem(STORAGE_KEY, enabled ? '1' : '0');
