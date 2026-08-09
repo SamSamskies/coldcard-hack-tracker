@@ -1,13 +1,13 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-09T19:11:18.421Z",
+  "updatedAt": "2026-08-09T19:55:00.244Z",
   "source": "mempool.space",
-  "usdPrice": 65145,
+  "usdPrice": 65146,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
-      "balanceSats": 56202138056,
-      "utxoCount": 56
+      "balanceSats": 56202139594,
+      "utxoCount": 57
     },
     {
       "address": "bc1qx76cae2706qd5q576feh7xq8rfcsjpf2htfhe3",
