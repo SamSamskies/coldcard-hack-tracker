@@ -2,7 +2,7 @@
 
 Live single-page dashboard for Bitcoin held after Coldcard seed-entropy sweeps since July 2026.
 
-Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). **Core vaults** (Waves 1–2 and small community holdings) are polled live in the browser via the public [mempool.space](https://mempool.space) API. **Wave 3** balances come from `public/snapshot.json`, refreshed by a GitHub Actions cron about every 15 minutes — so visitors do not fan out dozens of explorer requests.
+Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). **Core vaults** (Waves 1–2 and small community holdings) are polled live in the browser via the public [mempool.space](https://mempool.space) API. **Wave 3** balances come from `public/snapshot.json`, refreshed by a GitHub Actions cron about every hour — so visitors do not fan out dozens of explorer requests.
 
 ## Develop
 

@@ -2,8 +2,8 @@ name: Refresh balance snapshot
 
 on:
   schedule:
-    # Public runners can delay cron; ~30m target (~48 deploys/day).
-    - cron: '*/30 * * * *'
+    # Public runners can delay cron; ~1h target (~24 deploys/day).
+    - cron: '0 * * * *'
   workflow_dispatch:
   push:
     branches: [main]
