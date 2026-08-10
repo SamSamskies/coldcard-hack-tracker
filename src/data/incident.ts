@@ -816,6 +816,11 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * Arkham: Bybit (OKLink: Exchange Bybit).
    */
   '17fqFGPGPTmoWRqSnoSUp4VMDExDofFcFL': 'Bybit deposit',
+  /**
+   * Wave 4 hop-2 peels from intermediate bc1q55llq… (blocks 960898, 961148, 961384;
+   * dust < 0.01 BTC each). Arkham: Quidax Deposit Address (cluster e1e9).
+   */
+  bc1qcgjnpnsnsyklteqmsunv2vm7ww4zs02q9jtdt7: 'Quidax deposit',
 };
 
 /** Hop 0 = watched holdings; hop 1+ = destinations of those spends. */
