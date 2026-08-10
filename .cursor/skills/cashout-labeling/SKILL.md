@@ -22,7 +22,7 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
 - [ ] Follow hops (depth ≤2, ≥0.01 BTC, ≤3 dests/spend, block > 960400)
 - [ ] Skip surplus pass-through / Ocean peels
 - [ ] Identify destination role (see table)
-- [ ] Label with evidence (Arkham / OKLink / primary report) — or leave unlabeled
+- [ ] Label with evidence (Arkham / OKLink / Bithypha / primary report) — or leave unlabeled
 - [ ] Edit data + optional UI rail; npm test; snapshot if holdings changed
 ```
 
@@ -55,13 +55,20 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
    cron — Esplora stays canonical. Explorer REST APIs were suspended (~May
    2025); there is no free Esplora-style API to wire in. Unlabeled high-volume
    hubs may stay blank on OKLink even when Arkham has a soft tag.
-4. Cross-check community X only as leads — prefer situational
+4. **Bithypha** (tertiary — community OSINT / cluster when Arkham+OKLink are
+   soft or blank): `https://bithypha.com/address/{ADDR}`. Free open explorer
+   with entity icons, cluster IDs, and an OSINT notes tab. Best for unlabeled
+   hops; well-known CEX deposits often add nothing beyond Arkham. Prefer
+   Firecrawl scrape with `--wait-for 5000` (SPA). Plain `curl` often **403**.
+   If scrape fails, ask the user to open the page. Do **not** use for balances,
+   fees, or hop follow.
+5. Cross-check community X only as leads — prefer situational
    `mariusoffchain` / `osint_based` (or known post ids) via X MCP
    `get_users_posts` / `get_posts_by_id`; **not** `search_posts_all`;
    xcancel fallback. Prefer Arkham / OKLink entity tags with a cited block
    height. See coldcard-hack-research [reference.md](../coldcard-hack-research/reference.md)
    for default vs situational X polls.
-5. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
+6. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
    `Bullish.com deposit`, `THORChain BTC vault`, `P2SH service hub`). Prefer
    “deposit” / “hub” / “vault” so empty balances read correctly.
 
