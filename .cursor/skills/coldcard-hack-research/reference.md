@@ -15,7 +15,7 @@ Read this when you need concrete constants, source URLs, or script paths. Keep `
 | `scripts/run-wave3-parallel.sh` | Sharded scan (emzy + bitaroo) |
 | `scripts/run-wave3-mopup.sh` | Fill block gaps then merge/follow |
 | `scripts/wave3-out/merged/vaults.csv` | Candidate vaults with park lineage |
-| `.github/workflows/snapshot.yml` | ~1h cron + push triggers |
+| `.github/workflows/snapshot.yml` | ~2h cron + push triggers |
 
 Tip / new-wave scouting (`scripts/scan-new-waves.py`) is **not** part of this
 workflow — use the separate **new-wave-scan** skill when the user asks.
