@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-08-11T05:53:27.346Z",
+  "updatedAt": "2026-08-11T06:49:55.641Z",
   "source": "mempool.space",
-  "usdPrice": 63981,
+  "usdPrice": 63877,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -627,19 +627,6 @@
       "confirmed": true,
       "blockHeight": 961076,
       "blockTime": 1785880446
-    },
-    {
-      "txid": "e3274a1b87096938d014e1edaa01b06c3dd16e72a48f66ead95c79f83f2b3ddf",
-      "fromAddress": "bc1q0rvn88w08j75k4h48lf9fvhan7unjp7vjf5q6m",
-      "fromLabel": "Aug 2 vault",
-      "amountBtc": 64.90373764,
-      "destinations": [
-        "bc1pynd6vswmxkghw6k5463xwcj7el7u4tpl2t2pnh0s8llmc2wgzfqsdu7h92"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 961065,
-      "blockTime": 1785873400
     },
     {
       "txid": "f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281",
