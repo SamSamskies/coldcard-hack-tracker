@@ -377,7 +377,7 @@ export const SOURCES = [
   },
   {
     label: 'James O\'Beirne · CK tripwire',
-    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)); frontier still ~5 bits with mid/high passphrase bands live. Defensive research only — do not add honeypot sinks to holdings.',
+    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)). By Aug 12, frontier ~11 bits after a low (pass) honeypot (HP-9C4F) was swept; mid/high/extreme bands still live. ColeTU’s weak BIP-39 passphrase experiment is listed as an external honeypot (1–3 word Mk3 passphrases swept in ~6–7d; claimed Mk4 seed still live). Defensive research only — do not add honeypot sinks to holdings.',
     url: 'https://cktripwire.com/',
   },
   {
@@ -454,6 +454,11 @@ export const SOURCES = [
     label: 'WizardSardine',
     note: 'Aug 1 deep dive: who is affected (including Mk3 5.0.x), advanced features still broken with dice seeds, and migration guidance.',
     url: 'https://wizardsardine.com/blog/coldcard-rng-vulnerability/',
+  },
+  {
+    label: 'SlowMist',
+    note: 'Aug 12: reproduces the Mk3 4.1.9 attack chain (Yasmarang fallback, button-press profiles, GPU pad search) and MistTrack consolidations aligned with Galaxy W1–3 / Early Aug 2 / P2TR cash-outs. Uses Galaxy’s 1,719 BTC headline; their “Wave 4” label for bc1q0rvn88… is our Early Aug 2 vault, not Thorn’s Likely Wave 4.',
+    url: 'https://slowmist.medium.com/coldcard-111-million-theft-a-deep-dive-into-the-private-key-vulnerability-8e51d1a969d3',
   },
   {
     label: 'Nunchuk · Slipstream migration',

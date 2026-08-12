@@ -110,6 +110,7 @@ python3 scripts/x_cache.py stats
 - Coinkite: `https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/`
 - Block Engineering: `https://engineering.block.xyz/blog/predictable-rng-fallback-and-32-bit-reseed-in-coldcard-firmware`
 - WizardSardine: `https://wizardsardine.com/blog/coldcard-rng-vulnerability/`
+- SlowMist Aug 12: `https://slowmist.medium.com/coldcard-111-million-theft-a-deep-dive-into-the-private-key-vulnerability-8e51d1a969d3`
 - CoinDesk Aug 1: `https://www.coindesk.com/tech/2026/08/01/how-bitcoin-cold-wallets-lost-usd70-million-in-an-attack-that-never-touched-the-devices`
 
 COLDCARD RNG chain map: public cross-check for Wave 3; no URL constant in repo — find the current public map when reconstructing.
