@@ -19,7 +19,8 @@ When you want a keyword search, **stop and ask**: proposed query, approx `max_re
 
 - MCP `get_posts_by_id` / `get_posts_by_ids`
 - MCP `get_users_by_username` → `get_users_posts` on known accounts
-  (prefer the coldcard-hack-research **default** poll; add **situational**
+  (prefer the coldcard-hack-research **quiet-period** poll — `glxyresearch`
+  first, community accounts only when hunting leads; add **situational**
   accounts only when the task needs them — see that skill’s `reference.md`)
 - Other non-search read tools already in use for research
 

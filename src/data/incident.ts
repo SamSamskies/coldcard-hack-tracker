@@ -721,9 +721,9 @@ export const MEMPOOL_HOSTS = [
 
 export const REQUEST_TIMEOUT_MS = 8_000;
 /** Live refresh for core holdings (Wave 3 uses /snapshot.json from cron). */
-export const REFRESH_INTERVAL_MS = 60_000;
+export const REFRESH_INTERVAL_MS = 5 * 60_000;
 /** How often to re-fetch the cron snapshot for Wave 3 balances. */
-export const SNAPSHOT_REFRESH_INTERVAL_MS = 5 * 60_000;
+export const SNAPSHOT_REFRESH_INTERVAL_MS = 15 * 60_000;
 export const SATS_PER_BTC = 100_000_000;
 /** Primary wave funds reported unspent at this block; later spends count as movement. */
 export const WATCH_AFTER_BLOCK = 960_400;

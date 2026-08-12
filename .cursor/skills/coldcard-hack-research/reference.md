@@ -15,7 +15,7 @@ Read this when you need concrete constants, source URLs, or script paths. Keep `
 | `scripts/run-wave3-parallel.sh` | Sharded scan (emzy + bitaroo) |
 | `scripts/run-wave3-mopup.sh` | Fill block gaps then merge/follow |
 | `scripts/wave3-out/merged/vaults.csv` | Candidate vaults with park lineage |
-| `.github/workflows/snapshot.yml` | ~2h cron + push triggers |
+| `.github/workflows/snapshot.yml` | ~6h cron + push triggers |
 
 Tip / new-wave scouting (`scripts/scan-new-waves.py`) is **not** part of this
 workflow — use the separate **new-wave-scan** skill when the user asks.
@@ -59,10 +59,10 @@ python3 scripts/x_cache.py stats
 ```
 
 1. Cache-check known post ids / `list-user` before MCP
-2. **Default poll** (every research pass) — `get_users_by_username` → `get_users_posts` with `start_time` / `exclude=replies` → **`put-posts`**:
-   - `glxyresearch` — Galaxy headlines / footprints
-   - `intangiblecoins` — Wave 4 + victim-report pipeline
-   - `KevinKelbie` — fee-band / P2TR wave finds
+2. **Quiet-period poll** — do **not** fetch all three every research pass. Prefer:
+   - On a dedicated “any new reports?” ask, or when chasing a lead: `glxyresearch` first (Galaxy headlines / footprints)
+   - Add `intangiblecoins` (Wave 4 + victim pipeline) / `KevinKelbie` (fee-band / P2TR finds) only if Galaxy is quiet and you still need community wave leads
+   - Same pattern: `get_users_by_username` → `get_users_posts` with `start_time` / `exclude=replies` → **`put-posts`**
 3. **Situational** — only when the task needs them (same fetch → cache pattern):
    - `jamesob` — CK tripwire scoreboard / honeypot frontier moved
    - `mariusoffchain` — cash-out / mixing / hop exits

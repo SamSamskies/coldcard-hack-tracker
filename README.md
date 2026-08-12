@@ -2,7 +2,7 @@
 
 Live single-page dashboard for Bitcoin held after Coldcard seed-entropy sweeps since July 2026.
 
-Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). **Core vaults** (Waves 1–2 and small community holdings) are polled live in the browser via the public [mempool.space](https://mempool.space) API. **Wave 3** balances come from `public/snapshot.json`, refreshed by a GitHub Actions cron about every 2 hours — so visitors do not fan out dozens of explorer requests.
+Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). **Core vaults** (Waves 1–2 and small community holdings) are polled live in the browser via the public [mempool.space](https://mempool.space) API. **Wave 3** balances come from `public/snapshot.json`, refreshed by a GitHub Actions cron about every 6 hours — so visitors do not fan out dozens of explorer requests.
 
 ## Develop
 
@@ -37,7 +37,7 @@ npm run preview
 | BTC/USD | `/api/v1/prices` (+ snapshot) |
 | Incident facts | Galaxy Research + community cluster reports (static) |
 
-No API key is needed for the dashboard. Core vaults refresh about every 60 seconds; the Wave 3 snapshot is re-read about every 5 minutes.
+No API key is needed for the dashboard. Core vaults refresh about every 5 minutes; the Wave 3 snapshot is re-read about every 15 minutes.
 
 Optional local research: put `BLOCKCHAIR_API_KEY` in a gitignored `.env` for faster tip wave scouts (`scripts/scan-new-waves.py --blockchair`) and batch balance checks (`scripts/blockchair-balances.py`). Estimate request points and confirm before spending quota; **do not** use that key in the snapshot cron.
 

@@ -4,8 +4,9 @@ description: >-
   Periodically scout the last 3 Bitcoin tip blocks for unreported
   Coldcard-hack-like sweep waves (dense 1-vout fee clusters). Default is
   shallow tip-only (--no-escalate); do not deep-scan or backfill unless the
-  user explicitly asks. Use when checking for new waves, tip sweeps, or a
-  local periodic wave check — before waiting on Galaxy/community reports.
+  user explicitly asks. Prefer on-demand / ~daily while quiet — not every
+  research pass. Use when checking for new waves, tip sweeps, or a local
+  wave check — before waiting on Galaxy/community reports.
 ---
 
 # New Wave Scan
@@ -56,7 +57,11 @@ After a Blockchair run, report **actual** `blockchair cost:` / stderr cost lines
 
 ## When to run
 
-- User: “check for new waves”, “scan tip”, “any new sweeps?”, periodic reminder
+- User: “check for new waves”, “scan tip”, “any new sweeps?”
+- Prefer **on demand** or at most ~daily while the incident is quiet — do not
+  treat tip scouting as a routine every-research-pass chore.
+- Skip proactive scans when the user is only updating labels / cash-outs /
+  docs and has not asked about new waves.
 
 ## Workflow
 

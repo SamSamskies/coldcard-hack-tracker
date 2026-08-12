@@ -2,8 +2,9 @@ name: Refresh balance snapshot
 
 on:
   schedule:
-    # Public runners can delay cron; ~2h target (~12 deploys/day).
-    - cron: '0 */2 * * *'
+    # Quiet period: ~6h is enough while large stacks sit still (~4 deploys/day).
+    # Bump back toward */2 if big vaults start moving again.
+    - cron: '0 */6 * * *'
   workflow_dispatch:
   push:
     branches: [main]

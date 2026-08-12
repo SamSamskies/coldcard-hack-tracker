@@ -84,7 +84,7 @@ Details: [reference.md](reference.md).
    `get_users_posts` / `get_posts_by_id`; **not** `search_posts_all`;
    xcancel fallback. Prefer Arkham / OKLink entity tags with a cited block
    height. See coldcard-hack-research [reference.md](../coldcard-hack-research/reference.md)
-   for default vs situational X polls.
+   for quiet-period vs situational X polls.
 6. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
    `Bullish.com deposit`, `THORChain BTC vault`, `P2SH service hub`). Prefer
    “deposit” / “hub” / “vault” so empty balances read correctly.
