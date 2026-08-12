@@ -129,7 +129,9 @@ Cite report URLs in cluster `note` / sources when they back a holding (e.g. Kelb
 
 ## Known exit labels
 
-Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md). Arkham
+Full labeling workflow: [cashout-labeling](../cashout-labeling/SKILL.md)
+(patterns: [cashout-labeling/reference.md](../cashout-labeling/reference.md)).
+Bridge hops: [btc-bridge-follow](../btc-bridge-follow/SKILL.md). Arkham
 (primary): `https://arkm.com/explorer/address/{addr}`. OKLink (secondary tags
 only — not balances/hops): `https://www.oklink.com/btc/address/{addr}`.
 Bithypha (tertiary OSINT/cluster when labels are soft): 

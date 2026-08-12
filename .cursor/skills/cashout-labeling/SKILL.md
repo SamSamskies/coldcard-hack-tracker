@@ -12,7 +12,9 @@ description: >-
 When watched holdings spend, classify destinations and label known exits so the
 movement feed and UI stay honest. Hop discovery **stops** at addresses in
 `KNOWN_ADDRESS_LABELS` (no further watches / no peels emitted from those venues).
-On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
+On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Bridge
+decode (THOR / Hyperunit / Chainflip): [btc-bridge-follow](../btc-bridge-follow/SKILL.md).
+Patterns / tools: [reference.md](reference.md). Policy:
 [coldcard-hack-research](../coldcard-hack-research/SKILL.md).
 
 ## Workflow
@@ -21,10 +23,25 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
 - [ ] Confirm source vault emptied / partial move (live balance vs reportBtc)
 - [ ] Follow hops (depth ≤2, ≥0.01 BTC, ≤3 dests/spend, block > 960400)
 - [ ] Skip surplus pass-through / Ocean peels
+- [ ] Classify pattern (peel / fan-out / CJ / bridge / CEX) — see below
+- [ ] If bridge vault: resolve via btc-bridge-follow, then continue labeling
 - [ ] Identify destination role (see table)
 - [ ] Label with evidence (Arkham / OKLink / Bithypha / primary report) — or leave unlabeled
 - [ ] Edit data + optional UI rail; npm test; snapshot if holdings changed
 ```
+
+## Pattern → action (quick)
+
+| Pattern | Action |
+|---------|--------|
+| Peel / multi-hop | Follow large outs per hop rules; label exits |
+| Fan-out (1→many) | Cap dests; don’t mint holdings per leaf |
+| Many-to-one | Consolidation → holding, not cash-out |
+| CoinJoin / equal-denom | Label hub; no same-operator claim from anon set |
+| Bridge (THOR / Hyperunit / …) | Label vault; [btc-bridge-follow](../btc-bridge-follow/SKILL.md) |
+| CEX / service hub | `KNOWN_ADDRESS_LABELS` only; stop |
+
+Details: [reference.md](reference.md).
 
 ## Holding vs label-only
 
@@ -33,7 +50,7 @@ On-chain hops: [btc-esplora-verify](../btc-esplora-verify/SKILL.md). Policy:
 | Still-holding attacker vault / Wave 4 **park** stack | `CORE_HOLDING_ADDRESSES` (or Wave 3 if fingerprint) | Treat as mere label |
 | Exchange / custodial **deposit** | `KNOWN_ADDRESS_LABELS` only | Add as holding |
 | High-volume **service hub** (P2SH/P2WPKH mixer/swap sink) | `KNOWN_ADDRESS_LABELS` only | Add as holding |
-| Bridge vault (e.g. THORChain) | `KNOWN_ADDRESS_LABELS` only | Count as still-held stolen |
+| Bridge vault (e.g. THORChain, Hyperunit hub) | `KNOWN_ADDRESS_LABELS` only | Count as still-held stolen |
 | Intermediate hop, unknown | Follow further / note txids | Invent a venue name |
 
 **Gotcha:** Wave 4 destination parks that are base58 `1…`/`3…` **are** holdings

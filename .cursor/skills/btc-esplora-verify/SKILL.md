@@ -143,7 +143,7 @@ More jq / multi-hop notes: [reference.md](reference.md).
 | Consolidation still holding stack | Core holding or Wave 3 (≥ 0.5 BTC) |
 | Parallel fee-band sink | Collector (core + label) |
 | Intermediate before vault | Park — research only |
-| Post-spend destination | Hop / cash-out — label via [cashout-labeling](../cashout-labeling/SKILL.md) |
+| Post-spend destination | Hop / cash-out — label via [cashout-labeling](../cashout-labeling/SKILL.md); bridges via [btc-bridge-follow](../btc-bridge-follow/SKILL.md) |
 | Ocean peel / surplus pass-through | Notes only — not stolen |
 
 Do not invent addresses that contradict existing clusters. Run `npm test` after data edits.
