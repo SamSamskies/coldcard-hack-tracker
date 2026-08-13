@@ -18,7 +18,8 @@ Read this when you need concrete constants, source URLs, or script paths. Keep `
 | `.github/workflows/snapshot.yml` | ~6h cron + push triggers |
 
 Tip / new-wave scouting (`scripts/scan-new-waves.py`) is **not** part of this
-workflow — use the separate **new-wave-scan** skill when the user asks.
+workflow. Do not offer it after a research pass. Use **new-wave-scan** only
+when the user explicitly asks.
 
 `HOLDING_ADDRESSES` = core ∪ Wave 3. Core = live browser poll; Wave 3 = snapshot only.
 

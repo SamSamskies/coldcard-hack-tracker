@@ -51,7 +51,7 @@ const POINTS = [
   },
   {
     label: 'Lower risk',
-    text: 'At least 50 private dice rolls at seed creation. A long truly random BIP-39 passphrase (not the device PIN) may buy time, but weak passphrases are not enough — [BTC Sessions](https://x.com/BTCsessions/status/2084024733511921691) reported a confirmed Mk3 drain with a two-word passphrase; [ColeTU](https://x.com/ColeTU/status/2087506473123217436) saw 1–3 BIP39-word passphrases on a compromised Mk3 seed swept in ~6–7 days. [CK tripwire](https://cktripwire.com/) is mapping live how far added dice/passphrase entropy currently stops sweeps (zero-entropy control swept in ~1h; frontier ~11 bits by Aug 12 after a low/pass honeypot sweep; mid/high bands still live). Still migrate when practical.',
+    text: 'At least 50 private dice rolls at seed creation. A long truly random BIP-39 passphrase (not the device PIN) may buy time, but weak passphrases are not enough — [BTC Sessions](https://x.com/BTCsessions/status/2084024733511921691) reported a confirmed Mk3 drain with a two-word passphrase; [ColeTU](https://x.com/ColeTU/status/2087506473123217436) saw 1–3 BIP39-word passphrases on a compromised Mk3 seed swept in ~6–7 days. [CK tripwire](https://cktripwire.com/) is mapping live how far added dice/passphrase entropy currently stops sweeps (zero-entropy control swept in ~1h; frontier still ~11 bits as of Aug 13 after two low/pass honeypot sweeps; mid/high bands still live). Still migrate when practical.',
   },
   {
     label: 'Not this bug',

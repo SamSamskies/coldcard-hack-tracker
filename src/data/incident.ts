@@ -377,7 +377,7 @@ export const SOURCES = [
   },
   {
     label: 'James O\'Beirne · CK tripwire',
-    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)). By Aug 12, frontier ~11 bits after a low (pass) honeypot (HP-9C4F) was swept; mid/high/extreme bands still live. ColeTU’s weak BIP-39 passphrase experiment is listed as an external honeypot (1–3 word Mk3 passphrases swept in ~6–7d; claimed Mk4 seed still live). Defensive research only — do not add honeypot sinks to holdings.',
+    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)). Frontier still ~11 bits after a second low (pass) honeypot (HP-E786) was swept Aug 13, following HP-9C4F on Aug 12; mid/high/extreme bands still live. ColeTU’s weak BIP-39 passphrase experiment is listed as an external honeypot (1–3 word Mk3 passphrases swept in ~6–7d; claimed Mk4 seed still live). Defensive research only — do not add honeypot sinks to holdings.',
     url: 'https://cktripwire.com/',
   },
   {

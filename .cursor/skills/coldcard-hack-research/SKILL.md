@@ -33,7 +33,7 @@ Canonical facts live in code; explorers only supply live balances.
 8. **Cash-outs / labels** — when vaults empty or hops hit exchanges/bridges, follow **[cashout-labeling](../cashout-labeling/SKILL.md)** (holding vs label-only, Arkham primary / OKLink secondary / Bithypha tertiary for unlabeled hops, `KNOWN_ADDRESS_LABELS`). Bridge decode (THOR / Hyperunit / Chainflip → post-bridge dest): **[btc-bridge-follow](../btc-bridge-follow/SKILL.md)**.
 9. **OCR** — for chart images (Galaxy maps), use local Vision/OCR; do not trust eyeballed BTC figures.
 
-Do **not** run `scan-new-waves.py` from this skill — tip / new-wave scouting is a separate ask via **[new-wave-scan](../new-wave-scan/SKILL.md)**.
+Do **not** run `scan-new-waves.py` from this skill, and do **not** offer or ask about a tip / new-wave scan at the end of a research report. Quiet period: tip scouting is a separate explicit ask via **[new-wave-scan](../new-wave-scan/SKILL.md)** only.
 
 ### When blocked
 

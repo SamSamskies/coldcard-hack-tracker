@@ -4,9 +4,10 @@ description: >-
   Periodically scout the last 3 Bitcoin tip blocks for unreported
   Coldcard-hack-like sweep waves (dense 1-vout fee clusters). Default is
   shallow tip-only (--no-escalate); do not deep-scan or backfill unless the
-  user explicitly asks. Prefer on-demand / ~daily while quiet — not every
-  research pass. Use when checking for new waves, tip sweeps, or a local
-  wave check — before waiting on Galaxy/community reports.
+  user explicitly asks.   Prefer on-demand / ~daily while quiet — not part of a research
+  pass, and do not offer it after research. Use only when the user
+  explicitly asks to check for new waves, tip sweeps, or a local
+  wave check.
 ---
 
 # New Wave Scan
