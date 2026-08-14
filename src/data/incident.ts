@@ -461,6 +461,11 @@ export const SOURCES = [
     url: 'https://slowmist.medium.com/coldcard-111-million-theft-a-deep-dive-into-the-private-key-vulnerability-8e51d1a969d3',
   },
   {
+    label: 'Praveen Perera · Wave 1 forensics',
+    note: 'Aug 12–13: reconstructs 328 weak Mk3 seeds covering 1,042 / 1,195 Wave 1 sources (949.7 BTC); maps Holding 1–4 into three scan-session branches; same 30 sat/vB address-job builder + paid-API clues; 153 sources (~133 BTC) still unexplained.',
+    url: 'https://praveenperera.com/blog/coldcard-mk3-weak-rng-wave1/',
+  },
+  {
     label: 'Nunchuk · Slipstream migration',
     note: 'Aug 3: multisig urgency tiers (Coldcard keys alone vs below threshold) and MARA Slipstream to avoid RBF-sniping during migration; Slipstream now public with no code.',
     url: 'https://x.com/nunchuk_io/status/2084163891043688858',
