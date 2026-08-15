@@ -1124,10 +1124,11 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
           About {formatBtc(ORIGINAL_STOLEN_BTC)} BTC drained across known
           waves. Galaxy’s Waves 1–3 same-operator total is{' '}
           {formatBtc(GALAXY.totalStolenBtc)} BTC across{' '}
-          {GALAXY.victimAddresses.toLocaleString()} addresses; their Aug 7
+          {GALAXY.victimAddresses.toLocaleString()} addresses; their Aug 14
           high-confidence headline is {formatBtc(GALAXY.highConfidenceBtc)} BTC
-          across {GALAXY.highConfidenceVictimAddresses.toLocaleString()}{' '}
-          addresses (Waves 1–3 + owner-confirmed footprints), or up to ~
+          across more than{' '}
+          {GALAXY.highConfidenceVictimAddresses.toLocaleString()} addresses
+          (Waves 1–3 + owner-confirmed footprints), or up to{' '}
           {formatBtc(GALAXY.withCandidateWave4Btc)} BTC if outstanding
           candidates are promoted.{' '}
           {formatBtc(CONSOLIDATED_BTC)} BTC is in watched holdings. The
@@ -1135,7 +1136,8 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
           destinations (sparse still-held sample), plus smaller/unmatched
           Wave 3 vaults, untracked lettered footprints, and fees. Community
           waves (evening, morning, early Aug 2, P2TR, Wave 4) may be different
-          operators — Galaxy now tracks 25+ attack patterns.
+          operators — Galaxy now tracks {GALAXY.additionalFootprints}+
+          footprints beyond Waves 1–3. No confirmed attack after Aug 6.
         </p>
       </div>
 

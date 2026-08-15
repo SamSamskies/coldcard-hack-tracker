@@ -21,13 +21,16 @@ export const EARLY_WAVE = {
  * `totalStolenBtc` / `victimAddresses` stay Waves 1–3 only (same-operator
  * fingerprint; Aug 1 map) so cluster invariants keep working.
  *
- * Aug 7 update ([thread](https://x.com/glxyresearch/status/2085748513015488758)):
- * high-confidence headline is 1,719 BTC / 8,092 addresses (~$111M) after more
- * owner-confirmed lettered footprints. Chart “established losses” = 1,719.19
- * (= 1,367.05 + 352.14 footprints). Outstanding candidates → 2,300+ BTC if
- * promoted; Galaxy thinks total losses likely exceed $130M. 25+ attack patterns.
+ * Aug 14 update ([thread](https://x.com/glxyresearch/status/2088252639767085417);
+ * [brief](https://www.galaxy.com/insights/research/coldcard-exploit-abates-as-total-losses-climb-to-at-least-1700-btc)):
+ * high-confidence 1,778.84 BTC / 8,600+ addresses (~$112.7M) from 190 victims
+ * spoken to. Tweet rounds to 1,778 BTC / $112M. No confirmed attack after
+ * Aug 6. 3 waves + ≥33 footprints; 1,531 BTC still unmoved, ~246 moved
+ * (≈65% coinjoin). Medium-confidence + unconfirmed Wave 4 → 2,417.35 BTC
+ * ($153M).
  *
- * Aug 3 cut was 1,596 tweet / ~1,591 chart (= 1,367.05 + 223.85 footprints A–N).
+ * Aug 7 cut was 1,719 tweet / 1,719.19 chart (= 1,367.05 + 352.14 footprints),
+ * candidates → 2,300+. Aug 3 cut was 1,596 tweet / ~1,591 chart.
  */
 export const GALAXY = {
   /** Waves 1–3 same-operator total — must equal those three cluster sums. */
@@ -35,35 +38,51 @@ export const GALAXY = {
   victimAddresses: 4585,
   /** Galaxy’s reported finals; our live Wave 3 watch list is a partial reconstruct. */
   holdingAddresses: 7 + 293,
-  /** Aug 7 tweet high-confidence: Waves 1–3 + owner-confirmed footprints. */
-  highConfidenceBtc: 1719,
-  /** Chart: 8,092 addresses drained in the established-losses set (Aug 7). */
-  highConfidenceVictimAddresses: 8092,
+  /** Aug 14 published total: Waves 1–3 + owner-confirmed footprints (1,778.84). */
+  highConfidenceBtc: 1778.84,
+  /** Brief: more than 8,600 addresses in the established-losses set (Aug 14). */
+  highConfidenceVictimAddresses: 8600,
   /**
-   * Chart: owner-confirmed footprints taken (Aug 7) — E 182.67, Q 43.48, T 23.68,
-   * A 23.11, U 22.32, plus D/R/G/N/O/V/… tail 56.88.
+   * Owner-confirmed footprints taken (Aug 14) = published 1,778.84 − W1–3.
+   * Sankey (block 962304): E 209.94, Q 43.48, T 23.68, A 23.30, plus 41
+   * smaller footprints 111.39.
    */
-  footprintsConfirmedBtc: 352.14,
+  footprintsConfirmedBtc: 411.79,
   /**
-   * Chart: of those footprints, still at first receive addresses (Aug 7) —
-   * E 117.38 + T 23.68 + A 22.56 + U 22.32 + tail 32.55 (Q fully moved).
+   * Of the 1,778.84 high-confidence set, still in attacker-controlled
+   * addresses unmoved (Aug 14 tweet / brief).
    */
-  footprintsStillHeldBtc: 218.49,
+  unmovedBtc: 1531,
   /**
-   * Residual other pattern-matched candidates so W1–3 + footprints + this +
-   * Wave 4 ≈ Galaxy’s Aug 7 2,300+ ceiling. Not a separately labeled chart band
-   * (Aug 3 had an explicit 15.27 line).
+   * Moved by attackers after theft (Aug 14). ≈65% coinjoin / ≈35% onward;
+   * 1531 + 246 rounds to the 1,778 headline.
    */
-  patternMatchedUnconfirmedBtc: 132.08,
-  /** Aug 7: outstanding candidates for promotion → 2,300+ BTC. */
-  withCandidateWave4Btc: 2300,
-  wave4CandidateBtc: 448.73,
+  movedAfterTheftBtc: 246,
+  /** Direct victim conversations (Aug 14); not the same as earlier “250+ reports”. */
+  victimsSpokenTo: 190,
+  /** Footprints beyond Waves 1–3 (Aug 14). */
+  additionalFootprints: 33,
+  /**
+   * Chart: 271 pattern-matched addresses (15.93 BTC) with no owner
+   * confirmation — unpublished medium-confidence band (Aug 14).
+   */
+  patternMatchedUnconfirmedBtc: 15.93,
+  /** Aug 14: high-confidence + unpublished candidates (incl. Wave 4) → 2,417.35. */
+  withCandidateWave4Btc: 2417.35,
+  /**
+   * Unpublished Wave 4 band so W1–3 + footprints + pattern-matched + this
+   * = 2,417.35. Aug 7 figure was 448.73 (Thorn/Nunchuk pastebin cut);
+   * Galaxy’s Aug 14 unpublished Wave 4 remainder is 622.58.
+   */
+  wave4CandidateBtc: 622.58,
   /** Wave 3 map (Aug 1). */
   sourceUrl: 'https://x.com/glxyresearch/status/2083623500183421043',
   /** Losses exceed $100M / multi-attacker footprints (Aug 3). */
   aug3UpdateUrl: 'https://x.com/glxyresearch/status/2084411904924045370',
   /** $111M confirmed / 1,719 BTC high-confidence (Aug 7). */
   aug7UpdateUrl: 'https://x.com/glxyresearch/status/2085748513015488758',
+  /** $112.7M / 1,778.84 BTC high-confidence; attacks eased (Aug 14). */
+  aug14UpdateUrl: 'https://x.com/glxyresearch/status/2088252639767085417',
 } as const;
 
 /**
@@ -343,7 +362,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 443.34,
     date: '2026-08-03',
-    note: 'Pattern-match only (no victim report yet). Galaxy’s revised Wave 4 figure is 448.73 BTC after cutting 89 multisig destinations. We go one step further and also drop 6 destinations that already had prior on-chain history (−5.39 BTC), so our total is 443.34. Galaxy’s Aug 7 candidate ceiling is 2,300+ BTC (high-confidence 1,719 plus outstanding promotions, including this Wave 4 figure) — not our stricter 443.34 cut. Watched addresses are a sparse still-held sample.',
+    note: 'Pattern-match only (no victim report yet). Galaxy’s Aug 7 Wave 4 figure was 448.73 BTC after cutting 89 multisig destinations; their Aug 14 unpublished Wave 4 band is 622.58. We go one step further than the Aug 7 cut and also drop 6 destinations that already had prior on-chain history (−5.39 BTC), so our watched total is 443.34. Galaxy’s Aug 14 candidate ceiling is 2,417.35 BTC (high-confidence 1,778.84 plus unpublished promotions) — not our stricter 443.34 cut. Watched addresses are a sparse still-held sample.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
@@ -361,13 +380,18 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
+    label: 'Galaxy Research · $112M update',
+    note: 'Aug 14: high-confidence 1,778.84 BTC / 8,600+ addresses (~$112.7M) from 190 victims spoken to; tweet rounds to 1,778 BTC / $112M. No confirmed attack after Aug 6. Three waves + ≥33 footprints; multiple attackers. 1,531 BTC still unmoved; ~246 moved (≈65% coinjoin / ≈35% onward). Medium-confidence + unconfirmed Wave 4 → 2,417.35 BTC ($153M). Attacker-address lists shared with exchanges, compliance, and law enforcement. [Brief](https://www.galaxy.com/insights/research/coldcard-exploit-abates-as-total-losses-climb-to-at-least-1700-btc) / [Thorn](https://x.com/intangiblecoins/status/2088305623318298903).',
+    url: 'https://x.com/glxyresearch/status/2088252639767085417',
+  },
+  {
     label: 'Galaxy Research · $111M update',
-    note: 'Aug 7: high-confidence 1,719 BTC / 8,092 addresses (~$111M); chart established losses 1,719.19. Outstanding candidates → 2,300+ BTC if promoted; total losses likely exceed $130M. 25+ attack patterns / multiple threat actors. Scope still Coldcard Mk3/Mk4/Mk5/Q post–2021-03-17 firmware. 250+ victim reports via @intangiblecoins.',
+    note: 'Aug 7: high-confidence 1,719 BTC / 8,092 addresses (~$111M); chart established losses 1,719.19. Outstanding candidates → 2,300+ BTC if promoted; total losses likely exceed $130M. 25+ attack patterns / multiple threat actors. Scope still Coldcard Mk3/Mk4/Mk5/Q post–2021-03-17 firmware. 250+ victim reports via @intangiblecoins. Superseded by the Aug 14 $112M cut.',
     url: 'https://x.com/glxyresearch/status/2085748513015488758',
   },
   {
     label: 'Galaxy Research · $100M update',
-    note: 'Aug 3: high-confidence 1,596 BTC / ~7,300 addresses across Waves 1–3 + 14 owner-confirmed footprints; candidate Wave 4 would bring ~2,055 BTC. Multiple independent attackers. Waves 1–3 coins then still unmoved (Wave 2 collector later emptied Aug 7). Superseded by the Aug 7 $111M cut.',
+    note: 'Aug 3: high-confidence 1,596 BTC / ~7,300 addresses across Waves 1–3 + 14 owner-confirmed footprints; candidate Wave 4 would bring ~2,055 BTC. Multiple independent attackers. Waves 1–3 coins then still unmoved (Wave 2 collector later emptied Aug 7). Superseded by later Galaxy cuts.',
     url: 'https://x.com/glxyresearch/status/2084411904924045370',
   },
   {

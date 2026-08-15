@@ -48,25 +48,26 @@ describe('incident data invariants', () => {
     expect(sum).toBeCloseTo(GALAXY.totalStolenBtc, 2);
   });
 
-  it('keeps Galaxy Aug 7 headline tiers ordered', () => {
-    expect(GALAXY.highConfidenceBtc).toBe(1719);
-    expect(GALAXY.highConfidenceVictimAddresses).toBe(8092);
+  it('keeps Galaxy Aug 14 headline tiers ordered', () => {
+    expect(GALAXY.highConfidenceBtc).toBeCloseTo(1778.84, 2);
+    expect(GALAXY.highConfidenceVictimAddresses).toBe(8600);
     expect(GALAXY.highConfidenceBtc).toBeGreaterThan(GALAXY.totalStolenBtc);
     expect(GALAXY.withCandidateWave4Btc).toBeGreaterThan(GALAXY.highConfidenceBtc);
-    // Chart established losses (1,719.19); tweet headline rounds to 1,719.
     expect(
       GALAXY.totalStolenBtc + GALAXY.footprintsConfirmedBtc,
-    ).toBeCloseTo(1719.19, 2);
+    ).toBeCloseTo(GALAXY.highConfidenceBtc, 2);
     expect(
       GALAXY.totalStolenBtc +
         GALAXY.footprintsConfirmedBtc +
         GALAXY.patternMatchedUnconfirmedBtc +
         GALAXY.wave4CandidateBtc,
-    ).toBeCloseTo(GALAXY.withCandidateWave4Btc, 0);
-    expect(GALAXY.footprintsStillHeldBtc).toBeLessThanOrEqual(
-      GALAXY.footprintsConfirmedBtc,
-    );
+    ).toBeCloseTo(GALAXY.withCandidateWave4Btc, 2);
+    expect(GALAXY.unmovedBtc).toBe(1531);
+    expect(GALAXY.movedAfterTheftBtc).toBe(246);
+    expect(GALAXY.unmovedBtc).toBeLessThan(GALAXY.highConfidenceBtc);
+    expect(GALAXY.additionalFootprints).toBe(33);
     expect(GALAXY.aug7UpdateUrl).toContain('2085748513015488758');
+    expect(GALAXY.aug14UpdateUrl).toContain('2088252639767085417');
   });
 
   it('documents Footprint O without adding a watched cluster', () => {
