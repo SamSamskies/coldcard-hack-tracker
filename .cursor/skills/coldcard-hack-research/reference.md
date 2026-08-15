@@ -21,7 +21,8 @@ Tip / new-wave scouting (`scripts/scan-new-waves.py`) is **not** part of this
 workflow. Do not offer it after a research pass. Use **new-wave-scan** only
 when the user explicitly asks.
 
-`HOLDING_ADDRESSES` = core ∪ Wave 3. Core = live browser poll; Wave 3 = snapshot only.
+`HOLDING_ADDRESSES` = core ∪ Wave 3. Both are served from the cron snapshot
+(no live browser Esplora).
 
 ## Fingerprints
 
@@ -40,9 +41,10 @@ Movement watch: block **> 960400**. Hop follow: depth ≤2, ≥0.01 BTC, ≤3 de
 
 ## Explorer hosts
 
-Browser probe order (`MEMPOOL_HOSTS`): mempool.space → emzy → bitaroo.
+UI address/tx links (`MEMPOOL_HOSTS`): mempool.space → emzy → bitaroo.
 
 Cron / bulk research preference: **bitaroo → emzy**; avoid hammering space/Blockstream.
+The dashboard does not poll Esplora in the browser.
 
 ## X MCP workflow (no unapproved keyword search)
 

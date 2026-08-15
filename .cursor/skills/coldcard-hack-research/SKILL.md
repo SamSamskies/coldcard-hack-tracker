@@ -56,7 +56,7 @@ Details: [reference.md](reference.md).
 | Clusters, fingerprints, core holdings, sources | `src/data/incident.ts` |
 | Wave 3 watch list (≥ 0.5 BTC) | `src/data/wave3Vaults.ts` |
 | Invariants | `src/data/incident.test.ts` |
-| Live Wave 3 balances | `public/snapshot.json` via `npm run snapshot` |
+| Live balances & movements | `public/snapshot.json` via `npm run snapshot` |
 | Offline Wave 3 discovery | `scripts/find-wave3-vaults.py`, `scripts/wave3-out/` |
 
 Galaxy Waves 1–3 `stolenBtc` must continue to sum to `GALAXY.totalStolenBtc` (~1367.05).

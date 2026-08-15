@@ -75,7 +75,7 @@ export function shouldTrackSeedOutbounds(
  *
  * `pollBalance: false` only skips *balance* polls (synth 0). Those emptied
  * vaults must still be movement seeds — otherwise hop trails disappear from
- * the feed on the next snapshot/live refresh.
+ * the feed on the next snapshot rebuild.
  */
 export function shouldWatchSeedMovements(
   h: { pollBalance?: boolean; reportBtc: number },

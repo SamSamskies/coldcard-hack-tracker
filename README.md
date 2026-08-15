@@ -1,8 +1,8 @@
 # Coldcard Hack Tracker
 
-Live single-page dashboard for Bitcoin held after Coldcard seed-entropy sweeps since July 2026.
+Static dashboard for Bitcoin held after Coldcard seed-entropy sweeps since July 2026.
 
-Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). **Core vaults** (Waves 1–2 and small community holdings) are polled live in the browser via the public [mempool.space](https://mempool.space) API. **Wave 3** balances come from `public/snapshot.json`, refreshed by a GitHub Actions cron about every 6 hours — so visitors do not fan out dozens of explorer requests.
+Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). All balances and the movement feed come from `public/snapshot.json`, refreshed by a GitHub Actions cron about every 6 hours — visitors do not hit public explorers.
 
 ## Develop
 
@@ -32,12 +32,11 @@ npm run preview
 
 | Data | Source |
 |------|--------|
-| Core balances & txs (live) | mempool `/api/address/{addr}` |
-| Wave 3 balances | `/snapshot.json` (cron) |
-| BTC/USD | `/api/v1/prices` (+ snapshot) |
+| Holdings & movements | `/snapshot.json` (cron) |
+| BTC/USD | snapshot `usdPrice` |
 | Incident facts | Galaxy Research + community cluster reports (static) |
 
-No API key is needed for the dashboard. Core vaults refresh about every 5 minutes; the Wave 3 snapshot is re-read about every 15 minutes.
+No API key is needed for the dashboard. The browser re-reads `/snapshot.json` on load, on tab focus, and about every 15 minutes while the tab is visible.
 
 Optional local research: put `BLOCKCHAIR_API_KEY` in a gitignored `.env` for faster tip wave scouts (`scripts/scan-new-waves.py --blockchair`) and batch balance checks (`scripts/blockchair-balances.py`). Estimate request points and confirm before spending quota; **do not** use that key in the snapshot cron.
 
@@ -47,7 +46,7 @@ Optional local research: put `BLOCKCHAIR_API_KEY` in a gitignored `.env` for fas
 npm run snapshot
 ```
 
-Writes `public/snapshot.json` (all watched holdings + movements for vaults that look spent). On `main`, [`.github/workflows/snapshot.yml`](.github/workflows/snapshot.yml) runs this on a schedule and commits the file so static hosts redeploy with fresh Wave 3 numbers. Esplora-only by design.
+Writes `public/snapshot.json` (all watched holdings + movements for vaults that look spent). On `main`, [`.github/workflows/snapshot.yml`](.github/workflows/snapshot.yml) runs this on a schedule and commits the file so static hosts redeploy with fresh numbers. Esplora-only by design.
 
 ### Tip wave scout
 
@@ -61,25 +60,27 @@ Scouts the last 3 tip blocks for Coldcard-like 1-vout fee clusters. See `.cursor
 ### Movement alerts
 
 Use the **Alerts** toggle in the header for browser notifications when a new
-outbound spend appears (holdings or followed hops). Preference is stored in
-`localStorage`; the tab must stay open for polling to continue.
+outbound spend appears in the snapshot (holdings or followed hops). This is
+not live chain — the cron is about every 6 hours. Preference is stored in
+`localStorage`. Notifications only fire while the tab is open (including after
+a snapshot re-read).
 
 ### Explorer mirrors
 
-Some networks, VPNs, and DNS filters block `mempool.space`, which makes every
-request fail in the browser. The app probes hosts in order and reuses the first
-one that answers:
+The snapshot cron probes Esplora hosts in this order (see `HOSTS` in
+`scripts/build-snapshot.mjs`):
 
-1. `mempool.space`
-2. `mempool.emzy.de`
-3. `mempool.bitaroo.net`
+1. `mempool.bitaroo.net`
+2. `mempool.space`
+3. `mempool.emzy.de`
 
-The footer shows which host served the current data. Edit `MEMPOOL_HOSTS` in
-[src/data/incident.ts](src/data/incident.ts) to add your own instance.
+Address and transaction links in the UI default to `mempool.space`. Edit
+`MEMPOOL_HOSTS` in [src/data/incident.ts](src/data/incident.ts) to change
+link targets.
 
 ### Hop following
 
-When a holding address spends reported consolidation, the tracker follows the
+When a holding address spends reported consolidation, the snapshot builder follows the
 largest destinations (up to hop 2, ignoring dust under 0.01 BTC) and lists those
 outbound spends in the movement feed. Still-held % stays based on the watched
 holding addresses only.

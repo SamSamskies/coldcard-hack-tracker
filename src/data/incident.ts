@@ -525,7 +525,7 @@ export type HoldingAddress = {
   pollBalance?: boolean;
 };
 
-/** Whether live/snapshot should fetch this holding's balance from Esplora. */
+/** Whether the snapshot cron should fetch this holding's balance from Esplora. */
 export function shouldPollBalance(h: HoldingAddress): boolean {
   return h.pollBalance !== false;
 }
@@ -545,7 +545,7 @@ export const NO_POLL_BALANCE_ADDRESSES = [
   '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ', // Wave 4 park
 ] as const;
 
-/** Wave 1/2 + community vaults — live-polled in the browser. */
+/** Wave 1/2 + community vaults — balances from the cron snapshot. */
 export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
   {
     address: 'bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r',
@@ -735,9 +735,6 @@ export const CONSOLIDATED_BTC = HOLDING_ADDRESSES.reduce(
   0,
 );
 
-/** Cap parallel mempool address polls for live core holdings. */
-export const ADDRESS_FETCH_CONCURRENCY = 4;
-
 /**
  * Some networks and DNS resolvers block mempool.space, so fall through to
  * community instances that serve the same API.
@@ -749,9 +746,7 @@ export const MEMPOOL_HOSTS = [
 ] as const;
 
 export const REQUEST_TIMEOUT_MS = 8_000;
-/** Live refresh for core holdings (Wave 3 uses /snapshot.json from cron). */
-export const REFRESH_INTERVAL_MS = 5 * 60_000;
-/** How often to re-fetch the cron snapshot for Wave 3 balances. */
+/** How often a visible tab re-reads /snapshot.json (same-origin; not Esplora). */
 export const SNAPSHOT_REFRESH_INTERVAL_MS = 15 * 60_000;
 export const SATS_PER_BTC = 100_000_000;
 /** Primary wave funds reported unspent at this block; later spends count as movement. */

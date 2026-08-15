@@ -1,27 +1,20 @@
-import { useEffect, useState } from 'react';
 import { AddressList } from './components/AddressList';
 import { IncidentHeader } from './components/IncidentHeader';
 import { KpiRow } from './components/KpiRow';
 import { MovementFeed } from './components/MovementFeed';
 import { RiskChecklist } from './components/RiskChecklist';
 import { SourcesStrip } from './components/SourcesStrip';
-import {
-  alertsCurrentlyArmed,
-  useMovementAlerts,
-} from './hooks/useMovementAlerts';
+import { useMovementAlerts } from './hooks/useMovementAlerts';
 import { useTrackerData } from './hooks/useTrackerData';
+import { formatRelativeTime } from './lib/format';
 
 export default function App() {
-  const [allowBackgroundPoll, setAllowBackgroundPoll] = useState(
-    alertsCurrentlyArmed,
-  );
-  const data = useTrackerData(allowBackgroundPoll);
+  const data = useTrackerData();
   const hasData = data.addresses.length > 0;
   const alerts = useMovementAlerts(data.movements, hasData);
-
-  useEffect(() => {
-    setAllowBackgroundPoll(alerts.enabled);
-  }, [alerts.enabled]);
+  const snapshotAge = data.snapshotUpdatedAt
+    ? formatRelativeTime(new Date(data.snapshotUpdatedAt))
+    : null;
 
   return (
     <div className="app-shell">
@@ -43,10 +36,10 @@ export default function App() {
         {data.error ? (
           <div className="error-banner" role="alert">
             <div>
-              <strong>Could not reach a Bitcoin explorer.</strong>{' '}
+              <strong>Could not load the balance snapshot.</strong>{' '}
               <span className="muted">
-                Some networks and DNS providers block explorer domains. Check
-                your connection, VPN, or DNS filter, then retry.
+                The dashboard reads /snapshot.json (refreshed about every 6
+                hours). Check your connection, then retry.
               </span>
               <span className="error-detail mono">{data.error}</span>
             </div>
@@ -80,6 +73,10 @@ export default function App() {
 
         <footer className="site-footer">
           <p>Not affiliated with Coinkite or Coldcard.</p>
+          <p>
+            Balances from the ~6h snapshot
+            {snapshotAge ? ` · last updated ${snapshotAge}` : ''}.
+          </p>
         </footer>
       </main>
     </div>

@@ -1,42 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ADDRESS_FETCH_CONCURRENCY,
   CONSOLIDATED_BTC,
-  CORE_HOLDING_ADDRESSES,
   HOLDING_ADDRESSES,
-  MAX_HOP_DEPTH,
-  MAX_HOP_WATCH_ADDRESSES,
-  REFRESH_INTERVAL_MS,
   SATS_PER_BTC,
   SNAPSHOT_REFRESH_INTERVAL_MS,
-  shouldPollBalance,
   type HoldingAddress,
 } from '../data/incident';
-import {
-  addressBalanceSats,
-  fetchAddress,
-  fetchAddressTxs,
-  fetchUsdPrice,
-  satsToBtc,
-  type AddressResponse,
-  type Tx,
-} from '../lib/mempool';
-import { mapPool } from '../lib/pool';
+import { satsToBtc } from '../lib/mempool';
 import { fetchSnapshot, type Snapshot } from '../lib/snapshot';
 import {
   dedupeMovements,
-  discoverNextHops,
-  frozenTerminalHopAddresses,
   heldStats,
-  movementsFromWatch,
   omitHighFanoutMovements,
   omitKnownExitChurn,
   omitPostKnownExitPassThroughMovements,
-  shouldWatchSeedMovements,
   statusFor,
   type AddressStatus,
   type Movement,
-  type WatchTarget,
 } from '../lib/tracker';
 
 export type { AddressStatus, Movement };
@@ -57,18 +37,11 @@ export type TrackerData = {
   usdPrice: number | null;
   movements: Movement[];
   lastMovement: Movement | null;
+  snapshotUpdatedAt: string | null;
   loading: boolean;
   error: string | null;
   refresh: () => void;
 };
-
-function utxoEstimate(addr: AddressResponse): number {
-  return (
-    addr.chain_stats.funded_txo_count -
-    addr.chain_stats.spent_txo_count +
-    (addr.mempool_stats.funded_txo_count - addr.mempool_stats.spent_txo_count)
-  );
-}
 
 function reportAsLive(h: HoldingAddress, prev?: LiveAddress): LiveAddress {
   if (prev) return { ...prev, flash: false };
@@ -101,22 +74,23 @@ function liveFromSats(
 }
 
 /**
- * @param allowBackgroundPoll - When true (movement alerts armed), keep
- *   polling while the tab is hidden so notifications can still fire.
- *   When false, pause intervals in background tabs and catch up on focus.
+ * Quiet-period tracker: balances and the movement feed come only from
+ * `/snapshot.json` (GitHub Actions ~6h). No live Esplora from the browser.
+ * Re-reads the snapshot on load, on tab focus, and on an interval while the
+ * tab is visible.
  */
-export function useTrackerData(allowBackgroundPoll = false): TrackerData {
+export function useTrackerData(): TrackerData {
   const [addresses, setAddresses] = useState<LiveAddress[]>([]);
   const [usdPrice, setUsdPrice] = useState<number | null>(null);
   const [movements, setMovements] = useState<Movement[]>([]);
+  const [snapshotUpdatedAt, setSnapshotUpdatedAt] = useState<string | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const prevBalances = useRef<Map<string, number>>(new Map());
   const flashTimers = useRef<Map<string, number>>(new Map());
-  const hopWatchRef = useRef<Map<string, WatchTarget>>(new Map());
   const addressesRef = useRef<LiveAddress[]>([]);
-  const snapshotMovementsRef = useRef<Movement[]>([]);
-  const liveMovementsRef = useRef<Movement[]>([]);
   const snapshotAtRef = useRef(0);
 
   const scheduleFlashClear = useCallback((address: string) => {
@@ -131,43 +105,16 @@ export function useTrackerData(allowBackgroundPoll = false): TrackerData {
     flashTimers.current.set(address, t);
   }, []);
 
-  const publishMovements = useCallback(() => {
-    setMovements(
-      dedupeMovements(
-        omitPostKnownExitPassThroughMovements(
-          omitHighFanoutMovements(
-            omitKnownExitChurn([
-              ...snapshotMovementsRef.current,
-              ...liveMovementsRef.current,
-            ]),
-          ),
-        ),
-      ),
-    );
-  }, []);
-
-  /** Apply snapshot to Wave 3 rows; optionally seed core if we have no live data yet. */
   const applySnapshot = useCallback(
-    (snapshot: Snapshot, opts: { seedCore: boolean }) => {
+    (snapshot: Snapshot) => {
       const prevByAddr = new Map(
         addressesRef.current.map((a) => [a.address, a]),
       );
       const snapByAddr = new Map(
         snapshot.addresses.map((a) => [a.address, a]),
       );
-      const hasLiveCore = addressesRef.current.some(
-        (a) => a.clusterId !== 'galaxy-wave3',
-      );
 
       const live = HOLDING_ADDRESSES.map((h) => {
-        const isWave3 = h.clusterId === 'galaxy-wave3';
-        const shouldSeed =
-          isWave3 || (opts.seedCore && !hasLiveCore) || !prevByAddr.has(h.address);
-
-        if (!shouldSeed && !isWave3) {
-          return reportAsLive(h, prevByAddr.get(h.address));
-        }
-
         const row = snapByAddr.get(h.address);
         if (!row) return reportAsLive(h, prevByAddr.get(h.address));
 
@@ -179,221 +126,46 @@ export function useTrackerData(allowBackgroundPoll = false): TrackerData {
       });
 
       addressesRef.current = live;
-      snapshotMovementsRef.current = snapshot.movements;
       snapshotAtRef.current = Date.parse(snapshot.updatedAt) || Date.now();
       setAddresses(live);
+      setSnapshotUpdatedAt(snapshot.updatedAt);
       if (snapshot.usdPrice != null) setUsdPrice(snapshot.usdPrice);
-      publishMovements();
+      setMovements(
+        dedupeMovements(
+          omitPostKnownExitPassThroughMovements(
+            omitHighFanoutMovements(omitKnownExitChurn(snapshot.movements)),
+          ),
+        ),
+      );
     },
-    [publishMovements, scheduleFlashClear],
+    [scheduleFlashClear],
   );
 
   const refreshSnapshot = useCallback(async () => {
     const snapshot = await fetchSnapshot();
     if (!snapshot) return false;
     const t = Date.parse(snapshot.updatedAt) || 0;
-    const seedCore = addressesRef.current.length === 0;
-    if (!seedCore && t && t <= snapshotAtRef.current) return true;
-    applySnapshot(snapshot, { seedCore });
+    const firstLoad = addressesRef.current.length === 0;
+    if (!firstLoad && t && t <= snapshotAtRef.current) return true;
+    applySnapshot(snapshot);
     return true;
   }, [applySnapshot]);
-
-  const refreshLive = useCallback(async () => {
-    const prevByAddr = new Map(
-      addressesRef.current.map((a) => [a.address, a]),
-    );
-
-    const pollCores = CORE_HOLDING_ADDRESSES.filter(shouldPollBalance);
-
-    const [summaryResults, price] = await Promise.all([
-      mapPool(pollCores, ADDRESS_FETCH_CONCURRENCY, async (h) => {
-        try {
-          return await fetchAddress(h.address);
-        } catch {
-          return null;
-        }
-      }),
-      fetchUsdPrice().catch(() => null),
-    ]);
-
-    const summaryByAddr = new Map<string, AddressResponse>();
-    pollCores.forEach((h, i) => {
-      const summary = summaryResults[i];
-      if (summary) summaryByAddr.set(h.address, summary);
-    });
-
-    const coreOk = pollCores.some((h) => summaryByAddr.has(h.address));
-    if (!coreOk) {
-      throw new Error(
-        'Could not load core holding balances from any explorer',
-      );
-    }
-
-    const live: LiveAddress[] = HOLDING_ADDRESSES.map((h) => {
-      if (h.clusterId === 'galaxy-wave3') {
-        return reportAsLive(h, prevByAddr.get(h.address));
-      }
-
-      if (!shouldPollBalance(h)) {
-        const prev = prevBalances.current.get(h.address);
-        const row = liveFromSats(h, 0, 0, prev);
-        prevBalances.current.set(h.address, 0);
-        if (row.flash) scheduleFlashClear(h.address);
-        return row;
-      }
-
-      const summary = summaryByAddr.get(h.address);
-      if (!summary) {
-        return reportAsLive(h, prevByAddr.get(h.address));
-      }
-
-      const balanceSats = addressBalanceSats(summary);
-      const prev = prevBalances.current.get(h.address);
-      const row = liveFromSats(
-        h,
-        balanceSats,
-        Math.max(0, utxoEstimate(summary)),
-        prev,
-      );
-      prevBalances.current.set(h.address, balanceSats);
-      if (row.flash) scheduleFlashClear(h.address);
-      return row;
-    });
-
-    const activeSeeds: WatchTarget[] = [];
-    const activeAddrs: string[] = [];
-    for (const h of CORE_HOLDING_ADDRESSES) {
-      const balanceBtc = shouldPollBalance(h)
-        ? (() => {
-            const summary = summaryByAddr.get(h.address);
-            if (!summary) return null;
-            return satsToBtc(addressBalanceSats(summary));
-          })()
-        : 0;
-      if (balanceBtc == null) continue;
-      if (!shouldWatchSeedMovements(h, balanceBtc)) continue;
-      activeSeeds.push({
-        address: h.address,
-        label: h.label,
-        hop: 0,
-        reportBtc: h.reportBtc,
-      });
-      activeAddrs.push(h.address);
-    }
-
-    const activeSeedTxLists = await mapPool(
-      activeAddrs,
-      ADDRESS_FETCH_CONCURRENCY,
-      (addr) => fetchAddressTxs(addr).catch(() => [] as Tx[]),
-    );
-
-    const known = new Set(HOLDING_ADDRESSES.map((h) => h.address));
-    const allMovements = movementsFromWatch(activeSeeds, activeSeedTxLists);
-
-    const frozenHops = frozenTerminalHopAddresses([
-      ...snapshotMovementsRef.current,
-      ...liveMovementsRef.current,
-    ]);
-    for (const addr of frozenHops) {
-      known.add(addr);
-      hopWatchRef.current.delete(addr);
-    }
-
-    // Keep hop watches across polls. Clearing every refresh made hops drop out
-    // whenever a /txs fetch failed, then "pop back" into the feed already marked
-    // seen — so movement alerts never fired for those rows.
-    for (const w of hopWatchRef.current.values()) {
-      if (w.hop >= 1 && w.hop <= MAX_HOP_DEPTH) known.add(w.address);
-    }
-
-    const openSlots = Math.max(
-      0,
-      MAX_HOP_WATCH_ADDRESSES - hopWatchRef.current.size,
-    );
-    const freshHops = discoverNextHops(
-      activeSeeds,
-      activeSeedTxLists,
-      known,
-      openSlots,
-    );
-    for (const hop of freshHops) {
-      if (frozenHops.has(hop.address)) continue;
-      hopWatchRef.current.set(hop.address, hop);
-      known.add(hop.address);
-    }
-
-    let hopWatches = [...hopWatchRef.current.values()]
-      .filter(
-        (w) =>
-          w.hop >= 1 &&
-          w.hop <= MAX_HOP_DEPTH &&
-          !frozenHops.has(w.address),
-      )
-      .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
-      .slice(0, MAX_HOP_WATCH_ADDRESSES);
-
-    for (const w of hopWatches) known.add(w.address);
-
-    for (let round = 0; round < MAX_HOP_DEPTH && hopWatches.length > 0; round++) {
-      const hopTxLists = await mapPool(
-        hopWatches,
-        ADDRESS_FETCH_CONCURRENCY,
-        (w) => fetchAddressTxs(w.address).catch(() => [] as Tx[]),
-      );
-      allMovements.push(...movementsFromWatch(hopWatches, hopTxLists));
-      for (const m of allMovements) {
-        if (m.hop >= MAX_HOP_DEPTH) {
-          frozenHops.add(m.fromAddress);
-          known.add(m.fromAddress);
-        }
-      }
-
-      const slotsLeft = MAX_HOP_WATCH_ADDRESSES - hopWatchRef.current.size;
-      const next = discoverNextHops(hopWatches, hopTxLists, known, slotsLeft);
-      if (next.length === 0) break;
-
-      for (const hop of next) {
-        if (frozenHops.has(hop.address)) continue;
-        hopWatchRef.current.set(hop.address, hop);
-        known.add(hop.address);
-      }
-
-      hopWatches = next.filter((w) => !frozenHops.has(w.address));
-    }
-
-    const keep = new Set(
-      [...hopWatchRef.current.values()]
-        .filter((w) => !frozenHops.has(w.address))
-        .sort((a, b) => a.hop - b.hop || a.address.localeCompare(b.address))
-        .slice(0, MAX_HOP_WATCH_ADDRESSES)
-        .map((w) => w.address),
-    );
-    for (const addr of [...hopWatchRef.current.keys()]) {
-      if (!keep.has(addr)) hopWatchRef.current.delete(addr);
-    }
-
-    addressesRef.current = live;
-    liveMovementsRef.current = allMovements;
-    setAddresses(live);
-    if (price != null) setUsdPrice(price);
-    publishMovements();
-  }, [publishMovements, scheduleFlashClear]);
 
   const refresh = useCallback(async () => {
     setError(null);
     try {
-      const hadSnapshot = await refreshSnapshot();
-      if (hadSnapshot) setLoading(false);
-
-      await refreshLive();
+      const ok = await refreshSnapshot();
+      if (!ok && addressesRef.current.length === 0) {
+        setError('Could not load snapshot.json');
+      }
       setLoading(false);
     } catch (e) {
       if (addressesRef.current.length === 0) {
-        setError(e instanceof Error ? e.message : 'Failed to load chain data');
+        setError(e instanceof Error ? e.message : 'Failed to load snapshot');
       }
       setLoading(false);
     }
-  }, [refreshLive, refreshSnapshot]);
+  }, [refreshSnapshot]);
 
   useEffect(() => {
     const timers = flashTimers.current;
@@ -404,40 +176,27 @@ export function useTrackerData(allowBackgroundPoll = false): TrackerData {
   }, [refresh]);
 
   useEffect(() => {
-    let liveId: number | undefined;
     let snapId: number | undefined;
 
-    const clearTimers = () => {
-      if (liveId != null) window.clearInterval(liveId);
+    const clearTimer = () => {
       if (snapId != null) window.clearInterval(snapId);
-      liveId = undefined;
       snapId = undefined;
     };
 
-    const startTimers = () => {
-      if (liveId != null) return;
-      liveId = window.setInterval(() => {
-        void refreshLive().catch(() => {
-          /* keep last good core data */
-        });
-      }, REFRESH_INTERVAL_MS);
+    const startTimer = () => {
+      if (snapId != null) return;
       snapId = window.setInterval(() => {
         void refreshSnapshot();
       }, SNAPSHOT_REFRESH_INTERVAL_MS);
     };
 
     const syncPolling = () => {
-      if (allowBackgroundPoll || !document.hidden) startTimers();
-      else clearTimers();
+      if (!document.hidden) startTimer();
+      else clearTimer();
     };
 
     const onVisibility = () => {
-      if (!document.hidden) {
-        void refreshLive().catch(() => {
-          /* keep last good core data */
-        });
-        void refreshSnapshot();
-      }
+      if (!document.hidden) void refreshSnapshot();
       syncPolling();
     };
 
@@ -445,9 +204,9 @@ export function useTrackerData(allowBackgroundPoll = false): TrackerData {
     document.addEventListener('visibilitychange', onVisibility);
     return () => {
       document.removeEventListener('visibilitychange', onVisibility);
-      clearTimers();
+      clearTimer();
     };
-  }, [allowBackgroundPoll, refreshLive, refreshSnapshot]);
+  }, [refreshSnapshot]);
 
   const heldBtc = addresses.reduce((s, a) => s + a.balanceBtc, 0);
   const { movedBtc, heldPct } = heldStats(heldBtc, CONSOLIDATED_BTC);
@@ -463,6 +222,7 @@ export function useTrackerData(allowBackgroundPoll = false): TrackerData {
     usdPrice,
     movements,
     lastMovement,
+    snapshotUpdatedAt,
     loading,
     error,
     refresh,

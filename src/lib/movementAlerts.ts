@@ -46,7 +46,7 @@ export function isAlertableMovement(
  * Enabling while the feed already has items baselines those without notifying.
  *
  * Later polls may rediscover older hop spends that were not in the primed
- * set (snapshot vs live, transient /txs failures). Those are marked seen but
+ * set (stale vs fresh snapshot). Those are marked seen but
  * only notify when {@link isAlertableMovement} says they are recent.
  */
 export function advanceAlertWatch(

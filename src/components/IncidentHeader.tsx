@@ -29,10 +29,10 @@ export function IncidentHeader({
     alertsPermission === 'denied'
       ? 'Notifications are blocked in browser settings'
       : alertsEnabled
-        ? 'Browser notification when holdings or hop-1 destinations spend (not terminal hop remixes). Toggle off and on to send a test notification.'
+        ? 'Notify when the ~6h snapshot shows a new spend (not live chain). Toggle off and on to send a test notification.'
         : awaitingPermission
-          ? 'Click to grant browser permission for movement alerts'
-          : 'Click to allow notifications when holdings or hop-1 destinations spend (sends a test notification)';
+          ? 'Click to grant browser permission for snapshot movement alerts'
+          : 'Click to allow notifications when the snapshot shows a new spend (sends a test notification)';
   const alertsStatus =
     alertsPermission === 'denied'
       ? 'Blocked'
@@ -46,7 +46,6 @@ export function IncidentHeader({
     <header className="incident-header">
       <div className="brand-row">
         <div className="brand-block">
-          <p className="eyebrow">Live chain monitor</p>
           <h1 className="brand">{APP_NAME}</h1>
           <p className="subtitle">Seed-entropy sweeps since July 2026</p>
         </div>

@@ -77,7 +77,7 @@ export function KpiRow({
         </p>
         <p className="kpi-detail">
           {!hasData
-            ? 'Waiting for chain data'
+            ? 'Waiting for snapshot'
             : alert
               ? 'Reported consolidation has left the holding addresses'
               : 'Reported consolidation still on the holding addresses'}
@@ -99,7 +99,7 @@ export function KpiRow({
         </p>
         <p className="kpi-detail">
           {!hasData
-            ? 'Waiting for chain data'
+            ? 'Waiting for snapshot'
             : lastMovement
               ? `${formatBtc(lastMovement.amountBtc)} BTC from ${lastMovement.fromLabel}`
               : 'No spends of the reported consolidation'}

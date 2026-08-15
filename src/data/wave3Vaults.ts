@@ -3,7 +3,7 @@
  * and cross-checked against the public COLDCARD RNG chain map (293 vaults).
  * Not Galaxy’s published address list — see WAVE3_FINGERPRINT in incident.ts.
  * Watch list: vaults ≥ 0.5 BTC only (78 · 184.97366201 BTC) for reliable snapshots.
- * Balances served from public/snapshot.json (cron), not live browser polls.
+ * Balances served from public/snapshot.json (cron), same as all other holdings.
  */
 
 export const WAVE3_VAULTS = [

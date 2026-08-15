@@ -74,16 +74,18 @@ function notifyMovement(m: Movement) {
 function notifyAlertsArmed(): boolean {
   return showNotification(
     APP_NAME,
-    'Movement alerts on — holdings and hop-1 spends only (not terminal hop remixes).',
+    'Movement alerts on — fires when the ~6h snapshot shows a new spend (not live chain).',
     `alerts-armed-${Date.now()}`,
   );
 }
 
 /**
  * Browser notifications when new outbound spends appear after the first
- * successful poll. Opt-in; preference persisted in localStorage.
+ * snapshot load. Opt-in; preference persisted in localStorage. Quiet period:
+ * the feed only updates when /snapshot.json changes (~6h cron), not live
+ * Esplora.
  *
- * @param ready - True once the tracker has completed at least one poll so the
+ * @param ready - True once the tracker has loaded a snapshot so the
  *   initial feed can be baselined without treating it as brand-new movement.
  */
 export function useMovementAlerts(
