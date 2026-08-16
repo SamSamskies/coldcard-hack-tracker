@@ -84,8 +84,11 @@ python3 scripts/x_cache.py stats
 - Wave 3 / headline: `https://x.com/glxyresearch/status/2083623500183421043`
 - Aug 3 $100M / footprints: `https://x.com/glxyresearch/status/2084411904924045370`
   - Then: high-confidence ~1,596 BTC / ~7,300 addrs; chart footprints A–N 223.85; +W4 → ~2,055
+- Aug 16 $115M / dormancy charts: `https://x.com/glxyresearch/status/2089002238391832948`
+  - Theft-time valuation >$115M (chart ~$114.0M); chart 1,778.57697908 BTC / 8,680 addrs
+  - 200+ victims spoken to (chart: 203 reporters / 192 verified); no new attack wave
 - Aug 14 $112M / attacks eased: `https://x.com/glxyresearch/status/2088252639767085417`
-  - High-confidence 1,778.84 BTC / 8,600+ addrs (~$112.7M); tweet 1,778 / $112M
+  - High-confidence 1,778.84 BTC / 8,600+ addrs (~$112.7M spot); tweet 1,778 / $112M
   - No confirmed attack after Aug 6; 190 victims spoken to; ≥33 footprints
   - 1,531 BTC unmoved; ~246 moved (≈65% coinjoin); candidates → 2,417.35 BTC ($153M)
   - Brief: `https://www.galaxy.com/insights/research/coldcard-exploit-abates-as-total-losses-climb-to-at-least-1700-btc`
