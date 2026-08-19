@@ -393,6 +393,11 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
+    label: 'Bitcoin Magazine · Wave 1 / law enforcement',
+    note: 'Aug 18: Juan Galt reports Block’s paid blockchain-data-account lead (Clay Garrett, Jul 31) may have given authorities a path to the Wave 1 operator. Galaxy’s Alex Thorn said in a [Bitcoin Policy Institute / Bitcoin Magazine YouTube segment](https://www.youtube.com/watch?v=XlvsJblW4Sg) that Wave 1’s “attacker identity, may be known to law enforcement,” and that Wave 2’s pattern could be the same actor. Headline mentions the FBI; no FBI statement, named suspect, arrest, indictment, or seizure is in the public record. Wave 1 stack still unmoved.',
+    url: 'https://bitcoinmagazine.com/technical/hunting-down-the-coldcard-hacker-wave-1-thief-may-be-known-to-fbi',
+  },
+  {
     label: 'Galaxy Research · $115M update',
     note: 'Aug 16: losses exceeded $115M valued at theft-time BTC price (chart cumulative ~$114.0M). Established-losses chart 1,778.57697908 BTC / 8,680 addresses. Spoken with 200+ victims (chart: 203 reporters; 192 verified into the established set ≈40.2% of swept BTC). Thread is dormancy / footprint analysis charts — no new attack wave. No confirmed attack after Aug 6 still from Aug 14. Victim help: DM @intangiblecoins.',
     url: 'https://x.com/glxyresearch/status/2089002238391832948',
@@ -524,7 +529,7 @@ export const SOURCES = [
   },
   {
     label: 'Clay Garrett',
-    note: 'July 30 operator used a paid blockchain-data account during the sweeps; findings shared with authorities.',
+    note: 'July 30 operator used a paid blockchain-data account during the sweeps; findings shared with authorities. Aug 18 Bitcoin Magazine / Thorn follow-up: that lead “may” identify Wave 1 to law enforcement — not an FBI-confirmed suspect.',
     url: 'https://x.com/clay_garrett/status/2083247006139503065',
   },
 ] as const;
