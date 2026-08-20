@@ -38,8 +38,8 @@ export default function App() {
             <div>
               <strong>Could not load the balance snapshot.</strong>{' '}
               <span className="muted">
-                The dashboard reads /snapshot.json (refreshed about every 6
-                hours). Check your connection, then retry.
+                The dashboard reads /snapshot.json (refreshed about twice a
+                day). Check your connection, then retry.
               </span>
               <span className="error-detail mono">{data.error}</span>
             </div>
@@ -74,7 +74,7 @@ export default function App() {
         <footer className="site-footer">
           <p>Not affiliated with Coinkite or Coldcard.</p>
           <p>
-            Balances from the ~6h snapshot
+            Balances from the ~12h snapshot
             {snapshotAge ? ` · last updated ${snapshotAge}` : ''}.
           </p>
         </footer>

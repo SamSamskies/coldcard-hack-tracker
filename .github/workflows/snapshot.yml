@@ -2,9 +2,9 @@ name: Refresh balance snapshot
 
 on:
   schedule:
-    # Quiet period: ~6h is enough while large stacks sit still (~4 deploys/day).
-    # Bump back toward */2 if big vaults start moving again.
-    - cron: '0 */6 * * *'
+    # Quiet period: twice daily while large stacks sit still (~2 deploys/day).
+    # Bump denser (e.g. */6 or */2) if big vaults start moving again.
+    - cron: '0 */12 * * *'
   workflow_dispatch:
   push:
     branches: [main]

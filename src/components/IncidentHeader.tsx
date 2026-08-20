@@ -29,7 +29,7 @@ export function IncidentHeader({
     alertsPermission === 'denied'
       ? 'Notifications are blocked in browser settings'
       : alertsEnabled
-        ? 'Notify when the ~6h snapshot shows a new spend (not live chain). Toggle off and on to send a test notification.'
+        ? 'Notify when the ~12h snapshot shows a new spend (not live chain). Toggle off and on to send a test notification.'
         : awaitingPermission
           ? 'Click to grant browser permission for snapshot movement alerts'
           : 'Click to allow notifications when the snapshot shows a new spend (sends a test notification)';

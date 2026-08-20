@@ -75,7 +75,7 @@ function liveFromSats(
 
 /**
  * Quiet-period tracker: balances and the movement feed come only from
- * `/snapshot.json` (GitHub Actions ~6h). No live Esplora from the browser.
+ * `/snapshot.json` (GitHub Actions ~12h). No live Esplora from the browser.
  * Re-reads the snapshot on load, on tab focus, and on an interval while the
  * tab is visible.
  */

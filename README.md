@@ -2,7 +2,7 @@
 
 Static dashboard for Bitcoin held after Coldcard seed-entropy sweeps since July 2026.
 
-Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). All balances and the movement feed come from `public/snapshot.json`, refreshed by a GitHub Actions cron about every 6 hours — visitors do not hit public explorers.
+Monitors consolidation vaults across named clusters (Galaxy Waves 1–3 plus later community waves). All balances and the movement feed come from `public/snapshot.json`, refreshed by a GitHub Actions cron about twice a day — visitors do not hit public explorers.
 
 ## Develop
 
@@ -61,7 +61,7 @@ Scouts the last 3 tip blocks for Coldcard-like 1-vout fee clusters. See `.cursor
 
 Use the **Alerts** toggle in the header for browser notifications when a new
 outbound spend appears in the snapshot (holdings or followed hops). This is
-not live chain — the cron is about every 6 hours. Preference is stored in
+not live chain — the cron is about twice a day. Preference is stored in
 `localStorage`. Notifications only fire while the tab is open (including after
 a snapshot re-read).
 

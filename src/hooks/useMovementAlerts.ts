@@ -74,7 +74,7 @@ function notifyMovement(m: Movement) {
 function notifyAlertsArmed(): boolean {
   return showNotification(
     APP_NAME,
-    'Movement alerts on — fires when the ~6h snapshot shows a new spend (not live chain).',
+    'Movement alerts on — fires when the ~12h snapshot shows a new spend (not live chain).',
     `alerts-armed-${Date.now()}`,
   );
 }
@@ -82,7 +82,7 @@ function notifyAlertsArmed(): boolean {
 /**
  * Browser notifications when new outbound spends appear after the first
  * snapshot load. Opt-in; preference persisted in localStorage. Quiet period:
- * the feed only updates when /snapshot.json changes (~6h cron), not live
+ * the feed only updates when /snapshot.json changes (~12h cron), not live
  * Esplora.
  *
  * @param ready - True once the tracker has loaded a snapshot so the
