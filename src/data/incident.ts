@@ -393,6 +393,11 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
+    label: 'Coinkite · firmware 5.6.1 / 1.5.1Q',
+    note: 'Aug 20: thoroughly reviewed follow-up to the July 31 hotfix. Mk4/Mk5 5.6.1 and Q 1.5.1Q are the current recommended standard releases ([status](https://coldcard.com/security/status); [status.json](https://coldcard.com/security/status.json)). Minimum fixed for new seeds remains 5.6.0 / 1.5.0Q (Edge still 6.6.0X / 6.6.0QX). New seeds require user entropy (65 keypresses / 50 dice / 128 coin flips) mixed with STM32 TRNG + SE1 + SE2; Yasmarang backup PRNG replaced by SHA-256 Hash_DRBG. Also staged-PSBT re-verify before signing, USB/firmware-update boundaries, Delta Mode isolation, active-wallet backup fixes, safer SIGHASH defaults. Updating still does not repair an existing affected seed — migrate per the advisory. LE investigation ongoing; no named suspect in Coinkite’s post. [X](https://x.com/COLDCARDwallet/status/2090459345301488071).',
+    url: 'https://blog.coinkite.com/coldcard-security-update-5.6.1-1.5.1q/',
+  },
+  {
     label: 'Bitcoin Magazine · Wave 1 / law enforcement',
     note: 'Aug 18: Juan Galt reports Block’s paid blockchain-data-account lead (Clay Garrett, Jul 31) may have given authorities a path to the Wave 1 operator. Galaxy’s Alex Thorn said in a [Bitcoin Policy Institute / Bitcoin Magazine YouTube segment](https://www.youtube.com/watch?v=XlvsJblW4Sg) that Wave 1’s “attacker identity, may be known to law enforcement,” and that Wave 2’s pattern could be the same actor. Headline mentions the FBI; no FBI statement, named suspect, arrest, indictment, or seizure is in the public record. Wave 1 stack still unmoved.',
     url: 'https://bitcoinmagazine.com/technical/hunting-down-the-coldcard-hacker-wave-1-thief-may-be-known-to-fbi',
@@ -489,7 +494,7 @@ export const SOURCES = [
   },
   {
     label: 'Coinkite advisory',
-    note: 'Official guidance (updated Aug 1): who is exposed, fixed firmware versions, and migration steps.',
+    note: 'Official guidance (updated Aug 1): who is exposed, minimum fixed firmware versions, and migration steps. Live matrix / recommended releases: [Security Status](https://coldcard.com/security/status). Aug 20 follow-up release is 5.6.1 / 1.5.1Q.',
     url: 'https://blog.coinkite.com/coldcard-mk3-seed-generation-warning/',
   },
   {

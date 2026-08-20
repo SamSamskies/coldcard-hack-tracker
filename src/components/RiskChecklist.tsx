@@ -9,12 +9,12 @@ const FIRMWARE_ROWS = [
   {
     device: 'Mk4 / Mk5',
     vulnerable: 'Before Aug 1 patch (~72-bit)',
-    fixed: '5.6.0+',
+    fixed: '5.6.0+ (rec. 5.6.1)',
   },
   {
     device: 'Q',
     vulnerable: 'Before Aug 1 patch (~72-bit)',
-    fixed: '1.5.0Q+',
+    fixed: '1.5.0Q+ (rec. 1.5.1Q)',
   },
   {
     device: 'Edge (Mk4 / Mk5)',
@@ -67,7 +67,9 @@ export function RiskChecklist() {
           Am I at risk?
         </h2>
         <p className="risk-lede">
-          Short checklist from Coinkite’s Aug 1 advisory, Block’s root-cause
+          Short checklist from Coinkite’s advisory and{' '}
+          <a href="https://coldcard.com/security/status">Security Status</a>{' '}
+          (Aug 20 recommends Mk4/Mk5 5.6.1 / Q 1.5.1Q), Block’s root-cause
           writeup, WizardSardine’s analysis, and Nunchuk’s multisig migration
           guidance. This tracker does not check your wallet — follow the
           official steps before moving funds.
@@ -78,7 +80,8 @@ export function RiskChecklist() {
         <span className="risk-point-label">Likely exposed</span>
         <p className="risk-point-text">
           Your seed is likely exposed if it was generated on vulnerable firmware.
-          Fixed releases and later are safe for new seeds.
+          Minimum fixed releases (and later) are safe for new seeds; Coinkite
+          currently recommends Mk4/Mk5 5.6.1 and Q 1.5.1Q.
         </p>
         <div className="risk-firmware-wrap">
           <table className="risk-firmware-table">
