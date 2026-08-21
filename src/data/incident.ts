@@ -571,6 +571,7 @@ export const NO_POLL_BALANCE_ADDRESSES = [
   '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz', // Wave 4 park
   '36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G', // Wave 4 park
   '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ', // Wave 4 park
+  'bc1qcmnjt058q8hs4fvjr9wlu2kt974fyqnprfjvtl', // Wave 4 park
 ] as const;
 
 /** Wave 1/2 + community vaults — balances from the cron snapshot. */
@@ -720,6 +721,8 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 4 park',
     reportBtc: 1.04998888,
     clusterId: 'wave4-aug3',
+    pollBalance: false,
+    note: 'Emptied Aug 19 (block 963189, ~0.8 sat/vB): single-out → P2TR [bc1pynh7j…](address:bc1pynh7jn4jqh7h5v4l6fxxkjk7a0tqvt603ysnyn00824qmh2njcesd7ngxm) ([fd5af32f…30cb177b](txid:fd5af32f0c71a9e2cdc9d966130f31ccc5a2fa2ae320b283b61d4e1b30cb177b)). That hop mixed Aug 20 in Wasabi 2.x / WabiSabi (block 963262, 196-in/236-out, Taproot-heavy, power-of-3 dens [3dc1ced1…43c304d0](txid:3dc1ced1483f7800cc4019772b9a941bcabf5fc810fed4fb920c2ec843c304d0)) — anonymity set; stop.',
   },
   {
     address: 'bc1pj7f35576cz0cznm75h6scp9eknqeqx4r666kdpcnk9slgh4sp5vs4sulc2',
@@ -809,6 +812,12 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * Arkham: Coinbase Prime Custody.
    */
   bc1qdj58duywm3ng0twrxk5kykup9q6jmmj72n60ms: 'Coinbase Prime Custody',
+  /**
+   * Commingled hop-2 consolidate target (block 963214): 55-in → this + peel.
+   * Trail touched via prior Wave 4 hop address churn (not pure park stack).
+   * Arkham: Coinbase Prime Custody (OKLink: Coinbase Cold Wallet_299).
+   */
+  bc1q7yjedqu4thq908rkwmmqpst7sf8j0djplhrsxd: 'Coinbase Prime Custody',
   /**
    * Repeated peel target from Bullish hot wallet 324H9 (blocks 960837+).
    * Arkham: Wintermute (Binance deposit address tag).
