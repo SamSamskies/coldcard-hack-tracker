@@ -84,9 +84,14 @@ python3 scripts/x_cache.py stats
 - Wave 3 / headline: `https://x.com/glxyresearch/status/2083623500183421043`
 - Aug 3 $100M / footprints: `https://x.com/glxyresearch/status/2084411904924045370`
   - Then: high-confidence ~1,596 BTC / ~7,300 addrs; chart footprints A–N 223.85; +W4 → ~2,055
+- Aug 24 totals (Thorn): `https://x.com/intangiblecoins/status/2091852664388600079`
+  - Established 1,789.28 BTC / 8,865 addrs; $114.7M theft-time / $138.8M Aug 23 close
+  - 221 identified victims (2,292 addrs, 790.72 BTC = 44.2%); medium → 1,824 BTC (~$140M)
+  - No new attack wave; unmoved/moved split not restated
 - Aug 16 $115M / dormancy charts: `https://x.com/glxyresearch/status/2089002238391832948`
   - Theft-time valuation >$115M (chart ~$114.0M); chart 1,778.57697908 BTC / 8,680 addrs
   - 200+ victims spoken to (chart: 203 reporters / 192 verified); no new attack wave
+  - Superseded on BTC / address / victim counts by Aug 24
 - Aug 14 $112M / attacks eased: `https://x.com/glxyresearch/status/2088252639767085417`
   - High-confidence 1,778.84 BTC / 8,600+ addrs (~$112.7M spot); tweet 1,778 / $112M
   - No confirmed attack after Aug 6; 190 victims spoken to; ≥33 footprints

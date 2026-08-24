@@ -48,10 +48,10 @@ describe('incident data invariants', () => {
     expect(sum).toBeCloseTo(GALAXY.totalStolenBtc, 2);
   });
 
-  it('keeps Galaxy Aug 16 headline tiers ordered', () => {
-    expect(GALAXY.highConfidenceBtc).toBeCloseTo(1778.58, 2);
-    expect(GALAXY.highConfidenceVictimAddresses).toBe(8680);
-    expect(GALAXY.victimsSpokenTo).toBe(200);
+  it('keeps Galaxy Aug 24 headline tiers ordered', () => {
+    expect(GALAXY.highConfidenceBtc).toBeCloseTo(1789.28, 2);
+    expect(GALAXY.highConfidenceVictimAddresses).toBe(8865);
+    expect(GALAXY.victimsSpokenTo).toBe(221);
     expect(GALAXY.highConfidenceBtc).toBeGreaterThan(GALAXY.totalStolenBtc);
     expect(GALAXY.withCandidateWave4Btc).toBeGreaterThan(GALAXY.highConfidenceBtc);
     expect(
@@ -70,6 +70,7 @@ describe('incident data invariants', () => {
     expect(GALAXY.aug7UpdateUrl).toContain('2085748513015488758');
     expect(GALAXY.aug14UpdateUrl).toContain('2088252639767085417');
     expect(GALAXY.aug16UpdateUrl).toContain('2089002238391832948');
+    expect(GALAXY.aug24UpdateUrl).toContain('2091852664388600079');
   });
 
   it('documents Footprint O without adding a watched cluster', () => {

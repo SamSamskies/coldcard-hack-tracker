@@ -1124,11 +1124,11 @@ export function AddressList({ addresses, usdPrice, loading }: Props) {
           About {formatBtc(ORIGINAL_STOLEN_BTC)} BTC drained across known
           waves. Galaxy’s Waves 1–3 same-operator total is{' '}
           {formatBtc(GALAXY.totalStolenBtc)} BTC across{' '}
-          {GALAXY.victimAddresses.toLocaleString()} addresses; their Aug 16
+          {GALAXY.victimAddresses.toLocaleString()} addresses; their Aug 24
           high-confidence headline is {formatBtc(GALAXY.highConfidenceBtc)} BTC
           across{' '}
           {GALAXY.highConfidenceVictimAddresses.toLocaleString()} addresses
-          (Waves 1–3 + owner-confirmed footprints; ~$115M at theft-time
+          (Waves 1–3 + owner-confirmed footprints; ~$114.7M at theft-time
           prices), or up to{' '}
           {formatBtc(GALAXY.withCandidateWave4Btc)} BTC if outstanding
           candidates are promoted.{' '}

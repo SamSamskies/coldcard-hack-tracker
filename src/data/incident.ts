@@ -21,20 +21,28 @@ export const EARLY_WAVE = {
  * `totalStolenBtc` / `victimAddresses` stay Waves 1–3 only (same-operator
  * fingerprint; Aug 1 map) so cluster invariants keep working.
  *
+ * Aug 24 update ([Thorn](https://x.com/intangiblecoins/status/2091852664388600079);
+ * Galaxy Research chart as of Aug 23): established losses 1,789.28 BTC /
+ * 8,865 addresses; $114.7M at theft-time (weighted $64,097/BTC) / $138.8M at
+ * Aug 23 close ($77,593). 221 identified victims covering 2,292 addresses and
+ * 790.72 BTC (44.2%). Medium-confidence unpublished band → 1,824 BTC (~$140M
+ * theft-time). No new attack-wave headline. Unmoved/moved split not restated
+ * (still Aug 14: 1,531 / ~246).
+ *
  * Aug 16 update ([thread](https://x.com/glxyresearch/status/2089002238391832948)):
  * losses exceeded $115M valued at theft-time BTC price; chart cumulative
  * ~$114.0M. Established-losses chart 1,778.57697908 BTC / 8,680 addresses.
  * Spoken with 200+ victims (chart: 203 reporters; 192 verified into the
  * established set covering 40.2% of swept BTC). Dormancy / footprint charts
- * only — no new attack-wave headline. No confirmed attack after Aug 6 still
- * stands from Aug 14.
+ * only — no new attack-wave headline. Superseded on BTC / address / victim
+ * counts by Aug 24. No confirmed attack after Aug 6 still stands from Aug 14.
  *
  * Aug 14 update ([thread](https://x.com/glxyresearch/status/2088252639767085417);
  * [brief](https://www.galaxy.com/insights/research/coldcard-exploit-abates-as-total-losses-climb-to-at-least-1700-btc)):
  * high-confidence 1,778.84 BTC / 8,600+ addresses (~$112.7M spot) from 190
  * victims spoken to; 1,531 unmoved / ~246 moved; candidates → 2,417.35.
- * Superseded on $ / victim / address counts by Aug 16; BTC band refined on
- * the Aug 16 chart.
+ * Superseded on $ / victim / address counts by later cuts; BTC band refined on
+ * the Aug 16 chart, then again Aug 24.
  *
  * Aug 7 cut was 1,719 tweet / 1,719.19 chart (= 1,367.05 + 352.14 footprints),
  * candidates → 2,300+. Aug 3 cut was 1,596 tweet / ~1,591 chart.
@@ -45,41 +53,42 @@ export const GALAXY = {
   victimAddresses: 4585,
   /** Galaxy’s reported finals; our live Wave 3 watch list is a partial reconstruct. */
   holdingAddresses: 7 + 293,
-  /** Aug 16 chart established losses (Waves 1–3 + owner-confirmed footprints). */
-  highConfidenceBtc: 1778.58,
-  /** Aug 16 chart: 8,680 addresses in the established-losses set. */
-  highConfidenceVictimAddresses: 8680,
+  /** Aug 24 chart established losses (Waves 1–3 + owner-confirmed footprints). */
+  highConfidenceBtc: 1789.28,
+  /** Aug 24 chart: 8,865 addresses in the established-losses set. */
+  highConfidenceVictimAddresses: 8865,
   /**
-   * Owner-confirmed footprints = Aug 16 chart 1,778.58 − W1–3.
+   * Owner-confirmed footprints = Aug 24 chart 1,789.28 − W1–3.
    * Sankey (block 962304, Aug 14): E 209.94, Q 43.48, T 23.68, A 23.30, plus
-   * 41 smaller footprints 111.39 — composition unchanged; total refined.
+   * 41 smaller footprints 111.39 — lettered composition unchanged; total refined.
    */
-  footprintsConfirmedBtc: 411.53,
+  footprintsConfirmedBtc: 422.23,
   /**
    * Of the high-confidence set, still in attacker-controlled addresses
-   * unmoved (Aug 14 tweet / brief; Aug 16 did not restate).
+   * unmoved (Aug 14 tweet / brief; Aug 16 and Aug 24 did not restate).
    */
   unmovedBtc: 1531,
   /**
    * Moved by attackers after theft (Aug 14). ≈65% coinjoin / ≈35% onward;
-   * 1531 + 246 rounds to the ~1,778 headline.
+   * 1531 + 246 rounds to the then ~1,778 headline. Aug 24 did not restate.
    */
   movedAfterTheftBtc: 246,
-  /** Direct victim conversations (Aug 16 tweet: 200+; chart notes 203 reporters). */
-  victimsSpokenTo: 200,
+  /** Identified victims with a named owner (Aug 24 chart: 221; 2,292 addrs). */
+  victimsSpokenTo: 221,
   /** Footprints beyond Waves 1–3 (Aug 14; Aug 16 charts still use lettered set). */
   additionalFootprints: 33,
   /**
-   * Chart: 271 pattern-matched addresses (15.93 BTC) with no owner
-   * confirmation — unpublished medium-confidence band (Aug 14).
+   * Medium-confidence unpublished band (Aug 24): 1,824 − 1,789.28.
+   * Aug 14 chart had 271 pattern-matched addresses / 15.93 BTC; Thorn’s
+   * Aug 24 “medium confidence (not yet confirmed)” remainder is 34.72.
    */
-  patternMatchedUnconfirmedBtc: 15.93,
+  patternMatchedUnconfirmedBtc: 34.72,
   /**
    * High-confidence + unpublished candidates (incl. Wave 4). Aug 14 published
-   * 2,417.35; recomputed after Aug 16 chart refinement of the high-confidence
-   * band (wave4Candidate kept).
+   * 2,417.35; recomputed after Aug 24 chart refinement of the high-confidence
+   * and medium bands (wave4Candidate kept).
    */
-  withCandidateWave4Btc: 2417.09,
+  withCandidateWave4Btc: 2446.58,
   /**
    * Unpublished Wave 4 band so W1–3 + footprints + pattern-matched + this
    * = withCandidateWave4Btc. Aug 7 figure was 448.73 (Thorn/Nunchuk pastebin
@@ -96,6 +105,8 @@ export const GALAXY = {
   aug14UpdateUrl: 'https://x.com/glxyresearch/status/2088252639767085417',
   /** $115M theft-time valuation / 1,778.58 BTC chart; 200+ victims (Aug 16). */
   aug16UpdateUrl: 'https://x.com/glxyresearch/status/2089002238391832948',
+  /** 1,789.28 BTC / 8,865 addrs / 221 victims; medium → 1,824 BTC (Aug 24). */
+  aug24UpdateUrl: 'https://x.com/intangiblecoins/status/2091852664388600079',
 } as const;
 
 /**
@@ -375,7 +386,7 @@ export const CLUSTERS: readonly Cluster[] = [
      */
     stolenBtc: 443.34,
     date: '2026-08-03',
-    note: 'Pattern-match only (no victim report yet). Galaxy’s Aug 7 Wave 4 figure was 448.73 BTC after cutting 89 multisig destinations; their Aug 14 unpublished Wave 4 band is 622.58. We go one step further than the Aug 7 cut and also drop 6 destinations that already had prior on-chain history (−5.39 BTC), so our watched total is 443.34. Galaxy’s candidate ceiling is ~2,417 BTC (Aug 16 high-confidence 1,778.58 plus Aug 14 unpublished promotions) — not our stricter 443.34 cut. Watched addresses are a sparse still-held sample.',
+    note: 'Pattern-match only (no victim report yet). Galaxy’s Aug 7 Wave 4 figure was 448.73 BTC after cutting 89 multisig destinations; their Aug 14 unpublished Wave 4 band is 622.58. We go one step further than the Aug 7 cut and also drop 6 destinations that already had prior on-chain history (−5.39 BTC), so our watched total is 443.34. Galaxy’s candidate ceiling is ~2,447 BTC (Aug 24 high-confidence 1,789.28 plus medium 34.72 plus Aug 14 unpublished Wave 4 622.58) — not our stricter 443.34 cut. Watched addresses are a sparse still-held sample.',
     sourceUrl: 'https://x.com/intangiblecoins/status/2084079706320646300',
   },
 ] as const;
@@ -393,6 +404,11 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
+    label: 'Alex Thorn · Galaxy · Aug 24 totals',
+    note: 'Aug 24 (chart as of Aug 23): established losses 1,789.28 BTC / 8,865 addresses; $114.7M at theft-time (weighted $64,097/BTC) / $138.8M at Aug 23 close ($77,593). 221 identified victims covering 2,292 addresses and 790.72 BTC (44.2%). Median address 0.00152 BTC, mean 0.20184; dormancy median 3.2y. Losses concentrated: 45% of stolen value in 1–10 BTC addresses; largest 1% of addresses hold 41%. Medium-confidence unpublished band → 1,824 BTC (~$140M theft-time). No new attack wave. Unmoved/moved split not restated (still Aug 14: 1,531 / ~246).',
+    url: 'https://x.com/intangiblecoins/status/2091852664388600079',
+  },
+  {
     label: 'Coinkite · firmware 5.6.1 / 1.5.1Q',
     note: 'Aug 20: thoroughly reviewed follow-up to the July 31 hotfix. Mk4/Mk5 5.6.1 and Q 1.5.1Q are the current recommended standard releases ([status](https://coldcard.com/security/status); [status.json](https://coldcard.com/security/status.json)). Minimum fixed for new seeds remains 5.6.0 / 1.5.0Q (Edge still 6.6.0X / 6.6.0QX). New seeds require user entropy (65 keypresses / 50 dice / 128 coin flips) mixed with STM32 TRNG + SE1 + SE2; Yasmarang backup PRNG replaced by SHA-256 Hash_DRBG. Also staged-PSBT re-verify before signing, USB/firmware-update boundaries, Delta Mode isolation, active-wallet backup fixes, safer SIGHASH defaults. Updating still does not repair an existing affected seed — migrate per the advisory. LE investigation ongoing; no named suspect in Coinkite’s post. [X](https://x.com/COLDCARDwallet/status/2090459345301488071).',
     url: 'https://blog.coinkite.com/coldcard-security-update-5.6.1-1.5.1q/',
@@ -404,7 +420,7 @@ export const SOURCES = [
   },
   {
     label: 'Galaxy Research · $115M update',
-    note: 'Aug 16: losses exceeded $115M valued at theft-time BTC price (chart cumulative ~$114.0M). Established-losses chart 1,778.57697908 BTC / 8,680 addresses. Spoken with 200+ victims (chart: 203 reporters; 192 verified into the established set ≈40.2% of swept BTC). Thread is dormancy / footprint analysis charts — no new attack wave. No confirmed attack after Aug 6 still from Aug 14. Victim help: DM @intangiblecoins.',
+    note: 'Aug 16: losses exceeded $115M valued at theft-time BTC price (chart cumulative ~$114.0M). Established-losses chart 1,778.57697908 BTC / 8,680 addresses. Spoken with 200+ victims (chart: 203 reporters; 192 verified into the established set ≈40.2% of swept BTC). Thread is dormancy / footprint analysis charts — no new attack wave. No confirmed attack after Aug 6 still from Aug 14. Victim help: DM @intangiblecoins. Superseded on BTC / address / victim counts by Thorn’s Aug 24 cut.',
     url: 'https://x.com/glxyresearch/status/2089002238391832948',
   },
   {
@@ -429,7 +445,7 @@ export const SOURCES = [
   },
   {
     label: 'James O\'Beirne · CK tripwire',
-    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)). Frontier still ~11 bits after a second low (pass) honeypot (HP-E786) was swept Aug 13, following HP-9C4F on Aug 12; mid/high/extreme bands still live. ColeTU’s weak BIP-39 passphrase experiment is listed as an external honeypot (1–3 word Mk3 passphrases swept in ~6–7d; claimed Mk4 seed still live). Defensive research only — do not add honeypot sinks to holdings.',
+    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)). Frontier still ~11 bits after a second low (pass) honeypot (HP-E786) was swept Aug 13, following HP-9C4F on Aug 12; mid/high/extreme bands still live. Rechecked Aug 24: last event still HP-E786 (10 swept / 9 live; no new band). ColeTU’s weak BIP-39 passphrase experiment is listed as an external honeypot (1–3 word Mk3 passphrases swept in ~6–7d; claimed Mk4 seed still live). Defensive research only — do not add honeypot sinks to holdings.',
     url: 'https://cktripwire.com/',
   },
   {
