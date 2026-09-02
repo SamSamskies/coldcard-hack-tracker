@@ -445,7 +445,7 @@ export const SOURCES = [
   },
   {
     label: 'James O\'Beirne · CK tripwire',
-    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)). Frontier was ~11 bits after low (pass) HP-E786 / HP-9C4F (Aug 12–13). Aug 26: 2-of-3 multisig honeypot HP-5D67 swept (~22d live). Aug 28: low (dice) HP-8EF5 swept (~12.9–13 bits / 5 dice rolls, ~24d live) — [Galaxy](https://x.com/glxyresearch/status/2093456632378191930); scoreboard frontier now ~13 bits (12 swept / 7 live); twin 13-bit HP-C4AD still live; mid/high/extreme still live. ColeTU’s weak BIP-39 passphrase experiment remains an external honeypot (1–3 word Mk3 passphrases swept in ~6–7d). Defensive research only — do not add honeypot sinks to holdings.',
+    note: 'Aug 4: live honeypot scoreboard mapping attacker brute-force depth via decoys with added dice/passphrase entropy ([cktripwire.com](https://cktripwire.com/); [announcement](https://x.com/jamesob/status/2084769501661331589)). Zero-entropy control swept in ~1h. By Aug 8, multiple ~5-bit low (dice) honeypots were swept ([jamesob](https://x.com/jamesob/status/2086154136064586229)). Frontier was ~11 bits after low (pass) HP-E786 / HP-9C4F (Aug 12–13). Aug 26: 2-of-3 multisig honeypot HP-5D67 swept (~22d live). Aug 28: low (dice) HP-8EF5 swept (~12.9–13 bits / 5 dice rolls, ~24d live) — [Galaxy](https://x.com/glxyresearch/status/2093456632378191930). Aug 31: twin 13-bit low (dice) HP-C4AD swept (~27d live) — [Galaxy](https://x.com/glxyresearch/status/2094530813794910594). Scoreboard as of Sep 2: frontier still ~13 bits (13 swept / 6 live); one low(dice) ~5-bit HP-696E still live; mid/high/extreme still live. ColeTU’s weak BIP-39 passphrase experiment remains an external honeypot (1–3 word Mk3 passphrases swept in ~6–7d). Defensive research only — do not add honeypot sinks to holdings.',
     url: 'https://cktripwire.com/',
   },
   {
@@ -708,7 +708,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     reportBtc: 2.17767618,
     clusterId: 'wave4-aug3',
     pollBalance: false,
-    note: 'Emptied Aug 4 (block 961064, ~2 sat/vB): 14-input P2SH consolidate with sibling parks → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) still holding ~136.41 BTC ([f02164a9…50db281](txid:f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281)). Same tx as [342L6n3b…](address:342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz) + [36XfMDAYu…](address:36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G) + [34nHYNnc…](address:34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ). Mix includes parks funded outside Wave 4 window.',
+    note: 'Emptied Aug 4 (block 961064, ~2 sat/vB): 14-input P2SH consolidate with sibling parks → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) ([f02164a9…50db281](txid:f02164a928da943385b1f1a93ec404d2bba6c381e96dc99e0298c188650db281)). Same tx as [342L6n3b…](address:342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz) + [36XfMDAYu…](address:36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G) + [34nHYNnc…](address:34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ). Mix includes parks funded outside Wave 4 window. Sep 1 (block 965054, ~2 sat/vB): that hop emptied → [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) (~135.81) + [3H5i5M4Q…](address:3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o) (0.6) ([503ef827…21ccf4c0](txid:503ef8276d88aeb1f501651ba10a560413566863351d8dfdca57b5cf21ccf4c0)).',
   },
   {
     address: '342L6n3b61n1CGoh8wCzuzyXUvyZTSjZtz',
@@ -716,7 +716,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     reportBtc: 2.02374869,
     clusterId: 'wave4-aug3',
     pollBalance: false,
-    note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
+    note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB); that hop emptied Sep 1 → [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) / [3H5i5M4Q…](address:3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o).',
   },
   {
     address: 'bc1q65e6cd2k5ee2326fwwxsng370vf9pz85yce9u8',
@@ -730,7 +730,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     reportBtc: 1.09429601,
     clusterId: 'wave4-aug3',
     pollBalance: false,
-    note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
+    note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB); that hop emptied Sep 1 → [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) / [3H5i5M4Q…](address:3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o).',
   },
   {
     address: 'bc1qcmnjt058q8hs4fvjr9wlu2kt974fyqnprfjvtl',
@@ -752,7 +752,21 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     reportBtc: 0.96227191,
     clusterId: 'wave4-aug3',
     pollBalance: false,
-    note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) (~136.41 BTC still held).',
+    note: 'Emptied Aug 4 (block 961064): same 14-input consolidate as [35dHFzKH…](address:35dHFzKHn4WCnr3XJj1YErXJ44xPX4wNxH) → [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB); that hop emptied Sep 1 → [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) / [3H5i5M4Q…](address:3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o).',
+  },
+  {
+    address: '3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9',
+    label: 'Wave 4 hop',
+    reportBtc: 135.80743236,
+    clusterId: 'wave4-aug3',
+    note: 'Sep 1 (block 965054, ~2 sat/vB): large out from emptied hop [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) ([503ef827…21ccf4c0](txid:503ef8276d88aeb1f501651ba10a560413566863351d8dfdca57b5cf21ccf4c0)). Fresh P2SH park (1 tx); unlabeled as of Sep 2.',
+  },
+  {
+    address: '3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o',
+    label: 'Wave 4 hop peel',
+    reportBtc: 0.6,
+    clusterId: 'wave4-aug3',
+    note: 'Sep 1 (block 965054): 0.6 BTC peel sibling of [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) from [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB). Fresh P2SH (1 tx); unlabeled as of Sep 2.',
   },
 ];
 
