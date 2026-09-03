@@ -11,6 +11,8 @@ export const WAVE3_VAULTS = [
     address: 'bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld',
     label: 'Wave 3 vault 1',
     reportBtc: 20.49703196,
+    pollBalance: false,
+    note: 'Emptied Sep 2 (block 965217, ~5 sat/vB): first Wave 1–3 original vault spend — 2-of-2 P2WSH → hops → staging [bc1qgw8v0…](address:bc1qgw8v0fa7877ntrueghhz5tyc8lah8hm5phvsmu) → THORChain → ETH [0x160a7A4c…](https://etherscan.io/address/0x160a7A4c067B084F03400c6980Ac29F73F6782f6). ETH side (Sep 3): 317.16 ETH still sitting there (nonce 0) via 4 THORChain_Router (`0xD37BbE…`) internals — 12.88 + 45.80 + 31.58 + 226.90 ETH; no peel/Tornado yet. Galaxy: ~90% of Wave 3 still unmoved; BTC refunds/retries ongoing (~10.6 BTC on hop [bc1qt8rrtn…](address:bc1qt8rrtnxlszm7rcdjpeepzk076jd5hevakqerzjyxpk8u3p6dfh2q92ua36)). [Thorn](https://x.com/intangiblecoins/status/2095297452681158840).',
   },
   {
     address: 'bc1qu5dgcwgm0c6qazqhacskakt8qrqj96wfkyfzjsf2lje9unzjznasfmaygs',

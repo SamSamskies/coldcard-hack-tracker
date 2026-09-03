@@ -184,17 +184,15 @@ describe('incident data invariants', () => {
     expect(WAVE3_FINGERPRINT.matchedHeldBtc).toBeLessThan(WAVE3_FINGERPRINT.galaxyHeldBtc);
   });
 
-  it('skips Esplora balance polls only for the documented empty cores', () => {
-    const noPoll = CORE_HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h));
+  it('skips Esplora balance polls only for the documented empty holdings', () => {
+    const noPoll = HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h));
     expect(noPoll.map((h) => h.address).sort()).toEqual(
       [...NO_POLL_BALANCE_ADDRESSES].sort(),
     );
-    expect(HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h))).toHaveLength(
-      NO_POLL_BALANCE_ADDRESSES.length,
-    );
+    expect(noPoll).toHaveLength(NO_POLL_BALANCE_ADDRESSES.length);
     // Still listed with original report stacks — never removed or zeroed.
     for (const addr of NO_POLL_BALANCE_ADDRESSES) {
-      const h = CORE_HOLDING_ADDRESSES.find((x) => x.address === addr);
+      const h = HOLDING_ADDRESSES.find((x) => x.address === addr);
       expect(h).toBeDefined();
       expect(h!.pollBalance).toBe(false);
       expect(h!.reportBtc).toBeGreaterThan(0);
@@ -205,14 +203,14 @@ describe('incident data invariants', () => {
   it('still seeds movement-feed tx walks for every pollBalance:false holding', () => {
     // Regression: treating pollBalance:false like "stop all Esplora" dropped
     // hop 1/2 rows from the movement feed on the next snapshot rebuild.
-    const movementSeeds = CORE_HOLDING_ADDRESSES.filter((h) =>
+    const movementSeeds = HOLDING_ADDRESSES.filter((h) =>
       shouldWatchSeedMovements(h, shouldPollBalance(h) ? h.reportBtc : 0),
     );
     for (const addr of NO_POLL_BALANCE_ADDRESSES) {
       expect(movementSeeds.some((h) => h.address === addr)).toBe(true);
     }
     expect(
-      CORE_HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h)).every((h) =>
+      HOLDING_ADDRESSES.filter((h) => !shouldPollBalance(h)).every((h) =>
         shouldWatchSeedMovements(h, 0),
       ),
     ).toBe(true);

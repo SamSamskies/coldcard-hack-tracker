@@ -404,6 +404,11 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
+    label: 'Alex Thorn · Wave 3 first vault cash-out',
+    note: 'Sep 2: first funds from Wave 1–3 original hacker vaults to move — Wave 3 vault (~20.50 BTC, Reporter-0018 / 20 victim addrs) spent through 2-of-2 hops → staging → THORChain → ETH 0x160a7A4c… (affiliate “sto”). As of Sep 3: 317.16 ETH still unmoved on that address (4 router internals; nonce 0 — no peel). ~187 BTC / 292 vaults still resting (~90% of Wave 3); BTC-side THOR refunds/retries ongoing. Vault scripts revealed as BIP-67-sorted 2-of-2; cash-out wallet (RBF + anti-fee-sniping) differs from Jul 31/Aug 1 sweep tooling; THOR deposits are a third stack (OP_RETURN memos). Watch-list vault [bc1qn3uy9…](address:bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld) matches. Waves 1–2 original holdings still unmoved.',
+    url: 'https://x.com/intangiblecoins/status/2095297452681158840',
+  },
+  {
     label: 'Alex Thorn · Galaxy · Aug 24 totals',
     note: 'Aug 24 (chart as of Aug 23): established losses 1,789.28 BTC / 8,865 addresses; $114.7M at theft-time (weighted $64,097/BTC) / $138.8M at Aug 23 close ($77,593). 221 identified victims covering 2,292 addresses and 790.72 BTC (44.2%). Median address 0.00152 BTC, mean 0.20184; dormancy median 3.2y. Losses concentrated: 45% of stolen value in 1–10 BTC addresses; largest 1% of addresses hold 41%. Medium-confidence unpublished band → 1,824 BTC (~$140M theft-time). No new attack wave. Unmoved/moved split not restated (still Aug 14: 1,531 / ~246).',
     url: 'https://x.com/intangiblecoins/status/2091852664388600079',
@@ -588,6 +593,7 @@ export const NO_POLL_BALANCE_ADDRESSES = [
   '36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G', // Wave 4 park
   '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ', // Wave 4 park
   'bc1qcmnjt058q8hs4fvjr9wlu2kt974fyqnprfjvtl', // Wave 4 park
+  'bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld', // Wave 3 vault 1
 ] as const;
 
 /** Wave 1/2 + community vaults — balances from the cron snapshot. */
@@ -776,7 +782,10 @@ const WAVE3_HOLDING_ADDRESSES: readonly HoldingAddress[] = WAVE3_VAULTS.map(
     label: v.label,
     reportBtc: v.reportBtc,
     clusterId: 'galaxy-wave3' as const,
-    ...('note' in v ? { note: v.note } : {}),
+    ...('note' in v && v.note ? { note: v.note } : {}),
+    ...('pollBalance' in v && v.pollBalance === false
+      ? { pollBalance: false as const }
+      : {}),
   }),
 );
 
@@ -819,6 +828,13 @@ export const WATCH_AFTER_BLOCK = 960_400;
  */
 export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
   bc1qp6yzmq5kjr8yvyw7453gxvq4z3tvkdyadqm794: 'THORChain BTC vault',
+  /**
+   * Wave 3 Sep 2 THOR inbound vaults (swap memos → ETH 0x160a7A4c…).
+   * Do not label intermediate hops/staging here — that stops hop follow before the bridge.
+   */
+  bc1qkpljhacarzyvalnfynqux6xy83v9j2rcqqq44z: 'THORChain BTC vault',
+  bc1qxmatfxczp5v4dhtpfk6t97kt5vjvl2rf084r49: 'THORChain BTC vault',
+  bc1qeay5x2ap5cycqgje4s9y973eh3faaz9yw3zwph: 'THORChain BTC vault',
   '3KMmeqPeQcngyTehdfSwsGqvxfU7J7qtc8': 'P2SH service hub',
   /** Wave 4 dual-sweep park peel (block 960793). Arkham: Bullish.com deposit. */
   '3CTpBmp8uWTcHJBjmyVe8VPPyCHTzj2hBH': 'Bullish.com deposit',
