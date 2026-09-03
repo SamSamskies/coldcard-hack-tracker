@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-03T03:58:40.432Z",
+  "updatedAt": "2026-09-03T14:33:33.952Z",
   "source": "mempool.space",
-  "usdPrice": 77655,
+  "usdPrice": 79371,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -521,6 +521,19 @@
     }
   ],
   "movements": [
+    {
+      "txid": "377f77d5df029599f14d40d31fbf00270451922b58eabb7cfca173b27f6803ab",
+      "fromAddress": "bc1qt8rrtnxlszm7rcdjpeepzk076jd5hevakqerzjyxpk8u3p6dfh2q92ua36",
+      "fromLabel": "Hop 1 from Wave 3 vault 1",
+      "amountBtc": 10.64493702,
+      "destinations": [
+        "bc1qgw8v0fa7877ntrueghhz5tyc8lah8hm5phvsmu"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 965295,
+      "blockTime": 1788430824
+    },
     {
       "txid": "a2c1b6f4dfd5c115c0ebbe681b55e36f9edeb4342e668d9a26e5312c5038ca10",
       "fromAddress": "bc1q4tsjmdrdr7welf49uhywxgvuxrnqxu7cs6rfr3yv34zume2tw6msrtwzdc",
