@@ -404,6 +404,11 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
+    label: 'Lloyd Fournier · Mk3 keyspace sweep & drain forensics',
+    note: 'Sep 3: empirical sweep of the collapsed Coldcard Mk3 keyspace (2²⁵ pad × 512 keypresses, no passphrase/dice) across 2,145 recovered funded wallets ([coldcard-mk3-drain.fly.dev](https://coldcard-mk3-drain.fly.dev/); [thread](https://x.com/LLFOURN/status/2095448586356199754)). At attack open (block 960,183): 1,329 wallets held 2,045 BTC (~$131M; peak 2,525 BTC / $280M in Oct 2025). Largest wallet 106.7 BTC; median 0.28 BTC. Net outflow 2,054 BTC: classifier predicts 1,555 BTC stolen (105 BTC directly proven by multi-seed co-spends; 1,450 BTC inferred via burst/fee heuristics) and 499 BTC recovered by owners. Busiest block #960,363 emptied 162 wallets (962 spends). Reconstructed hardened sibling accounts 1–7 (64 wallets). Tested Praveen Perera’s 153 unresolved Wave 1 addresses across 8,700 descriptors / accounts 0–10 / index < 2000 — 0 matched.',
+    url: 'https://x.com/LLFOURN/status/2095448586356199754',
+  },
+  {
     label: 'Alex Thorn · Wave 3 first vault cash-out',
     note: 'Sep 2: first funds from Wave 1–3 original hacker vaults to move — Wave 3 vault (~20.50 BTC, Reporter-0018 / 20 victim addrs) spent through 2-of-2 hops → staging → THORChain → ETH 0x160a7A4c… (affiliate “sto”). As of Sep 3: 317.16 ETH still unmoved on that address (4 router internals; nonce 0 — no peel). ~187 BTC / 292 vaults still resting (~90% of Wave 3); BTC-side THOR refunds/retries ongoing. Vault scripts revealed as BIP-67-sorted 2-of-2; cash-out wallet (RBF + anti-fee-sniping) differs from Jul 31/Aug 1 sweep tooling; THOR deposits are a third stack (OP_RETURN memos). Watch-list vault [bc1qn3uy9…](address:bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld) matches. Waves 1–2 original holdings still unmoved.',
     url: 'https://x.com/intangiblecoins/status/2095297452681158840',
