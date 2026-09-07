@@ -21,13 +21,21 @@ export const EARLY_WAVE = {
  * `totalStolenBtc` / `victimAddresses` stay Waves 1–3 only (same-operator
  * fingerprint; Aug 1 map) so cluster invariants keep working.
  *
+ * Sep 7 update ([Galaxy](https://x.com/glxyresearch/status/2096785347929608296)):
+ * Wave 3 operator still cashing out — ranks 1–11 spent in size order (Sep 2
+ * THOR→ETH, then Sep 4–6 coinjoins); ~45% of Wave 3 stack moved. Overall ~82%
+ * of established losses still in original attacker addresses / ~18% moved for
+ * laundering (≈1,467 / ≈322 of the Aug 24 1,789.28 headline). Co-spent open
+ * vault may push Wave 3 to 294 vaults / published total ~1,806 BTC if promoted
+ * — not folded into highConfidence yet.
+ *
  * Aug 24 update ([Thorn](https://x.com/intangiblecoins/status/2091852664388600079);
  * Galaxy Research chart as of Aug 23): established losses 1,789.28 BTC /
  * 8,865 addresses; $114.7M at theft-time (weighted $64,097/BTC) / $138.8M at
  * Aug 23 close ($77,593). 221 identified victims covering 2,292 addresses and
  * 790.72 BTC (44.2%). Medium-confidence unpublished band → 1,824 BTC (~$140M
- * theft-time). No new attack-wave headline. Unmoved/moved split not restated
- * (still Aug 14: 1,531 / ~246).
+ * theft-time). No new attack-wave headline. Unmoved/moved split later restated
+ * Sep 7 (~82% / ~18%).
  *
  * Aug 16 update ([thread](https://x.com/glxyresearch/status/2089002238391832948)):
  * losses exceeded $115M valued at theft-time BTC price; chart cumulative
@@ -64,15 +72,17 @@ export const GALAXY = {
    */
   footprintsConfirmedBtc: 422.23,
   /**
-   * Of the high-confidence set, still in attacker-controlled addresses
-   * unmoved (Aug 14 tweet / brief; Aug 16 and Aug 24 did not restate).
+   * Of the high-confidence set, still in original attacker-controlled
+   * addresses. Sep 7 Galaxy: ~82% of Coldcard-exploit coins unmoved → ≈1,467
+   * of the Aug 24 1,789.28 headline (was Aug 14: 1,531 of ~1,778).
    */
-  unmovedBtc: 1531,
+  unmovedBtc: 1467,
   /**
-   * Moved by attackers after theft (Aug 14). ≈65% coinjoin / ≈35% onward;
-   * 1531 + 246 rounds to the then ~1,778 headline. Aug 24 did not restate.
+   * Moved by attackers after theft for laundering. Sep 7 Galaxy: ~18% → ≈322
+   * of 1,789.28 (Wave 3 ranks 1–11 → THOR/ETH + coinjoins; earlier peels).
+   * Aug 14 was ~246 of ~1,778 (≈65% coinjoin / ≈35% onward then).
    */
-  movedAfterTheftBtc: 246,
+  movedAfterTheftBtc: 322,
   /** Identified victims with a named owner (Aug 24 chart: 221; 2,292 addrs). */
   victimsSpokenTo: 221,
   /** Footprints beyond Waves 1–3 (Aug 14; Aug 16 charts still use lettered set). */
@@ -107,6 +117,8 @@ export const GALAXY = {
   aug16UpdateUrl: 'https://x.com/glxyresearch/status/2089002238391832948',
   /** 1,789.28 BTC / 8,865 addrs / 221 victims; medium → 1,824 BTC (Aug 24). */
   aug24UpdateUrl: 'https://x.com/intangiblecoins/status/2091852664388600079',
+  /** Wave 3 ranks 1–11 cash-out / ~82% unmoved / open vault → ~1806 (Sep 7). */
+  sep7UpdateUrl: 'https://x.com/glxyresearch/status/2096785347929608296',
 } as const;
 
 /**
@@ -138,7 +150,7 @@ export const WAVE3_FINGERPRINT = {
   matchedHeldBtc: WAVE3_VAULT_REPORT_BTC,
   minWatchBtc: WAVE3_MIN_WATCH_BTC,
   summary:
-    'Not Galaxy’s published address list. Matched their Wave 3 fingerprint (blocks 960396–960471, ~180–220 sat/vB, park → P2WSH vault), cross-checked against the public COLDCARD RNG chain map, then kept only higher-value vaults (≥ 0.5 BTC) so the cron snapshot stays reliable on public explorers. Smaller vaults are omitted on purpose. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC.',
+    'Not Galaxy’s published address list. Matched their Wave 3 fingerprint (blocks 960396–960471, ~180–220 sat/vB, park → P2WSH vault), cross-checked against the public COLDCARD RNG chain map, then kept only higher-value vaults (≥ 0.5 BTC) so the cron snapshot stays reliable on public explorers. Smaller vaults are omitted on purpose. Partial versus Galaxy’s ~293 vaults / ~207.73 BTC. Sep 7: added Galaxy’s co-spent “open” vault (block 960829, 58 inputs, ~201 sat/vB) after it emptied with ranks 3–11.',
 } as const;
 
 /** Galaxy Wave 2 markers from their Aug 1 map. */
@@ -404,6 +416,11 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
+    label: 'Galaxy Research · Wave 3 cash-out continues',
+    note: 'Sep 7: Wave 3 exploiter still moving funds from the 293 (now possibly 294) 2-of-2 multisig vaults. Sep 2 movements went THORChain → Ethereum; tonight’s batch into coinjoin rounds. Methodically spending largest vaults by size rank — ranks 1–11 spent; next ten unmoved hold 30.81 BTC; ranks 61–293 hold 33.77 BTC. Wave 3 operator has moved ~45% of coins taken in that wave (THOR or coinjoins). Co-spent a previously “cause = open” vault (58 inputs → identically formatted 2-of-2) into a hop that funded a coinjoin — likely CC victim; would make Wave 3 294 vaults and push published total to ~1,806 BTC if promoted (not yet in our high-confidence headline). Overall ~82% of Coldcard-exploit coins still in original attacker addresses / ~18% moved for laundering. Victim help: DM @intangiblecoins. Watch-list empties: vaults 1–12 on our ≥0.5 list (incl. open co-spend [bc1q5lxd8…](address:bc1q5lxd8nwhptgt59n46a33udsjp2ghjw3n2kerpguvwqzah8deg5ls4rf2sl)); next ten unmoved sum matches Galaxy’s 30.81.',
+    url: 'https://x.com/glxyresearch/status/2096785347929608296',
+  },
+  {
     label: 'Lloyd Fournier · Mk3 keyspace sweep & drain forensics',
     note: 'Sep 3: empirical sweep of the collapsed Coldcard Mk3 keyspace (2²⁵ pad × 512 keypresses, no passphrase/dice) across 2,145 recovered funded wallets ([coldcard-mk3-drain.fly.dev](https://coldcard-mk3-drain.fly.dev/); [thread](https://x.com/LLFOURN/status/2095448586356199754)). At attack open (block 960,183): 1,329 wallets held 2,045 BTC (~$131M; peak 2,525 BTC / $280M in Oct 2025). Largest wallet 106.7 BTC; median 0.28 BTC. Net outflow 2,054 BTC: classifier predicts 1,555 BTC stolen (105 BTC directly proven by multi-seed co-spends; 1,450 BTC inferred via burst/fee heuristics) and 499 BTC recovered by owners. Busiest block #960,363 emptied 162 wallets (962 spends). Reconstructed hardened sibling accounts 1–7 (64 wallets). Tested Praveen Perera’s 153 unresolved Wave 1 addresses across 8,700 descriptors / accounts 0–10 / index < 2000 — 0 matched.',
     url: 'https://x.com/LLFOURN/status/2095448586356199754',
@@ -415,7 +432,7 @@ export const SOURCES = [
   },
   {
     label: 'Alex Thorn · Galaxy · Aug 24 totals',
-    note: 'Aug 24 (chart as of Aug 23): established losses 1,789.28 BTC / 8,865 addresses; $114.7M at theft-time (weighted $64,097/BTC) / $138.8M at Aug 23 close ($77,593). 221 identified victims covering 2,292 addresses and 790.72 BTC (44.2%). Median address 0.00152 BTC, mean 0.20184; dormancy median 3.2y. Losses concentrated: 45% of stolen value in 1–10 BTC addresses; largest 1% of addresses hold 41%. Medium-confidence unpublished band → 1,824 BTC (~$140M theft-time). No new attack wave. Unmoved/moved split not restated (still Aug 14: 1,531 / ~246).',
+    note: 'Aug 24 (chart as of Aug 23): established losses 1,789.28 BTC / 8,865 addresses; $114.7M at theft-time (weighted $64,097/BTC) / $138.8M at Aug 23 close ($77,593). 221 identified victims covering 2,292 addresses and 790.72 BTC (44.2%). Median address 0.00152 BTC, mean 0.20184; dormancy median 3.2y. Losses concentrated: 45% of stolen value in 1–10 BTC addresses; largest 1% of addresses hold 41%. Medium-confidence unpublished band → 1,824 BTC (~$140M theft-time). No new attack wave. Unmoved/moved later restated Sep 7 (~82% / ~18%).',
     url: 'https://x.com/intangiblecoins/status/2091852664388600079',
   },
   {
@@ -599,6 +616,17 @@ export const NO_POLL_BALANCE_ADDRESSES = [
   '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ', // Wave 4 park
   'bc1qcmnjt058q8hs4fvjr9wlu2kt974fyqnprfjvtl', // Wave 4 park
   'bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld', // Wave 3 vault 1
+  'bc1qu5dgcwgm0c6qazqhacskakt8qrqj96wfkyfzjsf2lje9unzjznasfmaygs', // Wave 3 vault 2
+  'bc1qt7ktwfru52emkyyuw6nkju6lck98uxtc5r6gfwethgas50ufn22qpfsewn', // Wave 3 vault 3
+  'bc1qh0kkrnegczjr39rw52fvutv4ur6kvtdnva3jf6tkwwy7hwwtl4uqm96ruj', // Wave 3 vault 4
+  'bc1qajca7effwcxgpdf4aagh3h3fz634fnk93ar7c00hvghs3lrgk4tqd23qsa', // Wave 3 vault 5
+  'bc1q5lxd8nwhptgt59n46a33udsjp2ghjw3n2kerpguvwqzah8deg5ls4rf2sl', // Wave 3 vault 6 (open co-spend)
+  'bc1qysjc4jrltc4je2f9uek477xdczkrmkd0mwv2wgn47r0wt3qv4a7spkkx7h', // Wave 3 vault 7
+  'bc1qtsp50w4uru6t2mhmctvapfdy23g75r08werm7qmgzuedm4jsaztspf73yt', // Wave 3 vault 8
+  'bc1qmqc0vur7v0xcnvq2pzm2kxlmvw6twhlxtsvd8jgudjdwnud6juusx4nlwt', // Wave 3 vault 9
+  'bc1qsev2de8syz3g9005q7ckkthak6jhz2y4gzjc8a7tfatdkx7y42sqdtwlwd', // Wave 3 vault 10
+  'bc1qunepx2e5f65xa9cftcv6t6qcnwky77g9sl8k95zcty4jqwkxuurqs9ap78', // Wave 3 vault 11
+  'bc1qcryst78hk4z75hsu5dyutlgnyw3g3grcwsenfvhpl3uvpf0m6paqqr0epc', // Wave 3 vault 12
 ] as const;
 
 /** Wave 1/2 + community vaults — balances from the cron snapshot. */

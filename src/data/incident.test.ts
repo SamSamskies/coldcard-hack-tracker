@@ -63,14 +63,16 @@ describe('incident data invariants', () => {
         GALAXY.patternMatchedUnconfirmedBtc +
         GALAXY.wave4CandidateBtc,
     ).toBeCloseTo(GALAXY.withCandidateWave4Btc, 2);
-    expect(GALAXY.unmovedBtc).toBe(1531);
-    expect(GALAXY.movedAfterTheftBtc).toBe(246);
+    expect(GALAXY.unmovedBtc).toBe(1467);
+    expect(GALAXY.movedAfterTheftBtc).toBe(322);
     expect(GALAXY.unmovedBtc).toBeLessThan(GALAXY.highConfidenceBtc);
     expect(GALAXY.additionalFootprints).toBe(33);
     expect(GALAXY.aug7UpdateUrl).toContain('2085748513015488758');
     expect(GALAXY.aug14UpdateUrl).toContain('2088252639767085417');
     expect(GALAXY.aug16UpdateUrl).toContain('2089002238391832948');
     expect(GALAXY.aug24UpdateUrl).toContain('2091852664388600079');
+    expect(GALAXY.sep7UpdateUrl).toContain('2096785347929608296');
+    expect(GALAXY.unmovedBtc + GALAXY.movedAfterTheftBtc).toBe(1789);
   });
 
   it('documents Footprint O without adding a watched cluster', () => {

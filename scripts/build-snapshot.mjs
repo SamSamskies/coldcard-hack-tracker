@@ -134,11 +134,12 @@ function extractHoldings() {
     'g',
   );
   while ((m = wRe.exec(wave3Text))) {
+    const objBody = wave3Text.slice(m.index).split(/\n\s*\},/)[0] ?? '';
     wave3.push({
       address: m[1],
       label: m[2],
       reportBtc: Number(m[3]),
-      pollBalance: true,
+      pollBalance: !/\bpollBalance:\s*false\b/.test(objBody),
     });
   }
 
