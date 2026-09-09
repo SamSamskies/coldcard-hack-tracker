@@ -116,6 +116,7 @@ python3 scripts/x_cache.py stats
 - Erik (early Aug 2 Mk3 victim): `https://x.com/eriklocalhost/status/2083875886458171626`
 - Alex Thorn (likely Wave 4): `https://x.com/intangiblecoins/status/2084079706320646300`
 - James O'Beirne (CK tripwire launch): `https://x.com/jamesob/status/2084769501661331589`
+- Nick Bax / DART (white-hat ~50 BTC rescue → Wyoming Crypto Recovery Trust; not stolen holdings): `https://x.com/bax1337/status/2097715822600900839` / [writeup](https://assetrecovery.io/blog/coldcard-entropy-recovery.html)
 
 **Attacker capability frontier (honeypots — not stolen holdings)**
 
