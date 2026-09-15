@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-15T04:26:40.430Z",
+  "updatedAt": "2026-09-15T16:43:19.513Z",
   "source": "mempool.space",
-  "usdPrice": 77640,
+  "usdPrice": 76321,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -567,9 +567,9 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qysjc4jrltc4je2f9uek477xdczkrmkd0mwv2wgn47r0wt3qv4a7spkkx7h",
-      "fromLabel": "Wave 3 vault 7",
-      "amountBtc": 5.39098601,
+      "fromAddress": "bc1q5lxd8nwhptgt59n46a33udsjp2ghjw3n2kerpguvwqzah8deg5ls4rf2sl",
+      "fromLabel": "Wave 3 vault 6 (Galaxy open co-spend)",
+      "amountBtc": 6.34184638,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
