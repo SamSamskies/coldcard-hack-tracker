@@ -81,9 +81,10 @@ Details: [reference.md](reference.md).
    fees, or hop follow.
 5. Cross-check community X only as leads — prefer situational
    `mariusoffchain` / `osint_based` (or known post ids) via X MCP
-   `get_users_posts` / `get_posts_by_id`; **not** `search_posts_all`;
-   xcancel fallback. Prefer Arkham / OKLink entity tags with a cited block
-   height. See coldcard-hack-research [reference.md](../coldcard-hack-research/reference.md)
+   `get_users_posts` / `get_posts_by_id`; **not** `search_posts_all`.
+   If MCP is blocked, ask the user for the post text/screenshot. Prefer
+   Arkham / OKLink entity tags with a cited block height. See
+   coldcard-hack-research [reference.md](../coldcard-hack-research/reference.md)
    for quiet-period vs situational X polls.
 6. Label string style: short venue name (`KuCoin deposit`, `Coinbase Prime Custody`,
    `Bullish.com deposit`, `THORChain BTC vault`, `P2SH service hub`). Prefer
