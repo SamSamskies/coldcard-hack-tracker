@@ -335,7 +335,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 2 · July 31',
     stolenBtc: 76.16,
     date: '2026-07-31',
-    note: 'Two fee bands into a watched vault plus a collector; collector emptied Aug 7 into a hop still holding ~30.18 BTC.',
+    note: 'Two fee bands into a watched vault plus a collector; collector emptied Aug 7 into a hop that Galaxy flagged white-hat recovered Sep 21 (~30.18 BTC).',
     sourceUrl: 'https://x.com/glxyresearch/status/2083560940469981591',
   },
   {
@@ -686,10 +686,10 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
   },
   {
     address: 'bc1qmd5m5ktv7m5ffujxv4248fxv36myvdx79n8jp6',
-    label: 'Wave 2 collector',
+    label: 'Wave 2 collector · white-hat recovered',
     reportBtc: 30.18476329,
     clusterId: 'galaxy-july31',
-    note: 'Collector from 93 sweeps at ~10 sat/vB. Emptied Aug 7 (block 961368, ~2.4 sat/vB): 93-input consolidate → [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) ([93df0d26…abd4](txid:93df0d26e08ce950643f8cd03fd845c3d5697ba6021ec18874ee8e531f4eabd4)). Dust leftover (~0.00002 BTC). Sep 21: [Galaxy white-hat](https://x.com/glxyresearch/status/2102044678254215653) emptied that hop (~30.18 BTC) in block 967948 via [38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47) (co-spent with Footprint AA into a 480-out P2TR peel) — **not** attacker cash-out. [Chainabuse victim](https://chainabuse.com/report/d4c95fab-ed8e-4749-ae81-9d42bfdab1cb).',
+    note: 'White-hat recovered (~30.18 BTC) — [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) flagged Sep 21; not attacker cash-out. Originally a collector from 93 sweeps (~10 sat/vB). Aug 7: emptied into hop [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) ([93df0d26…abd4](txid:93df0d26e08ce950643f8cd03fd845c3d5697ba6021ec18874ee8e531f4eabd4)); dust leftover (~0.00002 BTC). Sep 21: that hop swept in block 967948 ([38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47), co-spent with Footprint AA). [Chainabuse victim](https://chainabuse.com/report/d4c95fab-ed8e-4749-ae81-9d42bfdab1cb).',
   },
   {
     address: 'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
