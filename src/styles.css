@@ -768,6 +768,7 @@ button:focus-visible {
   display: block;
   margin-top: 0.2rem;
   font-size: 0.78rem;
+  line-height: 1.45;
   color: var(--text-muted);
 }
 

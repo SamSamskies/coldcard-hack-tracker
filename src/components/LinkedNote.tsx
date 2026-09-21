@@ -50,5 +50,27 @@ export function LinkedNote({ text, className, as = 'p' }: Props) {
 
   if (last < text.length) nodes.push(text.slice(last));
 
-  return createElement(as, { className }, nodes.length > 0 ? nodes : text);
+  return createElement(
+    as,
+    { className },
+    expandNewlines(nodes.length > 0 ? nodes : [text]),
+  );
+}
+
+/** Preserve explicit `\n` in notes (HTML collapses whitespace otherwise). */
+function expandNewlines(nodes: ReactNode[]): ReactNode[] {
+  const out: ReactNode[] = [];
+  let brKey = 0;
+  for (const node of nodes) {
+    if (typeof node !== 'string') {
+      out.push(node);
+      continue;
+    }
+    const parts = node.split('\n');
+    parts.forEach((part, i) => {
+      if (i > 0) out.push(<br key={`nl-${brKey++}`} />);
+      if (part) out.push(part);
+    });
+  }
+  return out;
 }

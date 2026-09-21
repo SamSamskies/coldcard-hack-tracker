@@ -689,7 +689,11 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
     label: 'Wave 2 collector · white-hat recovered',
     reportBtc: 30.18476329,
     clusterId: 'galaxy-july31',
-    note: 'White-hat recovered (~30.18 BTC) — [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) flagged Sep 21; not attacker cash-out. Originally a collector from 93 sweeps (~10 sat/vB). Aug 7: emptied into hop [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) ([93df0d26…abd4](txid:93df0d26e08ce950643f8cd03fd845c3d5697ba6021ec18874ee8e531f4eabd4)); dust leftover (~0.00002 BTC). Sep 21: that hop swept in block 967948 ([38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47), co-spent with Footprint AA). [Chainabuse victim](https://chainabuse.com/report/d4c95fab-ed8e-4749-ae81-9d42bfdab1cb).',
+    note: `White-hat recovered (~30.18 BTC) — not attacker cash-out. Originally a collector from 93 sweeps (~10 sat/vB). [Chainabuse victim](https://chainabuse.com/report/d4c95fab-ed8e-4749-ae81-9d42bfdab1cb).
+
+Aug 7: emptied into hop [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) ([93df0d26…abd4](txid:93df0d26e08ce950643f8cd03fd845c3d5697ba6021ec18874ee8e531f4eabd4)); dust leftover (~0.00002 BTC).
+
+Sep 21: [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) flagged; that hop swept in block 967948 ([38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47), co-spent with Footprint AA).`,
   },
   {
     address: 'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
