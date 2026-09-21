@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-21T04:26:22.360Z",
+  "updatedAt": "2026-09-21T16:02:34.467Z",
   "source": "mempool.space",
-  "usdPrice": 81272,
+  "usdPrice": 85927,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -554,6 +554,32 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
+      "fromAddress": "bc1qajca7effwcxgpdf4aagh3h3fz634fnk93ar7c00hvghs3lrgk4tqd23qsa",
+      "fromLabel": "Wave 3 vault 5",
+      "amountBtc": 6.88509195,
+      "destinations": [
+        "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 965850,
+      "blockTime": 1788737928
+    },
+    {
+      "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
+      "fromAddress": "bc1q5lxd8nwhptgt59n46a33udsjp2ghjw3n2kerpguvwqzah8deg5ls4rf2sl",
+      "fromLabel": "Wave 3 vault 6 (Galaxy open co-spend)",
+      "amountBtc": 6.34184638,
+      "destinations": [
+        "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 965850,
+      "blockTime": 1788737928
+    },
+    {
+      "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
       "fromAddress": "bc1qysjc4jrltc4je2f9uek477xdczkrmkd0mwv2wgn47r0wt3qv4a7spkkx7h",
       "fromLabel": "Wave 3 vault 7",
       "amountBtc": 5.39098601,
@@ -583,19 +609,6 @@
       "fromAddress": "bc1qmqc0vur7v0xcnvq2pzm2kxlmvw6twhlxtsvd8jgudjdwnud6juusx4nlwt",
       "fromLabel": "Wave 3 vault 9",
       "amountBtc": 4.14175791,
-      "destinations": [
-        "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 965850,
-      "blockTime": 1788737928
-    },
-    {
-      "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qsev2de8syz3g9005q7ckkthak6jhz2y4gzjc8a7tfatdkx7y42sqdtwlwd",
-      "fromLabel": "Wave 3 vault 10",
-      "amountBtc": 4.01383972,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
@@ -1004,6 +1017,19 @@
       "fromAddress": "3EkYzYXTwFoDrz5Ei7pn1cV4FbUVSXDWeF",
       "fromLabel": "Hop 1 from Wave 4 park",
       "amountBtc": 0.02374887,
+      "destinations": [
+        "bc1qhfdzxfuj6hjxgwu58nnwhdghpr0rmpl9yj3wcx"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 960794,
+      "blockTime": 1785718502
+    },
+    {
+      "txid": "6c85668ec49c89b32afe94d53cc65c12518255f27c1c5b7932059307bdd30bbb",
+      "fromAddress": "bc1qw79velar2c0elc268fzxxn6ehe6v6n8lg683ha",
+      "fromLabel": "Hop 1 from Wave 4 park",
+      "amountBtc": 0.06990788,
       "destinations": [
         "bc1qhfdzxfuj6hjxgwu58nnwhdghpr0rmpl9yj3wcx"
       ],
