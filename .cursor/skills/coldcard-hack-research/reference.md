@@ -95,6 +95,8 @@ python3 scripts/x_cache.py stats
 - Sep 7 Wave 3 cash-out / ~82% unmoved: `https://x.com/glxyresearch/status/2096785347929608296`
 - Sep 21 white-hat Footprint AA + Wave 2 hop (40.713236 BTC / block 967948; not totals):
   `https://x.com/glxyresearch/status/2102044678254215653`
+- Sep 21 Thorn CRT follow-up (~52.37 peel, OP_RETURN claims:cryptorecoverytrust.com; ~40% Wave 2 white-hat):
+  `https://x.com/intangiblecoins/status/2102114798833946783`
 - Aug 14 $112M / attacks eased: `https://x.com/glxyresearch/status/2088252639767085417`
   - High-confidence 1,778.84 BTC / 8,600+ addrs (~$112.7M spot); tweet 1,778 / $112M
   - No confirmed attack after Aug 6; 190 victims spoken to; ≥33 footprints

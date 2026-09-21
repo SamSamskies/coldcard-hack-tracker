@@ -29,9 +29,12 @@ export const EARLY_WAVE = {
  * vault may push Wave 3 to 294 vaults / published total ~1,806 BTC if promoted
  * — not folded into highConfidence yet.
  *
- * Sep 21 ([Galaxy](https://x.com/glxyresearch/status/2102044678254215653)):
- * white-hat peel emptied Wave 2 hop bc1qez89… (~30.18) plus Footprint AA parks
- * (40.713236 BTC attributed / block 967948) — not a totals or attack-wave update.
+ * Sep 21 ([Galaxy](https://x.com/glxyresearch/status/2102044678254215653);
+ * [Thorn CRT](https://x.com/intangiblecoins/status/2102114798833946783)):
+ * white-hat peel emptied Wave 2 hop bc1qez89… (~30.18) plus Footprint AA/AU/AX
+ * parks (Galaxy 40.713236 attributed / co-spend ~52.37 / block 967948) into a
+ * CRT-claimed P2TR peel (OP_RETURN claims:cryptorecoverytrust.com); ~40% of
+ * Wave 2 white-hatted, vault ~45.9 still untouched — not a totals update.
  *
  * Aug 24 update ([Thorn](https://x.com/intangiblecoins/status/2091852664388600079);
  * Galaxy Research chart as of Aug 23): established losses 1,789.28 BTC /
@@ -125,6 +128,8 @@ export const GALAXY = {
   sep7UpdateUrl: 'https://x.com/glxyresearch/status/2096785347929608296',
   /** White-hat Footprint AA + Wave 2 hop peel; not a totals update (Sep 21). */
   sep21WhiteHatUrl: 'https://x.com/glxyresearch/status/2102044678254215653',
+  /** Thorn: same peel → Crypto Recovery Trust claim; ~40% Wave 2 white-hat. */
+  sep21CrtUrl: 'https://x.com/intangiblecoins/status/2102114798833946783',
 } as const;
 
 /**
@@ -335,7 +340,7 @@ export const CLUSTERS: readonly Cluster[] = [
     label: 'Galaxy Wave 2 · July 31',
     stolenBtc: 76.16,
     date: '2026-07-31',
-    note: 'Two fee bands into a watched vault plus a collector; collector emptied Aug 7 into a hop that Galaxy flagged white-hat recovered Sep 21 (~30.18 BTC).',
+    note: 'Two fee bands into a watched vault (~45.9, still untouched) plus a collector; collector emptied Aug 7 into a hop that Galaxy/Thorn flagged white-hat recovered Sep 21 (~30.18 BTC → CRT-claimed peel; ~40% of Wave 2).',
     sourceUrl: 'https://x.com/glxyresearch/status/2083560940469981591',
   },
   {
@@ -422,13 +427,13 @@ export const ORIGINAL_STOLEN_BTC = CLUSTERS.reduce(
 /** Primary public writeups for the sweep and the firmware issue. */
 export const SOURCES = [
   {
-    label: 'Galaxy Research · white-hat move · Footprint AA + Wave 2 hop',
-    note: 'Sep 21: [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) flags a **white-hat** movement of **40.713236 BTC** (~$3.31M) in block **967948** — hits Coldcard Hacker (Footprint AA) and Coldcard Hacker (Wave 2 second hop); 11 attributed addresses. On-chain: [38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47) (~2 sat/vB) co-spends ~52.37 BTC / 19 P2WPKH inputs into a 480-out mostly-P2TR peel; Galaxy’s exact 40.713236 is an 11-addr subset that includes Wave 2 hop [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) (~30.18 BTC, emptied) plus Footprint AA parks (e.g. [bc1q0hv8…](address:bc1q0hv8fw6q6k4e93cfl70f2wnhd7wmv35jvezktq), [bc1q6d5mar…](address:bc1q6d5marulp5jrjdl3q29lghf6qa54lx65lgqev4); AA funding ~960792–960907). Co-spent extras (e.g. [bc1qey7x58…](address:bc1qey7x58shha8375jwt2348jn3hepss8t5urwyhr) ~10.4 BTC) not in Galaxy’s 11. **Not attacker cash-out / not stolen holdings** — same class as DART Wyoming-trust rescues; do not add peel sinks to core/Wave 3. No new attack-wave or totals headline.',
-    url: 'https://x.com/glxyresearch/status/2102044678254215653',
+    label: 'Galaxy / Thorn · white-hat peel → Crypto Recovery Trust',
+    note: 'Sep 21: [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) flags a **white-hat** movement of **40.713236 BTC** (~$3.31M) in block **967948** — Footprint AA + Wave 2 second hop; 11 attributed addresses. [Thorn follow-up](https://x.com/intangiblecoins/status/2102114798833946783): same co-spend (~52.37 BTC) is Wave 2 + footprints AA/AU/AX delivered toward **Crypto Recovery Trust** (Wyoming; links [@bax1337](https://x.com/bax1337/status/2097715822600900839) / SEAL rescue); OP_RETURN `claims:https://cryptorecoverytrust.com` on [38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47) (~2 sat/vB, 20 P2WPKH inputs → 480-out mostly-P2TR peel — not a single CRT custody address). Galaxy’s 40.713236 is an 11-addr subset incl. Wave 2 hop [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) (~30.18 BTC, emptied) + AA parks (e.g. [bc1q0hv8…](address:bc1q0hv8fw6q6k4e93cfl70f2wnhd7wmv35jvezktq), [bc1q6d5mar…](address:bc1q6d5marulp5jrjdl3q29lghf6qa54lx65lgqev4)); co-spent extras (e.g. [bc1qey7x58…](address:bc1qey7x58shha8375jwt2348jn3hepss8t5urwyhr) ~10.4 BTC) + ~3.01 BTC Thorn lists as source-unestablished. Thorn: ~40% of Wave 2 white-hatted; vault ~45.9 still untouched (other ~60% different operator, white-hat status unknown). Victim address check: [cryptorecoverytrust.com](https://www.cryptorecoverytrust.com). **Not attacker cash-out / not stolen holdings** — do not add peel sinks to core/Wave 3. No new attack-wave or totals headline.',
+    url: 'https://x.com/intangiblecoins/status/2102114798833946783',
   },
   {
     label: 'Nick Bax / DART · white-hat rescue to Wyoming trust',
-    note: 'Sep 9: [@bax1337](https://x.com/bax1337/status/2097715822600900839) (SEAL) publicly confirms end-of-July involvement in rescuing ~50 BTC that were about to be stolen via the Coldcard entropy flaw; funds held by a Wyoming trust for return to rightful owners. Follow-up links [@D_A_R_TRescue](https://x.com/D_A_R_TRescue/status/2097395962826137919) and the [DART writeup](https://assetrecovery.io/blog/coldcard-entropy-recovery.html): as of Aug 17 ledger, just over 50 BTC secured with independent white hats into the Crypto Recovery Trust (Wyoming statutory trust; Steptoe counsel) — segregated custody, ownership verification, sanctions/source screening, then lawful return. Addresses / methods withheld while work continues; additional exposed assets still under review. Claims: [assetrecovery.io](https://assetrecovery.io/) → Submit Claim with a public wallet address only (never seeds/keys). **Not stolen holdings** — do not add trust wallets to core/Wave 3 totals; distinct from owner self-sweeps in LLFOURN’s ~499 BTC “recovered by owners” band.',
+    note: 'Sep 9: [@bax1337](https://x.com/bax1337/status/2097715822600900839) (SEAL) publicly confirms end-of-July involvement in rescuing ~50 BTC that were about to be stolen via the Coldcard entropy flaw; funds held by a Wyoming trust for return to rightful owners. Follow-up links [@D_A_R_TRescue](https://x.com/D_A_R_TRescue/status/2097395962826137919) and the [DART writeup](https://assetrecovery.io/blog/coldcard-entropy-recovery.html): as of Aug 17 ledger, just over 50 BTC secured with independent white hats into the Crypto Recovery Trust (Wyoming statutory trust; Steptoe counsel) — segregated custody, ownership verification, sanctions/source screening, then lawful return. Sep 21: [Thorn](https://x.com/intangiblecoins/status/2102114798833946783) ties the block-967948 CRT-claimed peel (~52.37 BTC) to this rescue. Claims: [cryptorecoverytrust.com](https://www.cryptorecoverytrust.com) / [assetrecovery.io](https://assetrecovery.io/) → Submit Claim with a public wallet address only (never seeds/keys). **Not stolen holdings** — do not add trust wallets to core/Wave 3 totals; distinct from owner self-sweeps in LLFOURN’s ~499 BTC “recovered by owners” band.',
     url: 'https://assetrecovery.io/blog/coldcard-entropy-recovery.html',
   },
   {
@@ -693,7 +698,7 @@ export const CORE_HOLDING_ADDRESSES: readonly HoldingAddress[] = [
 
 Aug 7: emptied into hop [bc1qez89…](address:bc1qez89sph5tgghmf36u79hq62h8n2xqqka05dt6n) ([93df0d26…abd4](txid:93df0d26e08ce950643f8cd03fd845c3d5697ba6021ec18874ee8e531f4eabd4)); dust leftover (~0.00002 BTC).
 
-Sep 21: [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) flagged; that hop swept in block 967948 ([38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47), co-spent with Footprint AA).`,
+Sep 21: [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) / [Thorn](https://x.com/intangiblecoins/status/2102114798833946783) — hop swept in block 967948 ([38b524cc…cea47](txid:38b524ccb8ca260ec705ab980982144857c477658fa39591870ee8cb09bcea47), co-spent with AA/AU/AX) into CRT-claimed P2TR peel (OP_RETURN claims:https://cryptorecoverytrust.com).`,
   },
   {
     address: 'bc1q7rmsw0ra7zrphe66wwa9960ffm69cp8dlrrcgf',
