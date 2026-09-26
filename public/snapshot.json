@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-26T04:32:03.685Z",
+  "updatedAt": "2026-09-26T16:11:06.241Z",
   "source": "mempool.space",
-  "usdPrice": 83877,
+  "usdPrice": 84128,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -634,9 +634,9 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1q5lxd8nwhptgt59n46a33udsjp2ghjw3n2kerpguvwqzah8deg5ls4rf2sl",
-      "fromLabel": "Wave 3 vault 6 (Galaxy open co-spend)",
-      "amountBtc": 6.34184638,
+      "fromAddress": "bc1qtsp50w4uru6t2mhmctvapfdy23g75r08werm7qmgzuedm4jsaztspf73yt",
+      "fromLabel": "Wave 3 vault 8",
+      "amountBtc": 4.53878769,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
@@ -647,9 +647,9 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qysjc4jrltc4je2f9uek477xdczkrmkd0mwv2wgn47r0wt3qv4a7spkkx7h",
-      "fromLabel": "Wave 3 vault 7",
-      "amountBtc": 5.39098601,
+      "fromAddress": "bc1qmqc0vur7v0xcnvq2pzm2kxlmvw6twhlxtsvd8jgudjdwnud6juusx4nlwt",
+      "fromLabel": "Wave 3 vault 9",
+      "amountBtc": 4.14175791,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
