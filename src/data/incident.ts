@@ -641,6 +641,8 @@ export const NO_POLL_BALANCE_ADDRESSES = [
   '36XfMDAYuCn76DDJt5HV6kJxCukb1F1x3G', // Wave 4 park
   '34nHYNnc9DLxo3iCzvSHiyD2YsC3jP4qDQ', // Wave 4 park
   'bc1qcmnjt058q8hs4fvjr9wlu2kt974fyqnprfjvtl', // Wave 4 park
+  '3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9', // Wave 4 hop
+  '3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o', // Wave 4 hop peel
   'bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld', // Wave 3 vault 1
   'bc1qu5dgcwgm0c6qazqhacskakt8qrqj96wfkyfzjsf2lje9unzjznasfmaygs', // Wave 3 vault 2
   'bc1qt7ktwfru52emkyyuw6nkju6lck98uxtc5r6gfwethgas50ufn22qpfsewn', // Wave 3 vault 3
@@ -828,14 +830,23 @@ Sep 21: [Galaxy](https://x.com/glxyresearch/status/2102044678254215653) / [Thorn
     label: 'Wave 4 hop',
     reportBtc: 135.80743236,
     clusterId: 'wave4-aug3',
-    note: 'Sep 1 (block 965054, ~2 sat/vB): large out from emptied hop [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) ([503ef827…21ccf4c0](txid:503ef8276d88aeb1f501651ba10a560413566863351d8dfdca57b5cf21ccf4c0)). Fresh P2SH park (1 tx); unlabeled as of Sep 2.',
+    pollBalance: false,
+    note: 'Sep 1 (block 965054, ~2 sat/vB): large out from emptied hop [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB) ([503ef827…21ccf4c0](txid:503ef8276d88aeb1f501651ba10a560413566863351d8dfdca57b5cf21ccf4c0)). Emptied Sep 25 (block 968586, ~3 sat/vB): → [3EGj76MX…](address:3EGj76MXeN2wrC7E2jgvHFxzxJWcrywTKx) (~135.72) + P2TR peel [bc1py50q8…](address:bc1py50q8lhwqelfnynuhrpgcre7skfajpyk0evw3ucfw8cu2jarj6tqvrrhfc) (~0.089) ([b99034c1…af33873b](txid:b99034c198f58b61fc7293e586b97cdfe3a2461cf0bf23ed643c622daf33873b)).',
   },
   {
     address: '3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o',
     label: 'Wave 4 hop peel',
     reportBtc: 0.6,
     clusterId: 'wave4-aug3',
-    note: 'Sep 1 (block 965054): 0.6 BTC peel sibling of [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) from [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB). Fresh P2SH (1 tx); unlabeled as of Sep 2.',
+    pollBalance: false,
+    note: 'Sep 1 (block 965054): 0.6 BTC peel sibling of [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) from [334iKwmh…](address:334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB). Emptied Sep 25 (block 968558, ~2 sat/vB): co-spent with unlabeled 4 BTC park [3D1c5toe…](address:3D1c5toenYniHNVQkdb5agJ2iZepLZ8BMK) → [bc1qgtq8…](address:bc1qgtq8elrj43wjrcgw98zy9gew928tcd3j3v72af) (4.1) + change [3DjaBJBU…](address:3DjaBJBUcC5daUwFy9Er2UYV9fysqYsKrB) (~0.5) ([1604ffc6…30cae753](txid:1604ffc633a5003f6dde120378e158f36d06599bf0cc6a24494a508430cae753)). Same block+1: 4.1 → high-volume hub [bc1qd3rsn…](address:bc1qd3rsn58mxnqfxufd4fz8znx3mlxxu4dcsy4hz4) ([6fdf02db…0eeba1fe](txid:6fdf02dbc2e52698bc381b2f586308264f0713fdcf540b772ceae8fb0eeba1fe)); 3Dja… still holds ~0.5 as of Sep 28.',
+  },
+  {
+    address: '3EGj76MXeN2wrC7E2jgvHFxzxJWcrywTKx',
+    label: 'Wave 4 hop',
+    reportBtc: 135.71814108,
+    clusterId: 'wave4-aug3',
+    note: 'Sep 25 (block 968586, ~3 sat/vB): large out from emptied [3Qm8C2ns…](address:3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9) ([b99034c1…af33873b](txid:b99034c198f58b61fc7293e586b97cdfe3a2461cf0bf23ed643c622daf33873b)). Fresh P2SH park (1 tx); Arkham/Bithypha unlabeled as of Sep 28; still holding full stack.',
   },
 ];
 
@@ -916,6 +927,12 @@ export const KNOWN_ADDRESS_LABELS: Readonly<Record<string, string>> = {
    * ~1.5M txs / ~75 BTC; Arkham High Transacting only.
    */
   bc1qrqlamjhy2qp0xj5mxv4sx7ra9qfmfxllf93l26: 'P2WPKH service hub',
+  /**
+   * Wave 4 hop-peel exit (block 968559): 4.1 BTC via messenger hop bc1qgtq8…
+   * from emptied 3H5i… (+ co-spent 4 BTC park). ~6.7k txs; Arkham High
+   * Transacting (counterparties OKX/Luno/Kraken/Cumberland); no named entity.
+   */
+  bc1qd3rsn58mxnqfxufd4fz8znx3mlxxu4dcsy4hz4: 'P2WPKH service hub',
   /**
    * Wave 4 hop (block 960818): multi-park + 352zz/35uR cluster consolidate.
    * Arkham: Coinbase Prime Custody.
