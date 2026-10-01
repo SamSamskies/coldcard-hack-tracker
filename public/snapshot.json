@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-09-30T17:53:28.626Z",
+  "updatedAt": "2026-10-01T05:19:46.687Z",
   "source": "mempool.space",
-  "usdPrice": 83949,
+  "usdPrice": 84189,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -532,6 +532,20 @@
   ],
   "movements": [
     {
+      "txid": "b99034c198f58b61fc7293e586b97cdfe3a2461cf0bf23ed643c622daf33873b",
+      "fromAddress": "3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9",
+      "fromLabel": "Wave 4 hop",
+      "amountBtc": 135.80743236,
+      "destinations": [
+        "3EGj76MXeN2wrC7E2jgvHFxzxJWcrywTKx",
+        "bc1py50q8lhwqelfnynuhrpgcre7skfajpyk0evw3ucfw8cu2jarj6tqvrrhfc"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 968586,
+      "blockTime": 1790369862
+    },
+    {
       "txid": "1604ffc633a5003f6dde120378e158f36d06599bf0cc6a24494a508430cae753",
       "fromAddress": "3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o",
       "fromLabel": "Wave 4 hop peel",
@@ -599,9 +613,9 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qysjc4jrltc4je2f9uek477xdczkrmkd0mwv2wgn47r0wt3qv4a7spkkx7h",
-      "fromLabel": "Wave 3 vault 7",
-      "amountBtc": 5.39098601,
+      "fromAddress": "bc1q5lxd8nwhptgt59n46a33udsjp2ghjw3n2kerpguvwqzah8deg5ls4rf2sl",
+      "fromLabel": "Wave 3 vault 6 (Galaxy open co-spend)",
+      "amountBtc": 6.34184638,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
@@ -612,9 +626,9 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qtsp50w4uru6t2mhmctvapfdy23g75r08werm7qmgzuedm4jsaztspf73yt",
-      "fromLabel": "Wave 3 vault 8",
-      "amountBtc": 4.53878769,
+      "fromAddress": "bc1qysjc4jrltc4je2f9uek477xdczkrmkd0mwv2wgn47r0wt3qv4a7spkkx7h",
+      "fromLabel": "Wave 3 vault 7",
+      "amountBtc": 5.39098601,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
