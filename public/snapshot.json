@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-02T05:07:43.959Z",
+  "updatedAt": "2026-10-02T17:44:41.808Z",
   "source": "mempool.space",
-  "usdPrice": 86593,
+  "usdPrice": 84560,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -131,8 +131,8 @@
     },
     {
       "address": "3EGj76MXeN2wrC7E2jgvHFxzxJWcrywTKx",
-      "balanceSats": 13571814108,
-      "utxoCount": 1
+      "balanceSats": 0,
+      "utxoCount": 0
     },
     {
       "address": "bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld",
@@ -531,6 +531,20 @@
     }
   ],
   "movements": [
+    {
+      "txid": "70895970ebb63c9743ae6f36effa01ac38cd58abb9eb2160224045141cca3a8a",
+      "fromAddress": "3EGj76MXeN2wrC7E2jgvHFxzxJWcrywTKx",
+      "fromLabel": "Wave 4 hop",
+      "amountBtc": 135.71814108,
+      "destinations": [
+        "3CjiKrrsKcpmBb9YGBGXAj6a7LxnvZhdyv",
+        "3QNAuki4mBYARn5HZP7N1N6kY8MdNd4DUx"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 969606,
+      "blockTime": 1790952308
+    },
     {
       "txid": "b99034c198f58b61fc7293e586b97cdfe3a2461cf0bf23ed643c622daf33873b",
       "fromAddress": "3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9",
@@ -1060,9 +1074,9 @@
     },
     {
       "txid": "6c85668ec49c89b32afe94d53cc65c12518255f27c1c5b7932059307bdd30bbb",
-      "fromAddress": "3EkYzYXTwFoDrz5Ei7pn1cV4FbUVSXDWeF",
+      "fromAddress": "bc1qw79velar2c0elc268fzxxn6ehe6v6n8lg683ha",
       "fromLabel": "Hop 1 from Wave 4 park",
-      "amountBtc": 0.02374887,
+      "amountBtc": 0.06990788,
       "destinations": [
         "bc1qhfdzxfuj6hjxgwu58nnwhdghpr0rmpl9yj3wcx"
       ],
@@ -1073,9 +1087,9 @@
     },
     {
       "txid": "6c85668ec49c89b32afe94d53cc65c12518255f27c1c5b7932059307bdd30bbb",
-      "fromAddress": "bc1qw79velar2c0elc268fzxxn6ehe6v6n8lg683ha",
+      "fromAddress": "3EkYzYXTwFoDrz5Ei7pn1cV4FbUVSXDWeF",
       "fromLabel": "Hop 1 from Wave 4 park",
-      "amountBtc": 0.06990788,
+      "amountBtc": 0.02374887,
       "destinations": [
         "bc1qhfdzxfuj6hjxgwu58nnwhdghpr0rmpl9yj3wcx"
       ],
