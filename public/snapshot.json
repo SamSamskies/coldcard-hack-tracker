@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-21T16:59:36.828Z",
+  "updatedAt": "2026-10-22T04:13:48.814Z",
   "source": "mempool.space",
-  "usdPrice": 84551,
+  "usdPrice": 82859,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -627,6 +627,19 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
+      "fromAddress": "bc1qajca7effwcxgpdf4aagh3h3fz634fnk93ar7c00hvghs3lrgk4tqd23qsa",
+      "fromLabel": "Wave 3 vault 5",
+      "amountBtc": 6.88509195,
+      "destinations": [
+        "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 965850,
+      "blockTime": 1788737928
+    },
+    {
+      "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
       "fromAddress": "bc1q5lxd8nwhptgt59n46a33udsjp2ghjw3n2kerpguvwqzah8deg5ls4rf2sl",
       "fromLabel": "Wave 3 vault 6 (Galaxy open co-spend)",
       "amountBtc": 6.34184638,
@@ -715,19 +728,6 @@
       "confirmed": true,
       "blockHeight": 965850,
       "blockTime": 1788737928
-    },
-    {
-      "txid": "968b914bd5a39a7563777c8faaceb93d57faf66ed6dd6ad236ad2d0f016a3abd",
-      "fromAddress": "bc1qu5dgcwgm0c6qazqhacskakt8qrqj96wfkyfzjsf2lje9unzjznasfmaygs",
-      "fromLabel": "Wave 3 vault 2",
-      "amountBtc": 15.47824995,
-      "destinations": [
-        "bc1pacpd74fkvvxelcqtrc9zy8aevxlrvwj2mfe3wv9tn8a4jfmfyraqvekg6w"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 965625,
-      "blockTime": 1788619290
     },
     {
       "txid": "377f77d5df029599f14d40d31fbf00270451922b58eabb7cfca173b27f6803ab",
@@ -1259,6 +1259,19 @@
         "bc1qvrpckutek504fr8jv06hljxfslpw4cwf60cddc"
       ],
       "hop": 0,
+      "confirmed": true,
+      "blockHeight": 960658,
+      "blockTime": 1785638973
+    },
+    {
+      "txid": "135d4c2cb95a908572f15f450906e6068eafb98ea98b16a9ba999b1a652d4ce9",
+      "fromAddress": "bc1qvrpckutek504fr8jv06hljxfslpw4cwf60cddc",
+      "fromLabel": "Hop 1 from Aug 1 hop vault",
+      "amountBtc": 0.241352,
+      "destinations": [
+        "36c8aprKMXmf4bGEnKCGvJwKKqAZQbQW35"
+      ],
+      "hop": 1,
       "confirmed": true,
       "blockHeight": 960658,
       "blockTime": 1785638973
