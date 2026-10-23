@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-22T16:58:38.662Z",
+  "updatedAt": "2026-10-23T04:17:39.387Z",
   "source": "mempool.space",
-  "usdPrice": 80939,
+  "usdPrice": 81686,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -1185,6 +1185,20 @@
       "blockTime": 1785644337
     },
     {
+      "txid": "61c0ddac816958a5a6b5814ad1202a24a683168d3298ae603e7c841e6598c095",
+      "fromAddress": "bc1qu2uq40wq04gmtjk09vcgv2dzxec4gsr25z6srw",
+      "fromLabel": "Hop 1 from Evening vault",
+      "amountBtc": 0.509799,
+      "destinations": [
+        "bc1qt8cawlq9e38y3mgv2tv9ek64lnf4pk0tfk5y4k",
+        "bc1qzkap7ttupnq36hk9mv4mjn62tqhcwn0m706e4z"
+      ],
+      "hop": 1,
+      "confirmed": true,
+      "blockHeight": 960668,
+      "blockTime": 1785643436
+    },
+    {
       "txid": "49dd29355e946c8265f86f83564411e96f02f2fbf6bd147e9bb11d198fd49564",
       "fromAddress": "bc1qzkap7ttupnq36hk9mv4mjn62tqhcwn0m706e4z",
       "fromLabel": "Hop 2 from Hop 1 from Evening vault",
@@ -1259,19 +1273,6 @@
         "bc1qvrpckutek504fr8jv06hljxfslpw4cwf60cddc"
       ],
       "hop": 0,
-      "confirmed": true,
-      "blockHeight": 960658,
-      "blockTime": 1785638973
-    },
-    {
-      "txid": "135d4c2cb95a908572f15f450906e6068eafb98ea98b16a9ba999b1a652d4ce9",
-      "fromAddress": "bc1qvrpckutek504fr8jv06hljxfslpw4cwf60cddc",
-      "fromLabel": "Hop 1 from Aug 1 hop vault",
-      "amountBtc": 0.241352,
-      "destinations": [
-        "36c8aprKMXmf4bGEnKCGvJwKKqAZQbQW35"
-      ],
-      "hop": 1,
       "confirmed": true,
       "blockHeight": 960658,
       "blockTime": 1785638973
