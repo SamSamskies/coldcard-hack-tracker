@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-09T05:43:56.330Z",
+  "updatedAt": "2026-11-09T22:11:00.174Z",
   "source": "mempool.space",
-  "usdPrice": 74292,
+  "usdPrice": 74926,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -852,6 +852,19 @@
       "blockTime": 1788381787
     },
     {
+      "txid": "90be5ee18bd47c810f1ee76d771270e411244ef7f5eed0da5c767c0fa396fcc2",
+      "fromAddress": "bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld",
+      "fromLabel": "Wave 3 vault 1",
+      "amountBtc": 20.49703196,
+      "destinations": [
+        "bc1qt8rrtnxlszm7rcdjpeepzk076jd5hevakqerzjyxpk8u3p6dfh2q92ua36"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 965217,
+      "blockTime": 1788379255
+    },
+    {
       "txid": "503ef8276d88aeb1f501651ba10a560413566863351d8dfdca57b5cf21ccf4c0",
       "fromAddress": "334iKwmhLKzJFoijrcQwcBFfFth7QjJ6gB",
       "fromLabel": "Hop 1 from Wave 4 park",
@@ -1224,20 +1237,6 @@
       "confirmed": true,
       "blockHeight": 960669,
       "blockTime": 1785644337
-    },
-    {
-      "txid": "61c0ddac816958a5a6b5814ad1202a24a683168d3298ae603e7c841e6598c095",
-      "fromAddress": "bc1qu2uq40wq04gmtjk09vcgv2dzxec4gsr25z6srw",
-      "fromLabel": "Hop 1 from Evening vault",
-      "amountBtc": 0.509799,
-      "destinations": [
-        "bc1qt8cawlq9e38y3mgv2tv9ek64lnf4pk0tfk5y4k",
-        "bc1qzkap7ttupnq36hk9mv4mjn62tqhcwn0m706e4z"
-      ],
-      "hop": 1,
-      "confirmed": true,
-      "blockHeight": 960668,
-      "blockTime": 1785643436
     },
     {
       "txid": "49dd29355e946c8265f86f83564411e96f02f2fbf6bd147e9bb11d198fd49564",
