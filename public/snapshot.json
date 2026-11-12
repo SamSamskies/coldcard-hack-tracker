@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-12T06:48:22.546Z",
+  "updatedAt": "2026-11-12T19:45:27.058Z",
   "source": "mempool.space",
-  "usdPrice": 73560,
+  "usdPrice": 71460,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -599,6 +599,20 @@
       "blockTime": 1790977219
     },
     {
+      "txid": "70895970ebb63c9743ae6f36effa01ac38cd58abb9eb2160224045141cca3a8a",
+      "fromAddress": "3EGj76MXeN2wrC7E2jgvHFxzxJWcrywTKx",
+      "fromLabel": "Wave 4 hop",
+      "amountBtc": 135.71814108,
+      "destinations": [
+        "3CjiKrrsKcpmBb9YGBGXAj6a7LxnvZhdyv",
+        "3QNAuki4mBYARn5HZP7N1N6kY8MdNd4DUx"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 969606,
+      "blockTime": 1790952308
+    },
+    {
       "txid": "b99034c198f58b61fc7293e586b97cdfe3a2461cf0bf23ed643c622daf33873b",
       "fromAddress": "3Qm8C2ns2XpzLq36xGbTYAAVNfd924RtV9",
       "fromLabel": "Wave 4 hop",
@@ -611,20 +625,6 @@
       "confirmed": true,
       "blockHeight": 968586,
       "blockTime": 1790369862
-    },
-    {
-      "txid": "1604ffc633a5003f6dde120378e158f36d06599bf0cc6a24494a508430cae753",
-      "fromAddress": "3H5i5M4QFgDaeGAPAe7f6b8XeYzToqFU3o",
-      "fromLabel": "Wave 4 hop peel",
-      "amountBtc": 0.6,
-      "destinations": [
-        "bc1qgtq8elrj43wjrcgw98zy9gew928tcd3j3v72af",
-        "3DjaBJBUcC5daUwFy9Er2UYV9fysqYsKrB"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 968558,
-      "blockTime": 1790347201
     },
     {
       "txid": "080f5c013481f408716ae906703f62da0900cd8151485d3f1d91f287a9345700",
@@ -735,19 +735,6 @@
       "fromAddress": "bc1qsev2de8syz3g9005q7ckkthak6jhz2y4gzjc8a7tfatdkx7y42sqdtwlwd",
       "fromLabel": "Wave 3 vault 10",
       "amountBtc": 4.01383972,
-      "destinations": [
-        "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 965850,
-      "blockTime": 1788737928
-    },
-    {
-      "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qunepx2e5f65xa9cftcv6t6qcnwky77g9sl8k95zcty4jqwkxuurqs9ap78",
-      "fromLabel": "Wave 3 vault 11",
-      "amountBtc": 3.98704957,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
