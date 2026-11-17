@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-17T07:30:07.058Z",
+  "updatedAt": "2026-11-17T20:43:01.803Z",
   "source": "mempool.space",
-  "usdPrice": 64644,
+  "usdPrice": 63965,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -734,9 +734,9 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qtsp50w4uru6t2mhmctvapfdy23g75r08werm7qmgzuedm4jsaztspf73yt",
-      "fromLabel": "Wave 3 vault 8",
-      "amountBtc": 4.53878769,
+      "fromAddress": "bc1qmqc0vur7v0xcnvq2pzm2kxlmvw6twhlxtsvd8jgudjdwnud6juusx4nlwt",
+      "fromLabel": "Wave 3 vault 9",
+      "amountBtc": 4.14175791,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
@@ -850,6 +850,19 @@
       "confirmed": true,
       "blockHeight": 965221,
       "blockTime": 1788381787
+    },
+    {
+      "txid": "90be5ee18bd47c810f1ee76d771270e411244ef7f5eed0da5c767c0fa396fcc2",
+      "fromAddress": "bc1qn3uy9j26m79vghed2uddr89l344xa5efnn4d0rxhz4q3xxlyxryqq595ld",
+      "fromLabel": "Wave 3 vault 1",
+      "amountBtc": 20.49703196,
+      "destinations": [
+        "bc1qt8rrtnxlszm7rcdjpeepzk076jd5hevakqerzjyxpk8u3p6dfh2q92ua36"
+      ],
+      "hop": 0,
+      "confirmed": true,
+      "blockHeight": 965217,
+      "blockTime": 1788379255
     },
     {
       "txid": "503ef8276d88aeb1f501651ba10a560413566863351d8dfdca57b5cf21ccf4c0",
@@ -1314,19 +1327,6 @@
         "bc1qvrpckutek504fr8jv06hljxfslpw4cwf60cddc"
       ],
       "hop": 0,
-      "confirmed": true,
-      "blockHeight": 960658,
-      "blockTime": 1785638973
-    },
-    {
-      "txid": "135d4c2cb95a908572f15f450906e6068eafb98ea98b16a9ba999b1a652d4ce9",
-      "fromAddress": "bc1qvrpckutek504fr8jv06hljxfslpw4cwf60cddc",
-      "fromLabel": "Hop 1 from Aug 1 hop vault",
-      "amountBtc": 0.241352,
-      "destinations": [
-        "36c8aprKMXmf4bGEnKCGvJwKKqAZQbQW35"
-      ],
-      "hop": 1,
       "confirmed": true,
       "blockHeight": 960658,
       "blockTime": 1785638973
