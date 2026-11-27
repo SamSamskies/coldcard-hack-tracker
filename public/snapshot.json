@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-26T21:16:49.341Z",
+  "updatedAt": "2026-11-27T07:48:49.988Z",
   "source": "mempool.space",
-  "usdPrice": 60735,
+  "usdPrice": 61443,
   "addresses": [
     {
       "address": "bc1qq85v2c926eg6pgxhwp6q7lf6cnsz80qs3fcu9r",
@@ -773,9 +773,9 @@
     },
     {
       "txid": "c6add187b87532a2fe4897e043c2bec8e62227a47b683c5ea868451bc9a8d26f",
-      "fromAddress": "bc1qunepx2e5f65xa9cftcv6t6qcnwky77g9sl8k95zcty4jqwkxuurqs9ap78",
-      "fromLabel": "Wave 3 vault 11",
-      "amountBtc": 3.98704957,
+      "fromAddress": "bc1qcryst78hk4z75hsu5dyutlgnyw3g3grcwsenfvhpl3uvpf0m6paqqr0epc",
+      "fromLabel": "Wave 3 vault 12",
+      "amountBtc": 3.80969146,
       "destinations": [
         "bc1p7xunc8vxs9g3z3kv7yqkjsza9aephe5m73ynwdqg78m9kj0va3qq6akw44"
       ],
@@ -783,19 +783,6 @@
       "confirmed": true,
       "blockHeight": 965850,
       "blockTime": 1788737928
-    },
-    {
-      "txid": "968b914bd5a39a7563777c8faaceb93d57faf66ed6dd6ad236ad2d0f016a3abd",
-      "fromAddress": "bc1qu5dgcwgm0c6qazqhacskakt8qrqj96wfkyfzjsf2lje9unzjznasfmaygs",
-      "fromLabel": "Wave 3 vault 2",
-      "amountBtc": 15.47824995,
-      "destinations": [
-        "bc1pacpd74fkvvxelcqtrc9zy8aevxlrvwj2mfe3wv9tn8a4jfmfyraqvekg6w"
-      ],
-      "hop": 0,
-      "confirmed": true,
-      "blockHeight": 965625,
-      "blockTime": 1788619290
     },
     {
       "txid": "377f77d5df029599f14d40d31fbf00270451922b58eabb7cfca173b27f6803ab",
